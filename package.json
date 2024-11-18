@@ -25,7 +25,20 @@
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
     "prettier": "^3.3.3",
     "typescript": "^5"
+  },
+  "lint-staged": {
+    "lint-staged": {
+      "*.{js,jsx,ts,tsx}": [
+        "eslint --fix",
+        "prettier --write"
+      ],
+      "*.{css,scss,md}": [
+        "prettier --write"
+      ]
+    }
   }
 }
