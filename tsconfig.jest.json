@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
     "target": "ES2017",
     "module": "commonjs", // Required for Jest
     "lib": ["dom", "dom.iterable", "esnext"],
