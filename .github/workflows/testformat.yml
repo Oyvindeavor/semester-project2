@@ -88,6 +88,9 @@ jobs:
       - name: Run Cypress
         run: npm run cypress:run
 
+      - name: Debug Server Logs
+        run: tail -n 100 nohup.out
+
   prettier:
     name: Prettier Check
     runs-on: ubuntu-latest
@@ -110,3 +113,5 @@ jobs:
       # Step 4: Run Prettier
       - name: Run Prettier Fix
         run: npx prettier --write .
+
+        
