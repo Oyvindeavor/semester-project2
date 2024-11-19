@@ -35,7 +35,7 @@ jobs:
       - name: Run Lint-Staged
         run: npx lint-staged
 
-    jest:
+  jest:
     name: Run Unit Tests
     runs-on: ubuntu-latest
 
