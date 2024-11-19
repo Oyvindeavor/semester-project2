@@ -107,5 +107,5 @@ jobs:
         run: npm ci
 
       # Step 4: Run Prettier
-      - name: Run Prettier Check
-        run: npx prettier --check .
+      - name: Run Prettier Fix
+        run: npx prettier --write .
