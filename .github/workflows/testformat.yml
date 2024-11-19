@@ -78,6 +78,7 @@ jobs:
         run: nohup npm run dev &
         env:
           NODE_ENV: development
+          PORT: 3000
 
       # Step 5: Wait for the server to start
       - name: Wait for server to start
