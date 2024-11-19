@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 22
+          node-version: 20
 
       - name: Cache Node Modules
         uses: actions/cache@v3
@@ -46,7 +46,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 22
+          node-version: 20
 
       - name: Cache Node Modules
         uses: actions/cache@v3
@@ -64,18 +64,18 @@ jobs:
         run: |
           if [ -z "$(find ./src -type f -name '*.test.*')" ]; then
             echo "No Jest test files found. Skipping Jest tests and build."
-            echo "::set-output name=skip::true"
+            echo "skip=true" >> $GITHUB_ENV
             exit 0
           else
             echo "Jest test files found. Proceeding with build."
           fi
 
       - name: Build Application
-        if: steps.check-jest.outputs.skip != 'true'
+        if: ${{ !env.skip }}
         run: npm run build --verbose
 
       - name: Run Jest
-        if: steps.check-jest.outputs.skip != 'true'
+        if: ${{ !env.skip }}
         run: npm test --verbose
 
   cypress:
@@ -89,7 +89,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 22
+          node-version: 20
 
       - name: Cache Node Modules
         uses: actions/cache@v3
@@ -107,36 +107,24 @@ jobs:
         run: |
           if [ -z "$(find ./cypress/e2e -type f -name '*.cy.*')" ]; then
             echo "No Cypress test files found. Skipping Cypress tests and build."
-            echo "::set-output name=skip::true"
+            echo "skip=true" >> $GITHUB_ENV
             exit 0
           else
             echo "Cypress test files found. Proceeding with build."
           fi
 
       - name: Build Application
-        if: steps.check-cypress.outputs.skip != 'true'
+        if: ${{ !env.skip }}
         run: npm run build --verbose
 
       - name: Start Development Server
-        if: steps.check-cypress.outputs.skip != 'true'
+        if: ${{ !env.skip }}
         run: nohup npm run dev > nohup.out 2>&1 &
         env:
           NODE_ENV: development
 
-      - name: Debug Server Logs
-        if: steps.check-cypress.outputs.skip != 'true'
-        run: cat nohup.out || echo "No server logs found."
-
-      - name: Check Running Processes
-        if: steps.check-cypress.outputs.skip != 'true'
-        run: ps aux | grep node
-
-      - name: Wait for server to start
-        if: steps.check-cypress.outputs.skip != 'true'
-        run: npx wait-on http://localhost:3000 --timeout 120000 --verbose
-
       - name: Run Cypress
-        if: steps.check-cypress.outputs.skip != 'true'
+        if: ${{ !env.skip }}
         run: npm run cypress:run
 
   prettier:
@@ -150,7 +138,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 22
+          node-version: 20
 
       - name: Cache Node Modules
         uses: actions/cache@v3
