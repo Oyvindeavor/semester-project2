@@ -1,0 +1,142 @@
+name: CI Tests
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+
+jobs:
+  lint:
+    name: Run Lint-Staged
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Lint-Staged
+        run: npx lint-staged
+
+
+  jest:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for Jest Test Files
+        id: check-jest
+        run: |
+          if [ -z "$(find ./src -type f -name '*.test.*')" ]; then
+            echo "No Jest test files found. Skipping Jest tests and build."
+            echo "skip=true" >> $GITHUB_ENV
+            exit 0
+          else
+            echo "Jest test files found. Proceeding with build."
+          fi
+
+      - name: Build Application
+        if: ${{ !env.skip }}
+        run: npm run build --verbose
+
+      - name: Run Jest
+        if: ${{ !env.skip }}
+        run: npm test --verbose
+
+  cypress:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for Cypress Test Files
+        id: check-cypress
+        run: |
+          if [ -z "$(find ./cypress/e2e -type f -name '*.cy.*')" ]; then
+            echo "No Cypress test files found. Skipping Cypress tests and build."
+            echo "skip=true" >> $GITHUB_ENV
+            exit 0
+          else
+            echo "Cypress test files found. Proceeding with build."
+          fi
+
+      - name: Build Application
+        if: ${{ !env.skip }}
+        run: npm run build --verbose
+
+      - name: Start Development Server
+        if: ${{ !env.skip }}
+        run: nohup npm run dev > nohup.out 2>&1 &
+        env:
+          NODE_ENV: development
+
+      - name: Run Cypress
+        if: ${{ !env.skip }}
+        run: npm run cypress:run
+
+  prettier:
+    name: Prettier Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
