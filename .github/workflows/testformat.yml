@@ -75,10 +75,15 @@ jobs:
 
       # Step 4: Start Development Server
       - name: Start Development Server
-        run: nohup npm run dev &
+        run: nohup npm run dev > nohup.out 2>&1 &
         env:
           NODE_ENV: development
-          PORT: 3000
+
+      - name: Debug Server Logs
+        run: cat nohup.out || true
+
+      - name: Check Running Processes
+        run: ps aux | grep node
 
       # Step 5: Wait for the server to start
       - name: Wait for server to start
