@@ -55,7 +55,6 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
       - name: Install dependencies
         run: npm ci
 
@@ -69,12 +68,14 @@ jobs:
           fi
 
       - name: Build Application
+        if: success() && steps.check-jest.outputs.skip != 'true' # Skip if no tests
         run: npm run build --verbose
 
       - name: Run Jest
+        if: success() && steps.check-jest.outputs.skip != 'true' # Skip if no tests
         run: npm test --verbose
 
-  cypress:
+   cypress:
     name: Run E2E Tests
     runs-on: ubuntu-latest
 
@@ -94,11 +95,11 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
       - name: Install dependencies
         run: npm ci
 
       - name: Check for Cypress Test Files
+        id: check-cypress
         run: |
           if [ -z "$(find ./cypress/e2e -type f -name '*.cy.*')" ]; then
             echo "No Cypress test files found. Skipping Cypress tests and build.";
@@ -108,24 +109,31 @@ jobs:
           fi
 
       - name: Build Application
+        if: success() && steps.check-cypress.outputs.skip != 'true' # Skip if no tests
         run: npm run build --verbose
 
       - name: Start Development Server
+        if: success() && steps.check-cypress.outputs.skip != 'true' # Skip if no tests
         run: nohup npm run dev > nohup.out 2>&1 &
         env:
           NODE_ENV: development
 
       - name: Debug Server Logs
+        if: success() && steps.check-cypress.outputs.skip != 'true' # Skip if no tests
         run: cat nohup.out || echo "No server logs found."
 
       - name: Check Running Processes
+        if: success() && steps.check-cypress.outputs.skip != 'true' # Skip if no tests
         run: ps aux | grep node
 
       - name: Wait for server to start
+        if: success() && steps.check-cypress.outputs.skip != 'true' # Skip if no tests
         run: npx wait-on http://localhost:3000 --timeout 120000 --verbose
 
       - name: Run Cypress
+        if: success() && steps.check-cypress.outputs.skip != 'true' # Skip if no tests
         run: npm run cypress:run
+
 
   prettier:
     name: Prettier Check
