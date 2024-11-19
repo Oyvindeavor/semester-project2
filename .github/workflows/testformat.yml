@@ -75,7 +75,7 @@ jobs:
         if: success() && steps.check-jest.outputs.skip != 'true' # Skip if no tests
         run: npm test --verbose
 
-   cypress:
+  cypress:
     name: Run E2E Tests
     runs-on: ubuntu-latest
 
