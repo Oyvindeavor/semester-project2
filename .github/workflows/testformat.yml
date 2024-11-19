@@ -59,14 +59,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check and Run Jest Tests
+      - name: Check for Jest Test Files
         run: |
           if [ -z "$(find ./src -type f -name '*.test.*')" ]; then
-            echo "No Jest test files found. Skipping Jest tests.";
+            echo "No Jest test files found. Skipping Jest tests and build.";
+            exit 0;
           else
-            echo "Jest test files found. Running tests.";
-            npm test --verbose;
+            echo "Jest test files found. Proceeding with build.";
           fi
+
+      - name: Build Application
+        run: npm run build --verbose
+
+      - name: Run Jest
+        run: npm test --verbose
 
   cypress:
     name: Run E2E Tests
@@ -85,15 +91,21 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') || 'default' }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Set Environment Variables
-        run: echo "NEXT_PUBLIC_API_URL=https://api.example.com" >> .env.local
+      - name: Check for Cypress Test Files
+        run: |
+          if [ -z "$(find ./cypress/e2e -type f -name '*.cy.*')" ]; then
+            echo "No Cypress test files found. Skipping Cypress tests and build.";
+            exit 0;
+          else
+            echo "Cypress test files found. Proceeding with build.";
+          fi
 
       - name: Build Application
         run: npm run build --verbose
@@ -112,14 +124,8 @@ jobs:
       - name: Wait for server to start
         run: npx wait-on http://localhost:3000 --timeout 120000 --verbose
 
-      - name: Check and Run Cypress Tests
-        run: |
-          if [ -z "$(find ./cypress/e2e -type f -name '*.cy.*')" ]; then
-            echo "No Cypress test files found. Skipping Cypress tests.";
-          else
-            echo "Cypress test files found. Running tests.";
-            npm run cypress:run;
-          fi
+      - name: Run Cypress
+        run: npm run cypress:run
 
   prettier:
     name: Prettier Check
