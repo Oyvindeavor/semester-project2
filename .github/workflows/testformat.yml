@@ -75,13 +75,13 @@ jobs:
 
       # Step 4: Start Development Server
       - name: Start Development Server
-        run: npm run dev &
+        run: nohup npm run dev &
         env:
           NODE_ENV: development
 
       # Step 5: Wait for the server to start
       - name: Wait for server to start
-        run: npx wait-on http://localhost:3000 --timeout 30000
+        run: npx wait-on http://localhost:3000 --timeout 60000 --verbose
 
       # Step 6: Run Cypress
       - name: Run Cypress
