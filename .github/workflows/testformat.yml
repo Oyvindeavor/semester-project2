@@ -81,7 +81,7 @@ jobs:
 
       # Step 5: Wait for the server to start
       - name: Wait for server to start
-        run: npx wait-on http://localhost:3000
+        run: npx wait-on http://localhost:3000 --timeout 30000
 
       # Step 6: Run Cypress
       - name: Run Cypress
