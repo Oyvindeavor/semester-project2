@@ -1,9 +1,15 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  sassOptions: {
-    includePaths: ['./src/styles'],
-    silenceDeprecationWarnings: ['legacy-js-api'],
+  experimental: {
+    turbo: {
+      rules: {
+        '*.scss': {
+          loaders: ['sass-loader'],
+          as: '*.css',
+        },
+      },
+    },
   },
 };
 
