@@ -1,5 +1,5 @@
-import { API_KEY } from './config';
-import { getAccessToken } from '@/utils/accessToken';
+import { API_KEY } from '@api/config/endpoints';
+import { getAccessToken } from '@utils/accessToken';
 
 export function headers() {
   const token = getAccessToken();
