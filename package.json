@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
+    "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -52,6 +53,10 @@
       ],
       "*.{css,scss,md}": [
         "prettier --write"
+      ],
+      "*": [
+        "npm run lint",
+        "npm run type-check"
       ]
     }
   }
