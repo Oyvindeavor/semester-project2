@@ -9,7 +9,6 @@ import Divider from '@mui/joy/Divider';
 import Alert from '@mui/joy/Alert';
 import Sheet from '@mui/joy/Sheet';
 import Link from 'next/link';
-import LinearProgress from '@mui/joy';
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
