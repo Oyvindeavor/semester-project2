@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FormLabel, Input, Button, FormHelperText } from '@mui/joy';
 import EmailIcon from '@mui/icons-material/Email';
-import infoOutLined from '@mui/icons-material/InfoOutlined';
 import PasswordIcon from '@mui/icons-material/Password';
 import Card from '@mui/joy/Card';
 import Divider from '@mui/joy/Divider';
@@ -72,65 +71,65 @@ export default function LoginForm() {
       const data = await response.json();
       console.log('Login successful:', data);
 
-      // Save token to local storage (or manage auth state)
       localStorage.setItem('accessToken', data.accessToken);
 
-      // Redirect to the dashboard
       router.push('/');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
-      setLoading(false); // End loading state
+      setLoading(false);
     }
-  }
 
-  return (
-    <Card sx={{ width: '400px', margin: '0 auto' }}>
-      <form onSubmit={handleSubmit} noValidate>
-        {/* Display General Error as an Alert */}
-        {error && (
-          <Alert color="danger" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
-        {/* Email Field */}
-        <Sheet>
-          <FormLabel htmlFor="email">Email:</FormLabel>
+    return (
+      <Card sx={{ width: '400px', margin: '0 auto' }}>
+        <form onSubmit={handleSubmit} noValidate>
+          {/* Display General Error as an Alert */}
+          {error && (
+            <Alert color="danger" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+          {/* Email Field */}
+          <Sheet>
+            <FormLabel htmlFor="email">Email:</FormLabel>
+            <Input
+              placeholder="Enter your email"
+              type="email"
+              name="email"
+              id="email"
+              required
+              error={Boolean(formErrors.email)}
+              startDecorator={<EmailIcon />}
+            />
+
+            <FormHelperText id="email-helper-text">
+              {formErrors.email}
+            </FormHelperText>
+          </Sheet>
+          {/* Password Field */}
+          <FormLabel htmlFor="password">Password:</FormLabel>
           <Input
-            placeholder="Enter your email"
-            type="email"
-            name="email"
-            id="email"
+            placeholder="Enter your password"
+            type="password"
+            name="password"
+            id="password"
             required
-            error={Boolean(formErrors.email)}
-            startDecorator={<EmailIcon />}
+            error={Boolean(formErrors.password)}
+            startDecorator={<PasswordIcon />}
           />
+          <FormHelperText>{formErrors.password}</FormHelperText>
 
-          <FormHelperText id="email-helper-text">
-            {formErrors.email}
-          </FormHelperText>
-        </Sheet>
-        {/* Password Field */}
-        <FormLabel htmlFor="password">Password:</FormLabel>
-        <Input
-          placeholder="Enter your password"
-          type="password"
-          name="password"
-          id="password"
-          required
-          error={Boolean(formErrors.password)}
-          startDecorator={<PasswordIcon />}
-        />
-        <FormHelperText>{formErrors.password}</FormHelperText>
-
-        {/* Error Message */}
-
-        {/* Submit Button */}
-        <Divider />
-        <Button type="submit" loading={loading} size="lg">
-          {loading ? 'Logging in...' : 'Login'}
-        </Button>
-      </form>
-    </Card>
-  );
+          {/* Submit Button */}
+          <Divider />
+          <Button type="submit" loading={loading} size="lg">
+            {loading ? 'Logging in...' : 'Login'}
+          </Button>
+        </form>
+      </Card>
+    );
+  }
 }
