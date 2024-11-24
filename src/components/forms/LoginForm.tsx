@@ -1,6 +1,6 @@
 'use client';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FormLabel, Input, Button, FormHelperText } from '@mui/joy';
 import EmailIcon from '@mui/icons-material/Email';
 import PasswordIcon from '@mui/icons-material/Password';
@@ -8,6 +8,8 @@ import Card from '@mui/joy/Card';
 import Divider from '@mui/joy/Divider';
 import Alert from '@mui/joy/Alert';
 import Sheet from '@mui/joy/Sheet';
+import Link from 'next/link';
+import LinearProgress from '@mui/joy';
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +18,20 @@ export default function LoginForm() {
     password?: string;
   }>({});
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const successMessage = searchParams.get('success');
+  const [showMessage, setShowMessage] = useState(!!successMessage);
   const router = useRouter();
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setShowMessage(false); // Hide the alert after 5 seconds
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -94,6 +109,13 @@ export default function LoginForm() {
             {error}
           </Alert>
         )}
+
+        {/* Display Success Message as an Alert */}
+        {successMessage && showMessage && (
+          <Alert color="success" sx={{ mb: 2 }}>
+            {successMessage}
+          </Alert>
+        )}
         {/* Email Field */}
         <Sheet>
           <FormLabel htmlFor="email">Email:</FormLabel>
@@ -126,9 +148,16 @@ export default function LoginForm() {
 
         {/* Submit Button */}
         <Divider />
-        <Button type="submit" loading={loading} size="lg">
+        <Button type="submit" loading={loading} size="lg" fullWidth>
           {loading ? 'Logging in...' : 'Login'}
         </Button>
+
+        <FormHelperText>
+          Dont have an account?{' '}
+          <Link href="/register" passHref>
+            Register
+          </Link>
+        </FormHelperText>
       </form>
     </Card>
   );
