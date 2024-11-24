@@ -19,7 +19,7 @@ export default function LoginForm() {
   const router = useRouter();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault(); // Prevent default form submission behavior
+    event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
     const email = formData.get('email') as string;
@@ -83,53 +83,53 @@ export default function LoginForm() {
     } finally {
       setLoading(false);
     }
-
-    return (
-      <Card sx={{ width: '400px', margin: '0 auto' }}>
-        <form onSubmit={handleSubmit} noValidate>
-          {/* Display General Error as an Alert */}
-          {error && (
-            <Alert color="danger" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
-          {/* Email Field */}
-          <Sheet>
-            <FormLabel htmlFor="email">Email:</FormLabel>
-            <Input
-              placeholder="Enter your email"
-              type="email"
-              name="email"
-              id="email"
-              required
-              error={Boolean(formErrors.email)}
-              startDecorator={<EmailIcon />}
-            />
-
-            <FormHelperText id="email-helper-text">
-              {formErrors.email}
-            </FormHelperText>
-          </Sheet>
-          {/* Password Field */}
-          <FormLabel htmlFor="password">Password:</FormLabel>
-          <Input
-            placeholder="Enter your password"
-            type="password"
-            name="password"
-            id="password"
-            required
-            error={Boolean(formErrors.password)}
-            startDecorator={<PasswordIcon />}
-          />
-          <FormHelperText>{formErrors.password}</FormHelperText>
-
-          {/* Submit Button */}
-          <Divider />
-          <Button type="submit" loading={loading} size="lg">
-            {loading ? 'Logging in...' : 'Login'}
-          </Button>
-        </form>
-      </Card>
-    );
   }
+
+  return (
+    <Card sx={{ width: '400px', margin: '0 auto' }}>
+      <form onSubmit={handleSubmit} noValidate>
+        {/* Display General Error as an Alert */}
+        {error && (
+          <Alert color="danger" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+        {/* Email Field */}
+        <Sheet>
+          <FormLabel htmlFor="email">Email:</FormLabel>
+          <Input
+            placeholder="Enter your email"
+            type="email"
+            name="email"
+            id="email"
+            required
+            error={Boolean(formErrors.email)}
+            startDecorator={<EmailIcon />}
+          />
+
+          <FormHelperText id="email-helper-text">
+            {formErrors.email}
+          </FormHelperText>
+        </Sheet>
+        {/* Password Field */}
+        <FormLabel htmlFor="password">Password:</FormLabel>
+        <Input
+          placeholder="Enter your password"
+          type="password"
+          name="password"
+          id="password"
+          required
+          error={Boolean(formErrors.password)}
+          startDecorator={<PasswordIcon />}
+        />
+        <FormHelperText>{formErrors.password}</FormHelperText>
+
+        {/* Submit Button */}
+        <Divider />
+        <Button type="submit" loading={loading} size="lg">
+          {loading ? 'Logging in...' : 'Login'}
+        </Button>
+      </form>
+    </Card>
+  );
 }
