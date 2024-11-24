@@ -41,3 +41,6 @@ next-env.d.ts
 
 # mac system file
 .DS_Store
+
+# next env api files
+.env.local
