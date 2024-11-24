@@ -5,7 +5,7 @@ export default function LoginPage() {
   return (
     <main>
       <h1>Login</h1>
-      <Suspense>
+      <Suspense fallback="Loading...">
         <LoginForm />
       </Suspense>
     </main>
