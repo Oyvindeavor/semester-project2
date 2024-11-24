@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { noAuthHeaders } from '../../../api/headers';
-import { noroffApi } from '../../../api/config';
+import { noAuthHeaders } from '@api/config/headers';
+import { noroffApi } from '@api/config/endpoints';
 
 export async function POST(req: Request) {
   try {
@@ -15,7 +15,6 @@ export async function POST(req: Request) {
     const result = await response.json();
 
     if (!response.ok) {
-      // Extract the first error message from the server response
       const errorMessage = result.errors?.[0]?.message || 'Failed to login';
       return NextResponse.json(
         { error: errorMessage },
@@ -32,9 +31,16 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ accessToken, ...result.data });
-  } catch (error: any) {
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: error.message || 'Unexpected error occurred' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
-      { error: error.message || 'Unexpected error occurred' },
+      { error: 'An unknown error occurred.' },
       { status: 500 }
     );
   }
