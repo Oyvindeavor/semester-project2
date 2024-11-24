@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { Box, Typography } from '@mui/joy';
+import Nextlink from 'next/link';
 
 export default function Home() {
   return (
     <Box>
       <Box>
+        <Nextlink href="/about">About</Nextlink>
+
+        <Nextlink href="/login">login</Nextlink>
         <Typography level="h1" sx={{ marginBottom: 2 }}>
           Test Joy UI
         </Typography>
