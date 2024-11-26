@@ -1,16 +1,13 @@
 import { API_KEY } from '@api/config/endpoints';
-import { getAccessToken } from '@utils/accessToken';
 
-export function headers() {
-  const token = getAccessToken();
-
+export function headers(accessToken: string | null) {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'X-Noroff-API-Key': API_KEY || '',
   };
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`;
   }
 
   return headers;
