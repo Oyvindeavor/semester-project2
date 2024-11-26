@@ -4,8 +4,9 @@ import { headers } from '@api/config/headers';
 
 export async function GET(
   req: Request,
-  { params }: { params: { name: string } }
+  props: { params: Promise<{ name: string }> }
 ) {
+  const params = await props.params;
   try {
     // Access the dynamic parameter `name`
     const { name } = params;
