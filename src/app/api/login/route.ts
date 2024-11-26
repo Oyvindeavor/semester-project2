@@ -4,12 +4,12 @@ import { noroffApi } from '@api/config/endpoints';
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const { email: userEmail, password } = await req.json();
 
     const response = await fetch(noroffApi.login, {
       method: 'POST',
       headers: noAuthHeaders(),
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email: userEmail, password }),
     });
 
     const result = await response.json();
@@ -22,7 +22,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const accessToken = result.data?.accessToken;
+    // Extract necessary fields from the response
+    const { accessToken, name, email, avatar, banner, venueManager } =
+      result.data;
+
+    // Validate that accessToken is present
     if (!accessToken) {
       return NextResponse.json(
         { error: 'AccessToken is missing in the response.' },
@@ -30,8 +34,13 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({ accessToken, ...result.data });
+    // Structure the user data to return to the client
+    const user = { name, email, avatar, banner, venueManager };
+
+    // Return the accessToken and user
+    return NextResponse.json({ accessToken, user });
   } catch (error) {
+    // Handle unexpected errors
     if (error instanceof Error) {
       return NextResponse.json(
         { error: error.message || 'Unexpected error occurred' },
