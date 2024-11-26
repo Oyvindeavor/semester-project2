@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/context';
 
 interface Profile {
   name: string;
@@ -17,6 +18,7 @@ interface Profile {
 }
 
 export default function Profile({ name }: { name: string }) {
+  const { accessToken } = useAuth(); // Use the accessToken from the context
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,9 +32,17 @@ export default function Profile({ name }: { name: string }) {
 
     async function fetchProfile() {
       try {
-        const response = await fetch(`/api/profile/${name}`); // Updated fetch path
+        const response = await fetch(`/api/profile/${name}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken || ''}`, // Include the token in the headers
+          },
+        });
+
         if (!response.ok) {
-          throw new Error('Failed to fetch profile data');
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch profile data');
         }
 
         const data = await response.json();
@@ -44,8 +54,13 @@ export default function Profile({ name }: { name: string }) {
       }
     }
 
-    fetchProfile();
-  }, [name]);
+    if (accessToken) {
+      fetchProfile(); // Fetch only if the accessToken is available
+    } else {
+      setError('User not authenticated');
+      setLoading(false);
+    }
+  }, [name, accessToken]);
 
   if (loading) {
     return <div>Loading profile...</div>;
