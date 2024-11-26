@@ -1,5 +1,7 @@
 import * as React from 'react';
 import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry';
+import NavBar from '@/components/navbar/navbar';
+import { AuthProvider } from '@/context';
 import './globals.scss';
 
 // import custom components navbar etc here
@@ -12,7 +14,12 @@ export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <ThemeRegistry>{props.children}</ThemeRegistry>
+        <AuthProvider>
+          <ThemeRegistry options={{ key: 'joy' }}>
+            <NavBar />
+            {props.children}
+          </ThemeRegistry>
+        </AuthProvider>
       </body>
     </html>
   );
