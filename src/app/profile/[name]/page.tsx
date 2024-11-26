@@ -1,6 +1,9 @@
 import Profile from '@/components/profile/profile';
 
-export default function ProfilePage({ params }: { params: { name: string } }) {
+export default async function ProfilePage(props: {
+  params: Promise<{ name: string }>;
+}) {
+  const params = await props.params;
   const { name } = params;
 
   return (

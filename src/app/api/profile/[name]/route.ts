@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     // Access the dynamic parameter `name`
-    const { name } = await params;
+    const { name } = params;
 
     // Fetch profile data with necessary headers
     const response = await fetch(noroffApi.getSingleProfile(name), {
