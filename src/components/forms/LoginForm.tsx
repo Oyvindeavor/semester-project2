@@ -9,8 +9,10 @@ import Divider from '@mui/joy/Divider';
 import Alert from '@mui/joy/Alert';
 import Sheet from '@mui/joy/Sheet';
 import Link from 'next/link';
+import { useAuth } from '@/context';
 
 export default function LoginForm() {
+  const { setAuthData } = useAuth(); //for accessing the setAuthData function from the context (localstorage)
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<{
     email?: string;
@@ -85,7 +87,8 @@ export default function LoginForm() {
       const data = await response.json();
       console.log('Login successful:', data);
 
-      localStorage.setItem('accessToken', data.accessToken);
+      // Use setAuthData to store both accessToken and user in context and localStorage
+      setAuthData(data.accessToken, data.user);
 
       router.push('/');
     } catch (err) {
@@ -102,20 +105,17 @@ export default function LoginForm() {
   return (
     <Card sx={{ width: '400px', margin: '0 auto' }}>
       <form onSubmit={handleSubmit} noValidate>
-        {/* Display General Error as an Alert */}
         {error && (
           <Alert color="danger" sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
 
-        {/* Display Success Message as an Alert */}
         {successMessage && showMessage && (
           <Alert color="success" sx={{ mb: 2 }}>
             {successMessage}
           </Alert>
         )}
-        {/* Email Field */}
         <Sheet>
           <FormLabel htmlFor="email">Email:</FormLabel>
           <Input
@@ -132,7 +132,6 @@ export default function LoginForm() {
             {formErrors.email}
           </FormHelperText>
         </Sheet>
-        {/* Password Field */}
         <FormLabel htmlFor="password">Password:</FormLabel>
         <Input
           placeholder="Enter your password"
@@ -145,7 +144,6 @@ export default function LoginForm() {
         />
         <FormHelperText>{formErrors.password}</FormHelperText>
 
-        {/* Submit Button */}
         <Divider />
         <Button type="submit" loading={loading} size="lg" fullWidth>
           {loading ? 'Logging in...' : 'Login'}
