@@ -8,6 +8,7 @@ export default function NavBar() {
     <div>
       <Box sx={{ justifyContent: 'space-between', display: 'flex' }}>
         <Link href={'/'}>Home</Link>
+        <Link href={`/profile/`}>Profile</Link>
         <LogoutButton />
 
         <AvatarNavBar />
