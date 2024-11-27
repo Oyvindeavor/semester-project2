@@ -1,6 +1,7 @@
 'use client';
-import { Avatar } from '@mui/joy';
+import { Avatar, Link } from '@mui/joy';
 import { useAuth } from '@/context';
+import Dropdown from '@mui/joy';
 
 export default function AvatarNavBar() {
   const { accessToken } = useAuth();
