@@ -1,7 +1,7 @@
 'use client';
 
 import { Modal, Sheet, ModalClose, Typography } from '@mui/joy';
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 
 interface ModalComponentProps {
   title: string;
