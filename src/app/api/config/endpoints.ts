@@ -34,7 +34,8 @@ export const noroffApi = {
 
   // Profiles
   getAllProfiles: `${API_BASE}auction/profiles`,
-  getSingleProfile: (name: string) => `${API_BASE}auction/profiles/${name}`,
+  getSingleProfile: (name: string) =>
+    `${API_BASE}auction/profiles/${name}?_listings=true&_wins=true`,
   getAllListingsByProfile: (name: string) =>
     `${API_BASE}auction/profiles/${name}/listings`,
   getAllBidsByProfile: (name: string) =>
