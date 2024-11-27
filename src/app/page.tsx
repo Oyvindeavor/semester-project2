@@ -1,129 +1,234 @@
 import * as React from 'react';
-import { Box, Sheet, Typography, Input, Card, Stack } from '@mui/joy';
-import Link from 'next/link';
+import { Box, Typography, Input, Card } from '@mui/joy';
+
 import CardOverflow from '@mui/joy/CardOverflow';
 import CardContent from '@mui/joy/CardContent';
 import Divider from '@mui/joy/Divider';
 import AspectRatio from '@mui/joy/AspectRatio';
-import GlobalStyles from '@mui/joy/GlobalStyles';
+import Button from '@mui/joy/Button';
 
 export default function Home() {
   return (
     <Box>
+      {/* Header */}
       <Box
-        className="search-container"
         sx={{
-          width: '1000px',
-          margin: '0 auto',
-          padding: 2,
+          textAlign: 'center',
+          py: 4,
+          background: 'linear-gradient(135deg, #f5f5f5, #e0e0e0)',
         }}
       >
-        <Link href="/about">About</Link>
-
-        <Link href="/login">login</Link>
-        <Link href="/register">register</Link>
-        <Typography level="h1" sx={{ marginBottom: 2 }}>
-          Test Joy UI
+        <Typography level="h1" sx={{ mb: 2 }}>
+          Discover Your Next Auction
         </Typography>
-        <Typography level-md="body" sx={{ marginBottom: 4 }}>
-          This is a sample Joy UI integration with Next.js.
+        <Typography level="body-lg" sx={{ mb: 4 }}>
+          Explore the best deals and listings. Bid before its too late!
         </Typography>
+        <Input
+          placeholder="Search for items..."
+          size="lg"
+          sx={{
+            maxWidth: '600px',
+            margin: '0 auto',
+            borderRadius: 'xl',
+            boxShadow: 'md',
+          }}
+        />
+      </Box>
 
-        <Input placeholder="Search" size="lg" />
+      {/* Categories Section */}
+      <Box sx={{ py: 4 }}>
+        <Typography level="h3" sx={{ textAlign: 'center', mb: 3 }}>
+          Categories
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+          {['Electronics', 'Fashion', 'Home', 'Toys', 'Vehicles'].map(
+            (category, index) => (
+              <Button
+                key={index}
+                variant="outlined"
+                sx={{
+                  width: '120px',
+                  height: '40px',
+                  borderRadius: 'md',
+                }}
+              >
+                {category}
+              </Button>
+            )
+          )}
+        </Box>
+      </Box>
 
-        <Card>
-          <Sheet>
-            <Typography level="h2">Card Title</Typography>
-            <Typography>
-              This is a card with a sheet inside. It has a title and body text.
-            </Typography>
-          </Sheet>
-        </Card>
-
-        <Box sx={{ display: 'flex', gap: '10px' }}>
-          <Link href={'/'}>
-            <Card variant="outlined" sx={{ width: 250 }}>
+      {/* Ending Soon Section */}
+      <Box sx={{ py: 4, px: 2, backgroundColor: 'background.level2' }}>
+        <Typography level="h3" sx={{ textAlign: 'center', mb: 3 }}>
+          Ending Soon
+        </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 2,
+            flexWrap: 'wrap',
+          }}
+        >
+          {[...Array(3)].map((_, index) => (
+            <Card
+              key={index}
+              variant="outlined"
+              sx={{
+                width: '280px',
+                borderRadius: 'md',
+                boxShadow: 'lg',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  boxShadow: 'xl',
+                },
+              }}
+            >
               <CardOverflow>
-                <AspectRatio ratio="1">
-                  <img
-                    src="https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?auto=format&fit=crop&w=318"
-                    srcSet="https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?auto=format&fit=crop&w=318&dpr=2 2x"
-                    loading="lazy"
-                    alt=""
+                <AspectRatio ratio="4/3">
+                  <img //eslint-disable-next-line
+                    src="https://images.finncdn.no/dynamic/1600w/2024/11/vertical-0/22/9/379/594/409_1e833f03-e98b-416e-86b3-5e4da5cc918b.jpg"
+                    alt="Popular Item"
+                    style={{ objectFit: 'cover' }}
                   />
                 </AspectRatio>
               </CardOverflow>
               <CardContent>
-                <Typography level="title-md">Yosemite National Park</Typography>
-                <Typography level="body-sm">299$ latest bid</Typography>
+                <Typography level="h4" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  Popular Item {index + 1}
+                </Typography>
+                <Typography
+                  level="body-sm"
+                  textColor="text.secondary"
+                  sx={{ mb: 1 }}
+                >
+                  Starting bid: <strong>$199</strong>
+                </Typography>
+                <Button
+                  variant="solid"
+                  size="sm"
+                  sx={{
+                    backgroundColor: 'primary.500',
+                    color: 'white',
+                    mt: 1,
+                    ':hover': {
+                      backgroundColor: 'primary.600',
+                    },
+                  }}
+                >
+                  Place Bid
+                </Button>
               </CardContent>
               <CardOverflow
                 variant="soft"
-                sx={{ bgcolor: 'background.level1' }}
+                sx={{
+                  bgcolor: 'background.level1',
+                  borderTop: '1px solid',
+                  borderColor: 'divider',
+                }}
               >
-                <Divider inset="context" />
-                <CardContent orientation="horizontal">
-                  <Typography
-                    level="body-xs"
-                    textColor="text.secondary"
-                    sx={{ fontWeight: 'md' }}
-                  >
-                    6.3k views
+                <CardContent orientation="horizontal" sx={{ gap: 2 }}>
+                  <Typography level="body-xs" textColor="text.secondary">
+                    12.3k views
                   </Typography>
                   <Divider orientation="vertical" />
-                  <Typography
-                    level="body-xs"
-                    textColor="text.secondary"
-                    sx={{ fontWeight: 'md' }}
-                  >
-                    1 hour ago
+                  <Typography level="body-xs" textColor="text.secondary">
+                    Ends in 2h
                   </Typography>
                 </CardContent>
               </CardOverflow>
             </Card>
-          </Link>
+          ))}
+        </Box>
+      </Box>
 
-          <Link href={'/'}>
-            <Card variant="outlined" sx={{ width: 320 }}>
+      {/* Popular Listings Section */}
+      <Box sx={{ py: 4, px: 2 }}>
+        <Typography level="h3" sx={{ textAlign: 'center', mb: 3 }}>
+          Popular Listings
+        </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 2,
+            flexWrap: 'wrap',
+          }}
+        >
+          {[...Array(3)].map((_, index) => (
+            <Card
+              key={index}
+              variant="outlined"
+              sx={{
+                width: '280px',
+                borderRadius: 'md',
+                boxShadow: 'lg',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  boxShadow: 'xl',
+                },
+              }}
+            >
               <CardOverflow>
-                <AspectRatio ratio="2">
-                  <img
-                    src="https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?auto=format&fit=crop&w=318"
-                    srcSet="https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?auto=format&fit=crop&w=318&dpr=2 2x"
-                    loading="lazy"
-                    alt=""
+                <AspectRatio ratio="4/3">
+                  <img // eslint-disable-line no-console
+                    src="https://via.placeholder.com/300"
+                    alt="Popular Item"
+                    style={{ objectFit: 'cover' }}
                   />
                 </AspectRatio>
               </CardOverflow>
               <CardContent>
-                <Typography level="title-md">Yosemite National Park</Typography>
-                <Typography level="body-sm">299$ latest bid</Typography>
+                <Typography level="h4" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  Popular Item {index + 1}
+                </Typography>
+                <Typography
+                  level="body-sm"
+                  textColor="text.secondary"
+                  sx={{ mb: 1 }}
+                >
+                  Starting bid: <strong>$199</strong>
+                </Typography>
+                <Button
+                  variant="solid"
+                  size="sm"
+                  sx={{
+                    backgroundColor: 'primary.500',
+                    color: 'white',
+                    mt: 1,
+                    ':hover': {
+                      backgroundColor: 'primary.600',
+                    },
+                  }}
+                >
+                  Place Bid
+                </Button>
               </CardContent>
               <CardOverflow
                 variant="soft"
-                sx={{ bgcolor: 'background.level1' }}
+                sx={{
+                  bgcolor: 'background.level1',
+                  borderTop: '1px solid',
+                  borderColor: 'divider',
+                }}
               >
-                <Divider inset="context" />
-                <CardContent orientation="horizontal">
-                  <Typography
-                    level="body-xs"
-                    textColor="text.secondary"
-                    sx={{ fontWeight: 'md' }}
-                  >
-                    6.3k views
+                <CardContent orientation="horizontal" sx={{ gap: 2 }}>
+                  <Typography level="body-xs" textColor="text.secondary">
+                    12.3k views
                   </Typography>
                   <Divider orientation="vertical" />
-                  <Typography
-                    level="body-xs"
-                    textColor="text.secondary"
-                    sx={{ fontWeight: 'md' }}
-                  >
-                    1 hour ago
+                  <Typography level="body-xs" textColor="text.secondary">
+                    Ends in 2h
                   </Typography>
                 </CardContent>
               </CardOverflow>
             </Card>
-          </Link>
+          ))}
         </Box>
       </Box>
     </Box>
