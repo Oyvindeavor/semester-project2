@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context';
 
 export default function LoginForm() {
-  const { setAuthData } = useAuth(); //for accessing the setAuthData function from the context (localstorage)
+  const { setAuthData } = useAuth(); //for accessing the setAuthData function from the context
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<{
     email?: string;
@@ -90,7 +90,7 @@ export default function LoginForm() {
       // Use setAuthData to store both accessToken and user in context and localStorage
       setAuthData(data.accessToken, data.user);
 
-      router.push('/');
+      router.push('/profile');
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
