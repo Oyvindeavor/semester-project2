@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { noroffApi } from '@api/config/endpoints';
 import { noAuthHeaders } from '@api/config/headers';
-import { FetchListingResponse } from '@/types/api/FetchListingResponse';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
