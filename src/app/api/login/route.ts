@@ -13,6 +13,8 @@ export async function POST(req: Request) {
     });
 
     const result = await response.json();
+    console.log('Login successful:', result.data);
+    console.log('Login successful:', result);
 
     if (!response.ok) {
       const errorMessage = result.errors?.[0]?.message || 'Failed to login';
@@ -22,11 +24,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Extract necessary fields from the response
-    const { accessToken, name, email, avatar, banner, venueManager } =
-      result.data;
+    const user = result.data;
+    const accessToken = result.data.accessToken;
 
-    // Validate that accessToken is present
     if (!accessToken) {
       return NextResponse.json(
         { error: 'AccessToken is missing in the response.' },
@@ -34,10 +34,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Structure the user data to return to the client
-    const user = { name, email, avatar, banner, venueManager };
-
-    // Return the accessToken and user
     return NextResponse.json({ accessToken, user });
   } catch (error) {
     // Handle unexpected errors
