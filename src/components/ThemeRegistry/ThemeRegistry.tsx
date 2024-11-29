@@ -5,7 +5,7 @@ import { CacheProvider } from '@emotion/react';
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
 import React, { ReactNode } from 'react';
-import theme from './theme';
+import darkTheme from './theme';
 
 // Define proper types for props
 interface ThemeRegistryProps {
@@ -58,8 +58,13 @@ export default function ThemeRegistry(props: ThemeRegistryProps) {
 
   return (
     <CacheProvider value={cache}>
-      <CssVarsProvider theme={theme}>
+      <CssVarsProvider
+        defaultMode="dark"
+        modeStorageKey="null"
+        theme={darkTheme}
+      >
         <CssBaseline />
+
         {children}
       </CssVarsProvider>
     </CacheProvider>
