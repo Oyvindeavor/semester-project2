@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 
 export async function PUT(req: Request) {
   try {
-    // Extract token and username from headers
     const accessToken = req.headers
       .get('Authorization')
       ?.replace('Bearer ', '');
