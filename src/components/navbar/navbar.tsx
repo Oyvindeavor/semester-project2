@@ -8,7 +8,7 @@ import StaticNavBar from './staticNavBar';
 import Link from 'next/link';
 
 export default function NavBar() {
-  const { loggedIn } = useAuth(); // Use loggedIn from useAuth for conditional rendering
+  const { loggedIn } = useAuth(); // Use loggedIn from useAuth hook
 
   if (!loggedIn) {
     // StaticNavBar when not logged in (faster loading server rendered)
