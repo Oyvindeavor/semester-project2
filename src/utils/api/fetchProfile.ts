@@ -1,4 +1,4 @@
-import { UserData } from '@/types/api/FetchProfileById';
+import { UserData } from '@/types/api/FetchProfile';
 
 export default async function fetchProfileById(
   name: string,
