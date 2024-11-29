@@ -69,8 +69,8 @@ export default function EditProfileForm() {
           url: bannerUrl || user.banner.url,
           alt: user.banner.alt,
         },
-        _wins: user._wins,
-        _listings: user._listings,
+        wins: user.wins,
+        listings: user.listings,
       };
 
       // Set the new user data in context and localStorage
