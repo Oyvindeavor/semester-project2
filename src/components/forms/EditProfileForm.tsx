@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/context';
-import { Box, Button, FormLabel, Input } from '@mui/joy';
+import { Box, Button, TextField, Typography } from '@mui/material';
 
 export default function EditProfileForm() {
   const { user, accessToken, setAuthData } = useAuth();
@@ -85,17 +85,49 @@ export default function EditProfileForm() {
 
   return (
     <Box
-      sx={{ margin: '0 auto', width: '400px' }}
+      sx={{
+        margin: '0 auto',
+        width: '400px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+      }}
       component="form"
       onSubmit={handleSubmit}
     >
-      <FormLabel htmlFor="bio">Bio:</FormLabel>
-      <Input name="bio" type="text" placeholder="Enter your bio" required />
-      <FormLabel htmlFor="avatar">Avatar URL:</FormLabel>
-      <Input name="avatar" type="url" placeholder="Enter avatar URL" required />
-      <FormLabel htmlFor="banner">Banner URL:</FormLabel>
-      <Input name="banner" type="url" placeholder="Enter banner URL" required />
-      <Button type="submit" sx={{ marginTop: 2 }}>
+      <Typography variant="h5" component="h1" gutterBottom>
+        Edit Profile
+      </Typography>
+      <TextField
+        name="bio"
+        label="Bio"
+        type="text"
+        placeholder="Enter your bio"
+        required
+        fullWidth
+      />
+      <TextField
+        name="avatar"
+        label="Avatar URL"
+        type="url"
+        placeholder="Enter avatar URL"
+        required
+        fullWidth
+      />
+      <TextField
+        name="banner"
+        label="Banner URL"
+        type="url"
+        placeholder="Enter banner URL"
+        required
+        fullWidth
+      />
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        sx={{ marginTop: 2 }}
+      >
         Edit Profile
       </Button>
     </Box>

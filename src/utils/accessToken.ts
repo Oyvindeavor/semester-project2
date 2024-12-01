@@ -1,3 +1,4 @@
+'use client';
 export function getAccessToken(): string | null {
   if (typeof window !== 'undefined') {
     try {

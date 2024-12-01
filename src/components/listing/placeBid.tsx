@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import Input from '@mui/joy/Input';
-import Button from '@mui/joy/Button';
+import { TextField, Button, Box } from '@mui/material';
 import { Listing } from '@/types/api/listing';
 import { useIsUserLoggedIn } from '@/utils/useIsUserLoggedIn';
 import bidOnListing from '@/utils/api/bidOnListing';
@@ -32,7 +31,7 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
     console.log('Placing bid with amount:', bidAmount);
 
     if (accessToken) {
-      bidOnListing(id, bidAmount, accessToken);
+      await bidOnListing(id, bidAmount, accessToken);
     } else {
       console.error('Access token is missing');
     }
@@ -41,13 +40,14 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
   if (!isLoggedIn) {
     return (
       <Button
-        variant="solid"
-        size="lg"
+        variant="contained"
+        size="large"
+        fullWidth
         sx={{
-          backgroundColor: 'primary.500',
+          backgroundColor: 'primary.main',
           color: 'white',
           ':hover': {
-            backgroundColor: 'primary.600',
+            backgroundColor: 'primary.dark',
           },
         }}
       >
@@ -57,29 +57,32 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
   }
 
   return (
-    <div>
-      <Input
+    <Box>
+      <TextField
         type="number"
-        placeholder="Enter your bid"
+        label="Enter your bid"
+        variant="outlined"
         value={bidAmount}
-        onChange={handleInputChange} // Update state on input change
-        sx={{ mb: 2, width: '100%' }}
+        onChange={handleInputChange}
+        fullWidth
+        margin="normal"
       />
       <Button
-        variant="solid"
-        size="lg"
-        onClick={handlePlaceBid} // Trigger bid function
+        variant="contained"
+        size="large"
+        onClick={handlePlaceBid}
+        fullWidth
         sx={{
-          backgroundColor: 'primary.500',
+          backgroundColor: 'primary.main',
           color: 'white',
           ':hover': {
-            backgroundColor: 'primary.600',
+            backgroundColor: 'primary.dark',
           },
         }}
       >
         Place bid
       </Button>
-    </div>
+    </Box>
   );
 };
 

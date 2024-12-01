@@ -1,5 +1,5 @@
 import RegisterForm from '@components/forms/RegisterForm';
-import Box from '@mui/joy/Box';
+import Box from '@mui/material/Box';
 
 export default function RegisterPage() {
   return (
