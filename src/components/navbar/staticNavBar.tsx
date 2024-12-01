@@ -1,6 +1,6 @@
 // StaticNavBar.tsx (Server-Side Rendered Component)
 import Link from 'next/link';
-import Box from '@mui/joy/Box';
+import Box from '@mui/material/Box';
 
 export default function StaticNavBar() {
   return (
