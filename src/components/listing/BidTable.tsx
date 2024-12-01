@@ -1,8 +1,17 @@
-import Sheet from '@mui/joy/Sheet';
-import Typography from '@mui/joy/Typography';
-import Table from '@mui/joy/Table';
+import React from 'react';
+import {
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Avatar,
+  Paper,
+} from '@mui/material';
 import { Listing } from '@/types/api/listing';
-import Avatar from '@mui/joy/Avatar';
 
 interface CustomTableProps {
   listing: Listing;
@@ -12,53 +21,57 @@ const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
   const sortedBids = [...listing.bids].sort((a, b) => b.amount - a.amount); // Sort bids descending
 
   return (
-    <Sheet
-      variant="outlined"
+    <Box
+      component={Paper}
       sx={{
         padding: 3,
-        borderRadius: 'md',
-        boxShadow: 'lg',
+        borderRadius: 2,
+        boxShadow: 3,
         overflowX: 'auto',
       }}
     >
-      <Typography level="h4" fontWeight="bold" sx={{ mb: 2 }}>
+      <Typography variant="h4" component="h2" fontWeight="bold" gutterBottom>
         Bids
       </Typography>
-      <Table stripe="odd" size="sm">
-        <thead>
-          <tr>
-            <th>Bidder</th>
-            <th>Bid Amount</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedBids.length > 0 ? (
-            sortedBids.map((bid) => (
-              <tr key={bid.id}>
-                <td>
-                  <Avatar
-                    src={`${bid.bidder.avatar.url}`}
-                    alt={bid.bidder.name || 'Unknown'}
-                    sx={{ mr: 2 }}
-                  />
-
-                  {bid.bidder.name || 'Unknown'}
-                </td>
-                <td>${bid.amount.toFixed(2)}</td>
-                <td>{new Date(bid.created).toLocaleString()}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={3} style={{ textAlign: 'center' }}>
-                No bids available.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
-    </Sheet>
+      <TableContainer>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Bidder</TableCell>
+              <TableCell>Bid Amount</TableCell>
+              <TableCell>Time</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sortedBids.length > 0 ? (
+              sortedBids.map((bid) => (
+                <TableRow key={bid.id}>
+                  <TableCell>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Avatar
+                        src={`${bid.bidder.avatar.url}`}
+                        alt={bid.bidder.name || 'Unknown'}
+                      />
+                      {bid.bidder.name || 'Unknown'}
+                    </Box>
+                  </TableCell>
+                  <TableCell>${bid.amount.toFixed(2)}</TableCell>
+                  <TableCell>
+                    {new Date(bid.created).toLocaleString()}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={3} align="center">
+                  No bids available.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 

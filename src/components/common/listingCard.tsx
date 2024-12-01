@@ -1,7 +1,5 @@
 import React from 'react';
-import Card from '@mui/joy/Card';
-import AspectRatio from '@mui/joy/AspectRatio';
-import Button from '@mui/joy/Button';
+import { Card, CardMedia, CardContent, Typography } from '@mui/material';
 import { Listing } from '@/types/api/FetchListingResponse';
 
 interface CustomCardProps {
@@ -11,27 +9,66 @@ interface CustomCardProps {
 const CustomCard: React.FC<CustomCardProps> = ({ listing }) => {
   return (
     <Card
-      variant="outlined"
       sx={{
-        width: 300,
+        width: 320,
         margin: '0 auto',
-        boxShadow: 'lg',
-        borderRadius: 'md',
-        padding: 2,
+        boxShadow: 4,
+        borderRadius: 3,
+        transition: 'transform 0.2s, box-shadow 0.2s',
+        ':hover': {
+          transform: 'scale(1.03)',
+          boxShadow: 6,
+        },
+        overflow: 'hidden',
       }}
     >
-      <AspectRatio ratio="16/9">
-        <img
-          src={listing.media[0].url || '/placeholder.jpg'}
-          alt={listing.media[0]?.alt || 'Listing Image'}
-          style={{ objectFit: 'cover', borderRadius: '8px' }}
-        />
-      </AspectRatio>
-      <h2>{listing.title}</h2>
-      <p>{listing.description}</p>
-      <Button variant="soft" size="sm" sx={{ mt: 2 }}>
-        View More
-      </Button>
+      {/* Media */}
+      <CardMedia
+        component="img"
+        height="180"
+        image={listing.media[0].url || '/placeholder.jpg'}
+        alt={listing.media[0]?.alt || 'Listing Image'}
+        sx={{
+          objectFit: 'cover',
+        }}
+      />
+
+      {/* Content */}
+      <CardContent
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+          padding: 2,
+        }}
+      >
+        <Typography
+          variant="h6"
+          component="h2"
+          sx={{
+            fontWeight: 'bold',
+            color: 'text.primary',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {listing.title}
+        </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: 2,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {listing.description || 'No description available'}
+        </Typography>
+      </CardContent>
     </Card>
   );
 };

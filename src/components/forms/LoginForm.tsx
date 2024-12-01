@@ -1,18 +1,22 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { FormLabel, Input, Button, FormHelperText } from '@mui/joy';
+import {
+  Box,
+  Card,
+  TextField,
+  Button,
+  Typography,
+  Alert,
+  Divider,
+} from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import PasswordIcon from '@mui/icons-material/Password';
-import Card from '@mui/joy/Card';
-import Divider from '@mui/joy/Divider';
-import Alert from '@mui/joy/Alert';
-import Sheet from '@mui/joy/Sheet';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context';
 
 export default function LoginForm() {
-  const { setAuthData } = useAuth(); //for accessing the setAuthData function from the context
+  const { setAuthData } = useAuth(); // Accessing the setAuthData function from the context
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<{
     email?: string;
@@ -103,58 +107,67 @@ export default function LoginForm() {
   }
 
   return (
-    <Card sx={{ width: '400px', margin: '0 auto' }}>
+    <Card sx={{ maxWidth: '400px', margin: '0 auto', padding: 3 }}>
       <form onSubmit={handleSubmit} noValidate>
         {error && (
-          <Alert color="danger" sx={{ mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
 
         {successMessage && showMessage && (
-          <Alert color="success" sx={{ mb: 2 }}>
+          <Alert severity="success" sx={{ mb: 2 }}>
             {successMessage}
           </Alert>
         )}
-        <Sheet>
-          <FormLabel htmlFor="email">Email:</FormLabel>
-          <Input
+
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            label="Email"
             placeholder="Enter your email"
             type="email"
             name="email"
-            id="email"
-            required
+            fullWidth
             error={Boolean(formErrors.email)}
-            startDecorator={<EmailIcon />}
+            helperText={formErrors.email}
+            InputProps={{
+              startAdornment: <EmailIcon sx={{ mr: 1 }} />,
+            }}
           />
+        </Box>
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            label="Password"
+            placeholder="Enter your password"
+            type="password"
+            name="password"
+            fullWidth
+            error={Boolean(formErrors.password)}
+            helperText={formErrors.password}
+            InputProps={{
+              startAdornment: <PasswordIcon sx={{ mr: 1 }} />,
+            }}
+          />
+        </Box>
 
-          <FormHelperText id="email-helper-text">
-            {formErrors.email}
-          </FormHelperText>
-        </Sheet>
-        <FormLabel htmlFor="password">Password:</FormLabel>
-        <Input
-          placeholder="Enter your password"
-          type="password"
-          name="password"
-          id="password"
-          required
-          error={Boolean(formErrors.password)}
-          startDecorator={<PasswordIcon />}
-        />
-        <FormHelperText>{formErrors.password}</FormHelperText>
+        <Divider sx={{ my: 2 }} />
 
-        <Divider />
-        <Button type="submit" loading={loading} size="lg" fullWidth>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          disabled={loading}
+        >
           {loading ? 'Logging in...' : 'Login'}
         </Button>
 
-        <FormHelperText>
+        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
           Dont have an account?{' '}
           <Link href="/register" passHref>
             Register
           </Link>
-        </FormHelperText>
+        </Typography>
       </form>
     </Card>
   );

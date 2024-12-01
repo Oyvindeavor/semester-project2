@@ -1,6 +1,5 @@
 import { Listing } from '@/types/api/listing';
-import Box from '@mui/joy/Box';
-import Typography from '@mui/joy/Typography';
+import { Box, Typography } from '@mui/material';
 
 interface AuctionDetailsProps {
   listing: Listing;
@@ -8,19 +7,19 @@ interface AuctionDetailsProps {
 
 const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
   return (
-    <Box sx={{ flex: 1 }}>
-      <Typography level="h4" fontWeight="bold">
+    <Box sx={{ flex: 1, padding: 2 }}>
+      <Typography variant="h4" component="h2" fontWeight="bold" gutterBottom>
         {listing.title || 'Auction Title'}
       </Typography>
-      <Typography level="body-sm" textColor="text.secondary" sx={{ mb: 2 }}>
+      <Typography variant="body2" color="textSecondary" gutterBottom>
         Ends At: <strong>{new Date(listing.endsAt).toLocaleString()}</strong>
       </Typography>
-      <Typography level="body-md" sx={{ mb: 2 }}>
+      <Typography variant="body1" gutterBottom>
         Description:{' '}
         <strong>{listing.description || 'No description available'}</strong>
       </Typography>
-      <Typography level="body-md" sx={{ mb: 4 }}>
-        Total Bids: <strong>{listing._count.bids || 0}</strong>
+      <Typography variant="body1">
+        Total Bids: <strong>{listing._count?.bids || 0}</strong>
       </Typography>
     </Box>
   );

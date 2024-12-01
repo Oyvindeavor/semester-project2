@@ -1,13 +1,18 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input, Button, FormHelperText, Card } from '@mui/joy';
+import {
+  TextField,
+  Button,
+  Card,
+  Box,
+  Typography,
+  Alert,
+  Link,
+} from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
-import PassWordIcon from '@mui/icons-material/Password';
+import PasswordIcon from '@mui/icons-material/Password';
 import PersonIcon from '@mui/icons-material/Person';
-import Alert from '@mui/joy/Alert';
-import FormLabel from '@mui/joy/FormLabel';
-import Link from 'next/link';
 
 export default function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
@@ -94,69 +99,79 @@ export default function RegisterForm() {
   }
 
   return (
-    <Card sx={{ margin: '0 auto', width: '400px' }}>
+    <Card sx={{ margin: '0 auto', width: '400px', padding: 3 }}>
       <form onSubmit={handleSubmit} noValidate>
         {/* Display General Error as an Alert */}
         {error && (
-          <Alert color="danger" sx={{ mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
+
         {/* Username field */}
-        <FormLabel>Username</FormLabel>
-        <Input
-          name="name"
-          type="name"
-          startDecorator={<PersonIcon />}
-          placeholder="Username"
-          required
-          error={Boolean(formErrors.name)}
-        />
-        <FormHelperText id="name-helper-text" color="danger">
-          {formErrors.name}
-        </FormHelperText>
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            label="Username"
+            name="name"
+            type="text"
+            placeholder="Username"
+            fullWidth
+            error={Boolean(formErrors.name)}
+            helperText={formErrors.name}
+            InputProps={{
+              startAdornment: <PersonIcon sx={{ mr: 1 }} />,
+            }}
+          />
+        </Box>
+
         {/* Email field */}
-        <FormLabel htmlFor="email">Email:</FormLabel>
-        <Input
-          name="email"
-          type="email"
-          startDecorator={<EmailIcon />}
-          placeholder="Email"
-          required
-          error={Boolean(formErrors.email)}
-        />
-        <FormHelperText id="email-helper-text" color="danger">
-          {formErrors.email}
-        </FormHelperText>
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            label="Email"
+            name="email"
+            type="email"
+            placeholder="Email"
+            fullWidth
+            error={Boolean(formErrors.email)}
+            helperText={formErrors.email}
+            InputProps={{
+              startAdornment: <EmailIcon sx={{ mr: 1 }} />,
+            }}
+          />
+        </Box>
+
         {/* Password field */}
-        <FormLabel htmlFor="password">Password:</FormLabel>
-        <Input
-          name="password"
-          type="password"
-          startDecorator={<PassWordIcon />}
-          placeholder="Password"
-          required
-          error={Boolean(formErrors.password)}
-        />
-        <FormHelperText id="password-helper-text" color="danger">
-          {formErrors.password}
-        </FormHelperText>
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            label="Password"
+            name="password"
+            type="password"
+            placeholder="Password"
+            fullWidth
+            error={Boolean(formErrors.password)}
+            helperText={formErrors.password}
+            InputProps={{
+              startAdornment: <PasswordIcon sx={{ mr: 1 }} />,
+            }}
+          />
+        </Box>
+
         <Button
           type="submit"
-          variant="solid"
+          variant="contained"
           color="primary"
           fullWidth
-          size="lg"
-          loading={loading}
+          disabled={loading}
         >
           {loading ? 'Registering...' : 'Register'}
         </Button>
-        <FormHelperText>
+
+        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
           Already have an account?{' '}
-          <Link href="/login" passHref>
-            login
+          <Link href="/login" underline="hover">
+            Login
           </Link>
-        </FormHelperText>
+        </Typography>
       </form>
     </Card>
   );
