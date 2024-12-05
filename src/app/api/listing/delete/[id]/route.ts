@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'; // Path to your NextAuth config
+import { authOptions } from '@api/auth/[...nextauth]/options';
 import { noroffApi } from '@/app/api/config/endpoints';
 import { headers } from '@/app/api/config/headers';
 
