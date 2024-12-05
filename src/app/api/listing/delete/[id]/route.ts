@@ -4,11 +4,14 @@ import { authOptions } from '@api/auth/[...nextauth]/options';
 import { noroffApi } from '@/app/api/config/endpoints';
 import { headers } from '@/app/api/config/headers';
 
-export async function DELETE(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
-  const { id } = await context.params;
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
+export async function DELETE(request: NextRequest, { params }: Props) {
+  const { id } = await params;
 
   if (!id) {
     return NextResponse.json(
@@ -25,7 +28,6 @@ export async function DELETE(
     }
 
     const accessToken = session.accessToken;
-
     const response = await fetch(`${noroffApi.deleteListing(id)}`, {
       method: 'DELETE',
       headers: await headers(accessToken),
@@ -34,7 +36,6 @@ export async function DELETE(
     if (!response.ok) {
       const errorData = await response.json();
       console.error('Error from Noroff API:', errorData);
-
       return NextResponse.json(
         {
           error: errorData.message || 'Failed to delete listing',
