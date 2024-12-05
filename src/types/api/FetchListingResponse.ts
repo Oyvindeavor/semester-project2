@@ -48,7 +48,7 @@ export interface Listing {
   updated: string;
   endsAt: string;
   bids: Bid[];
-  seller: Seller;
+  seller?: Seller;
   _count: ListingCount;
 }
 
