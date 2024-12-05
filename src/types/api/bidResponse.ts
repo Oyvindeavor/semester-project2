@@ -1,7 +1,3 @@
-/* eslint-disable */
-
-// Types for auction single listing
-
 export interface Media {
   url: string;
   alt: string;
@@ -10,7 +6,7 @@ export interface Media {
 export interface Bidder {
   name: string;
   email: string;
-  bio: string | null;
+  bio: string;
   avatar: Media;
   banner: Media;
 }
@@ -22,10 +18,6 @@ export interface Bid {
   created: string;
 }
 
-export interface ListingCount {
-  bids: number;
-}
-
 export interface Listing {
   id: string;
   title: string;
@@ -35,6 +27,15 @@ export interface Listing {
   created: string;
   updated: string;
   endsAt: string;
-  bids?: Bid[];
-  _count: ListingCount;
+  bids: Bid[];
+  _count: {
+    bids: number;
+  };
+  createdFormatted: string;
+  updatedFormatted: string;
+  endsAtFormatted: string;
+}
+
+export interface ListingResponse {
+  listing: Listing;
 }

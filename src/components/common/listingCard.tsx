@@ -26,7 +26,10 @@ const CustomCard: React.FC<CustomCardProps> = ({ listing }) => {
       <CardMedia
         component="img"
         height="180"
-        image={listing.media[0].url || '/placeholder.jpg'}
+        image={
+          listing.media[0]?.url ||
+          'https://usercontent.one/wp/www.vocaleurope.eu/wp-content/uploads/no-image.jpg?media=1642546813'
+        }
         alt={listing.media[0]?.alt || 'Listing Image'}
         sx={{
           objectFit: 'cover',

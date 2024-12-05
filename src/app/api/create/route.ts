@@ -4,25 +4,12 @@ import { headers } from '@/app/api/config/headers';
 
 export async function POST(req: NextRequest) {
   try {
-    // Extract and validate access token
-    const accessToken = req.headers
-      .get('Authorization')
-      ?.replace('Bearer ', '');
-    if (!accessToken) {
-      return NextResponse.json(
-        { error: 'Authorization token is missing' },
-        { status: 401 }
-      );
-    }
-
     const body = await req.json();
     const { title, description, tags, media, endsAt } = body;
 
     if (!title || !endsAt) {
       return NextResponse.json(
-        {
-          error: 'Both "title" and "endsAt" fields are required.',
-        },
+        { error: 'Both "title" and "endsAt" fields are required.' },
         { status: 400 }
       );
     }
@@ -43,10 +30,7 @@ export async function POST(req: NextRequest) {
 
     const response = await fetch(noroffApi.createListing, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers(accessToken),
-      },
+      headers: await headers(),
       body: JSON.stringify({
         title,
         description,

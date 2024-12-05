@@ -2,19 +2,17 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import { Listing } from '@/types/api/listing';
-import { useIsUserLoggedIn } from '@/utils/useIsUserLoggedIn';
 import bidOnListing from '@/utils/api/bidOnListing';
-import { useFetchAccessToken } from '@/utils/useFetchAccessToken';
+import { useSession } from 'next-auth/react';
 
 interface PlaceBidProps {
   listing: Listing;
 }
 
 const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
-  const isLoggedIn = useIsUserLoggedIn();
   const [bidAmount, setBidAmount] = useState<number | ''>(''); // State to track input value
   const id = listing.id;
-  const { accessToken } = useFetchAccessToken();
+  const { data: session } = useSession();
 
   // Handle input change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,14 +28,14 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
 
     console.log('Placing bid with amount:', bidAmount);
 
-    if (accessToken) {
-      await bidOnListing(id, bidAmount, accessToken);
+    if (session) {
+      await bidOnListing(id, bidAmount);
     } else {
       console.error('Access token is missing');
     }
   };
 
-  if (!isLoggedIn) {
+  if (!session) {
     return (
       <Button
         variant="contained"

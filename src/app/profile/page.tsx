@@ -1,143 +1,168 @@
 'use client';
-
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import EditProfileModal from '@/components/forms/EditProfileForm';
 import {
   Box,
   Button,
-  CircularProgress,
-  Typography,
   Card,
-  Avatar,
+  CardContent,
+  CardActions,
+  Typography,
 } from '@mui/material';
-import fetchProfileById from '@/utils/api/fetchProfile';
-import { useAuth } from '@/context/useAuth';
-import { User } from '@/context/useAuth';
+import { deleteListingById } from '@/utils/api/deleteListingById';
+import UpdateListingForm from '@/components/forms/updateListingForm';
+import ProfileHeader from '@/components/profile/ProfileHeader';
+
+// Define interfaces for type safety
+interface Media {
+  url: string;
+  alt?: string;
+}
+
+interface Listing {
+  id: string;
+  title: string;
+  description: string;
+  media: Media[];
+}
+
+interface ProfileData {
+  name: string;
+  avatar: {
+    url: string;
+  };
+  banner: {
+    url: string;
+  };
+  bio: string;
+  listings: Listing[];
+}
+
+interface Profile {
+  data: ProfileData;
+}
 
 export default function Profile() {
-  const { accessToken, user, loading, setAuthData } = useAuth();
-  const [profile, setProfile] = useState<User | null>(null);
+  const { data: session, status } = useSession();
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+  const [deleting, setDeleting] = useState<string | null>(null);
 
-  // Redirect to login if not authenticated
   useEffect(() => {
-    if (!accessToken || !user?.name) {
-      router.push('/login');
-    }
-  }, [accessToken, user?.name, router]);
-
-  // Fetch the profile only when required
-  useEffect(() => {
-    if (accessToken && user?.name && !profile) {
-      const fetchProfile = async () => {
-        try {
-          const profileData = await fetchProfileById(user.name, accessToken);
-          setProfile(profileData);
-          setAuthData(accessToken, profileData);
-        } catch (err) {
-          setError((err as Error).message);
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/profile`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch profile');
         }
-      };
+        const data = await response.json();
+        console.log('Fetched profile data:', data.profile);
+        setProfile(data.profile);
+      } catch (err) {
+        console.error('Error fetching profile:', err);
+        setError('Error loading profile');
+      }
+    };
 
+    if (status === 'authenticated') {
       fetchProfile();
     }
-  }, [accessToken, user?.name, profile, setAuthData]);
+  }, [status]);
 
-  // Handle loading state
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-        }}
-      >
-        <CircularProgress />
-        <Typography variant="body1" sx={{ ml: 2 }}>
-          Loading authentication...
-        </Typography>
-      </Box>
-    );
-  }
+  if (status === 'loading') return <div>Loading session...</div>;
+  if (!session) return <div>You must be logged in to view this page.</div>;
+  if (error) return <div>{error}</div>;
+  if (!profile) return <div>Loading profile...</div>;
 
-  // Handle error state
-  if (error) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          textAlign: 'center',
-        }}
-      >
-        <Typography variant="h6" color="error" gutterBottom>
-          Error: {error}
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => router.refresh()}
-        >
-          Retry
-        </Button>
-      </Box>
-    );
-  }
+  const handleDelete = async (id: string) => {
+    try {
+      const confirmation = confirm(
+        'Are you sure you want to delete this listing?'
+      );
+      if (!confirmation) return;
 
-  // Handle when profile is not yet loaded
-  if (!profile) {
-    return null;
-  }
+      setDeleting(id);
+      await deleteListingById(id);
+      alert('Listing deleted successfully!');
+      setProfile((prevProfile) => {
+        if (!prevProfile) return null;
+        return {
+          ...prevProfile,
+          data: {
+            ...prevProfile.data,
+            listings: prevProfile.data.listings.filter(
+              (listing) => listing.id !== id
+            ),
+          },
+        };
+      });
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+      alert('Failed to delete listing. Please try again.');
+    } finally {
+      setDeleting(null);
+    }
+  };
 
   return (
-    <Box
-      sx={{
-        maxWidth: 600,
-        margin: '0 auto',
-        padding: 4,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        alignItems: 'center',
-      }}
-    >
-      <Avatar
-        src={profile.avatar.url}
-        alt={profile.avatar.alt || 'User Avatar'}
-        sx={{ width: 100, height: 100, mb: 2 }}
+    <div>
+      <EditProfileModal />
+      <ProfileHeader
+        username={profile.data.name}
+        avatarUrl={profile.data.avatar.url}
+        bannerUrl={profile.data.banner.url}
+        bio={profile.data.bio}
+        totalAuctions={profile.data.listings.length}
       />
-      <Typography variant="h4" component="h1" gutterBottom>
-        {profile.name}s Profile
-      </Typography>
-      <Card
-        sx={{
-          padding: 3,
-          width: '100%',
-          boxShadow: 3,
-        }}
-      >
-        <Typography variant="body1" gutterBottom>
-          <strong>Email:</strong> {profile.email}
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          <strong>Bio:</strong> {profile.bio || 'No bio available'}
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          <strong>Credits:</strong> {profile.credits}
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          <strong>Listings:</strong> {profile.listings.length}
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          <strong>Wins:</strong> {profile.wins.length}
-        </Typography>
-      </Card>
-    </Box>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+        {profile.data.listings.map((listing) => (
+          <Card
+            key={listing.id}
+            sx={{
+              width: 300,
+              boxShadow: 3,
+              borderRadius: 2,
+            }}
+          >
+            <CardContent>
+              <img
+                src={
+                  listing.media.length > 0
+                    ? listing.media[0].url
+                    : '/default-listing.jpg'
+                }
+                alt={
+                  listing.media.length > 0 && listing.media[0].alt
+                    ? listing.media[0].alt
+                    : listing.title
+                }
+                style={{ width: '100%', height: 200, objectFit: 'cover' }}
+              />
+              <Typography variant="h6" component="div" gutterBottom>
+                {listing.title}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {listing.description}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <UpdateListingForm id={listing.id} />
+              <Button
+                size="small"
+                color="error"
+                variant="outlined"
+                onClick={() => handleDelete(listing.id)}
+                disabled={deleting === listing.id}
+              >
+                {deleting === listing.id ? 'Deleting...' : 'Delete'}
+              </Button>
+            </CardActions>
+          </Card>
+        ))}
+      </Box>
+    </div>
   );
 }

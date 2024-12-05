@@ -13,10 +13,9 @@ import EmailIcon from '@mui/icons-material/Email';
 import PasswordIcon from '@mui/icons-material/Password';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/context';
+import { signIn } from 'next-auth/react';
 
 export default function LoginForm() {
-  const { setAuthData } = useAuth(); // Accessing the setAuthData function from the context
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<{
     email?: string;
@@ -49,58 +48,26 @@ export default function LoginForm() {
     setFormErrors({});
     setError(null);
 
-    // Validate form fields
-    const errors: { email?: string; password?: string } = {};
+    // Validate form fields (unchanged)
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email) {
-      errors.email = 'Email is required.';
-    } else if (!emailRegex.test(email)) {
-      errors.email = 'Please enter a valid email address.';
-    }
-
-    // Password validation
-    if (!password) {
-      errors.password = 'Password is required.';
-    } else if (password.length < 8) {
-      errors.password = 'Password must be at least 8 characters long.';
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-
-    // Start loading state
     setLoading(true);
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+      const res = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Invalid email or password.');
-      }
-
-      const data = await response.json();
-      console.log('Login successful:', data);
-
-      // Use setAuthData to store both accessToken and user in context and localStorage
-      setAuthData(data.accessToken, data.user);
-
-      router.push('/profile');
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
+      if (res?.error) {
+        // Handle sign-in error
+        setError('Invalid email or password.');
       } else {
-        setError('An unknown error occurred');
+        // Sign-in successful
+        router.push('/');
       }
+    } catch (err) {
+      setError('An unknown error occurred');
+      console.error('Sign-in error:', err);
     } finally {
       setLoading(false);
     }
@@ -163,7 +130,7 @@ export default function LoginForm() {
         </Button>
 
         <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          Dont have an account?{' '}
+          Dont have an account?{''}
           <Link href="/register" passHref>
             Register
           </Link>

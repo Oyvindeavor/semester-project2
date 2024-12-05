@@ -22,7 +22,7 @@ export const noroffApi = {
   register: `${API_BASE}auth/register`,
 
   // Auction
-  getAllListings: `${API_BASE}auction/listings`,
+  getAllListings: (query: string) => `${API_BASE}auction/listings?${query}`,
   searchListings: (query: string) =>
     `${API_BASE}auction/listings/search?q=${query}`,
   getSingleListing: (id: string) =>
