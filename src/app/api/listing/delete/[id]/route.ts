@@ -4,14 +4,11 @@ import { authOptions } from '@api/auth/[...nextauth]/options';
 import { noroffApi } from '@/app/api/config/endpoints';
 import { headers } from '@/app/api/config/headers';
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
-export async function DELETE(_request: NextRequest, { params }: Props) {
-  const { id } = await params;
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
 
   if (!id) {
     return NextResponse.json(
