@@ -1,7 +1,7 @@
 import { API_KEY } from '@api/config/endpoints';
 
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 
 export async function headers(accessToken: string | null = null) {
   if (!accessToken) {
