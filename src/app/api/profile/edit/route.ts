@@ -1,41 +1,31 @@
 import { noroffApi } from '@api/config/endpoints';
 import { headers } from '@api/config/headers';
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'; // Path to your NextAuth config
 
 export async function PUT(req: Request) {
   try {
-    const accessToken = req.headers
-      .get('Authorization')
-      ?.replace('Bearer ', '');
-    const name = req.headers.get('X-User-Name');
-    console.log('Received Authorization Token: server', accessToken);
-    console.log('Received X-User-Name: server', name);
+    const session = await getServerSession(authOptions);
 
-    if (!accessToken) {
+    if (!session || !session.user?.name) {
       return NextResponse.json(
-        { error: 'Authorization token is missing' },
+        { error: 'Unauthorized: User is not logged in or name is missing' },
         { status: 401 }
       );
     }
 
-    if (!name) {
-      return NextResponse.json(
-        { error: 'User name is missing' },
-        { status: 400 }
-      );
-    }
+    const name = session.user.name;
+    console.log('Updating profile for user:', name);
 
-    // Extract body data
     const { avatar, banner, bio } = await req.json();
-    console.log('Received body data:', avatar, banner, bio);
 
     const response = await fetch(noroffApi.updateProfile(name), {
       method: 'PUT',
-      headers: headers(accessToken),
+      headers: await headers(),
       body: JSON.stringify({ avatar, banner, bio }),
     });
 
-    console.log('Response:', response);
     const result = await response.json();
 
     if (!response.ok) {
@@ -47,6 +37,7 @@ export async function PUT(req: Request) {
       );
     }
 
+    console.log('Profile updated successfully:', result);
     return NextResponse.json({ message: 'Profile updated successfully' });
   } catch (error) {
     console.error('Error in profile update:', error);

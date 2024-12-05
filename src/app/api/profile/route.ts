@@ -1,34 +1,26 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { noroffApi } from '@api/config/endpoints';
 import { headers } from '@api/config/headers';
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const accessToken = req.headers
-      .get('Authorization')
-      ?.replace('Bearer ', '');
-    const name = req.headers.get('X-User-Name');
+    const session = await getServerSession(authOptions);
 
-    console.log('Received Authorization Token:', accessToken);
-    console.log('Received X-User-Name:', name);
-
-    if (!accessToken) {
+    if (!session || !session.user?.name) {
       return NextResponse.json(
-        { error: 'Authorization token is missing' },
+        { error: 'User is not authenticated or name is missing' },
         { status: 401 }
       );
     }
 
-    if (!name) {
-      return NextResponse.json(
-        { error: 'User name is missing' },
-        { status: 400 }
-      );
-    }
+    const name = session.user.name;
+    console.log('Authenticated user name:', name);
 
     const response = await fetch(noroffApi.getSingleProfile(name), {
       method: 'GET',
-      headers: headers(accessToken),
+      headers: await headers(),
     });
 
     if (!response.ok) {

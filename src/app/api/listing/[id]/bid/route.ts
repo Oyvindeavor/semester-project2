@@ -7,17 +7,6 @@ export async function POST(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
-  const accessToken = req.headers.get('Authorization')?.replace('Bearer ', '');
-  console.log('Received Authorization Token:', accessToken);
-  console.log(id);
-
-  if (!accessToken) {
-    return NextResponse.json(
-      { error: 'Authorization token is missing' },
-      { status: 401 }
-    );
-  }
-
   const { amount } = await req.json();
 
   if (!id || !amount) {
@@ -26,17 +15,13 @@ export async function POST(
       { status: 400 }
     );
   }
-  console.log('Processing bid:', { id, amount });
 
   try {
     console.log('Processing bid:', { id, amount });
 
     const response = await fetch(noroffApi.bidOnListing(id), {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers(accessToken),
-      },
+      headers: await headers(),
       body: JSON.stringify({ amount }),
     });
 
