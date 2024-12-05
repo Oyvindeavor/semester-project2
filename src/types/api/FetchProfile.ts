@@ -11,6 +11,8 @@ export interface Count {
 }
 
 export interface UserData {
+  json(): unknown;
+  id: string;
   name: string;
   email: string;
   bio: string;
