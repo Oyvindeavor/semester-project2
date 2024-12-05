@@ -1,14 +1,14 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@api/auth/[...nextauth]/options';
 import { noroffApi } from '@/app/api/config/endpoints';
 import { headers } from '@/app/api/config/headers';
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: { id: string } }
 ) {
-  const { id } = await params;
+  const { id } = await context.params;
 
   if (!id) {
     return NextResponse.json(

@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { noroffApi } from '@api/config/endpoints';
 import { noAuthHeaders } from '@api/config/headers';
 
-export async function GET(req: Request) {
-  const url = new URL(req.url);
+export async function GET(request: NextRequest) {
+  const url = new URL(request.url);
   const id = url.pathname.split('/').pop();
 
   console.log('Fetching listing with ID:', id);
