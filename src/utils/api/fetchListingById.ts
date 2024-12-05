@@ -1,11 +1,10 @@
-import { Listing } from '@/types/api/FetchListingResponse';
+import { Listing } from '@/types/api/listing';
 
 export async function fetchListingById(id: string): Promise<Listing | null> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/listing/${id}`,
     {
       method: 'GET',
-      cache: 'no-store',
     }
   );
 
