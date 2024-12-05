@@ -10,7 +10,7 @@ type Props = {
   };
 };
 
-export async function DELETE(request: NextRequest, { params }: Props) {
+export async function DELETE(_request: NextRequest, { params }: Props) {
   const { id } = await params;
 
   if (!id) {
