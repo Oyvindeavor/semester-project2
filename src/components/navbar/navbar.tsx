@@ -1,155 +1,297 @@
 'use client';
-
 import React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import AdbIcon from '@mui/icons-material/Adb';
 import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  IconButton,
   Avatar,
   Drawer,
   List,
   ListItem,
   ListItemText,
+  ListItemIcon,
+  Container,
+  useTheme,
+  Button,
+  Menu,
+  MenuItem,
   Divider,
+  useMediaQuery,
 } from '@mui/material';
-import { useAuth } from '@/context/useAuth';
+import MenuIcon from '@mui/icons-material/Menu';
+import StorefrontIcon from '@mui/icons-material/Storefront';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
+
+const NAVIGATION_ITEMS = [
+  { name: 'Marketplace', href: '/marketplace', icon: <StorefrontIcon /> },
+  { name: 'Create Auction', href: '/create', icon: <AddCircleIcon /> },
+  { name: 'Profile', href: '/profile', icon: <PersonIcon /> },
+];
+
+const USER_MENU_ITEMS = [
+  { name: 'Profile', href: '/profile', icon: <PersonIcon /> },
+  { name: 'Create Listing', href: '/create', icon: <AddCircleIcon /> },
+  { name: 'Logout', icon: <LogoutIcon />, action: () => signOut() },
+];
 
 export default function NavBar() {
-  const { loggedIn, user, logout } = useAuth();
+  const { data: session, status } = useSession();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const toggleDrawer = (open: boolean) => () => {
-    setMobileOpen(open);
+  if (status === 'loading') return null;
+
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) =>
+    setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+
+  const renderNavItems = (mobile = false) => {
+    if (!session) return null;
+
+    return NAVIGATION_ITEMS.map((item) =>
+      mobile ? (
+        <ListItem
+          key={item.name}
+          component={Link}
+          href={item.href}
+          onClick={handleDrawerToggle}
+          sx={{ py: 1.5 }}
+        >
+          <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItemText primary={item.name} />
+        </ListItem>
+      ) : (
+        <Button
+          key={item.name}
+          component={Link}
+          href={item.href}
+          startIcon={item.icon}
+          sx={{
+            color: theme.palette.text.primary,
+            mx: 1,
+            '&:hover': {
+              backgroundColor: theme.palette.action.hover,
+            },
+          }}
+        >
+          {item.name}
+        </Button>
+      )
+    );
   };
 
-  const pages = [
-    { name: 'Marketplace', href: '/marketplace' },
-    { name: 'Create Auction', href: '/create' },
-    { name: 'Profile', href: '/profile' },
-  ];
-
-  if (!loggedIn) {
-    return null; // Handle the logged-out state separately
-  }
-
-  return (
-    <AppBar position="static">
-      <Toolbar>
-        {/* Logo */}
-        <Link
-          href="/"
-          passHref
-          style={{ textDecoration: 'none', color: 'inherit' }}
-        >
-          <Box
-            sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-          >
-            <AdbIcon sx={{ mr: 1 }} />
-            <Typography variant="h6" noWrap>
-              Auction
-            </Typography>
-          </Box>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <Box
-          sx={{
-            flexGrow: 1,
-            display: { xs: 'none', md: 'flex' },
-            justifyContent: 'flex-end',
-          }}
-        >
-          {pages.map((page) => (
-            <Link key={page.name} href={page.href} passHref>
-              <Typography
-                variant="button"
-                sx={{
-                  color: 'white',
-                  mx: 2,
-                  cursor: 'pointer',
-                  textDecoration: 'none',
-                }}
-              >
-                {page.name}
-              </Typography>
-            </Link>
-          ))}
-          <Typography
-            variant="button"
-            onClick={logout}
-            sx={{
-              color: 'white',
-              cursor: 'pointer',
-              mx: 2,
-              textDecoration: 'none',
-            }}
-          >
-            Logout
+  const renderMobileDrawer = () => (
+    <Drawer
+      variant="temporary"
+      anchor="right"
+      open={mobileOpen}
+      onClose={handleDrawerToggle}
+      ModalProps={{ keepMounted: true }}
+      sx={{
+        display: { xs: 'block', md: 'none' },
+        '& .MuiDrawer-paper': {
+          width: 280,
+          boxSizing: 'border-box',
+          backgroundColor: theme.palette.background.default,
+        },
+      }}
+    >
+      <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <StorefrontIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
+          <Typography variant="h6" color="primary">
+            Auction Platform
           </Typography>
         </Box>
-
-        {/* Mobile Menu */}
-        <Box
-          sx={{
-            display: { xs: 'flex', md: 'none' },
-            flexGrow: 1,
-            justifyContent: 'flex-end',
-          }}
-        >
-          <IconButton color="inherit" edge="start" onClick={toggleDrawer(true)}>
-            <MenuIcon />
-          </IconButton>
-        </Box>
-
-        {/* Avatar */}
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, ml: 2 }}>
-          <Avatar
-            alt={user?.avatar?.alt || 'User Avatar'}
-            src={user?.avatar?.url}
-            sx={{ width: 32, height: 32 }}
-          />
-        </Box>
-      </Toolbar>
-
-      {/* Drawer for Mobile */}
-      <Drawer
-        anchor="right"
-        open={mobileOpen}
-        onClose={toggleDrawer(false)}
-        ModalProps={{
-          keepMounted: true,
-        }}
-      >
-        <Box
-          sx={{ width: 250 }}
-          role="presentation"
-          onClick={toggleDrawer(false)}
-          onKeyDown={toggleDrawer(false)}
-        >
-          <List>
-            {pages.map((page) => (
-              <ListItem button key={page.name}>
-                <Link
-                  href={page.href}
-                  passHref
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  <ListItemText primary={page.name} />
-                </Link>
+        {session && (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Avatar
+              src={session.user.image || ''}
+              alt={session.user.name || 'User'}
+              sx={{ width: 32, height: 32, mr: 1 }}
+            />
+            <Box>
+              <Typography variant="subtitle2">{session.user.name}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                {session.user.email}
+              </Typography>
+            </Box>
+          </Box>
+        )}
+      </Box>
+      <List sx={{ pt: 1 }}>
+        {renderNavItems(true)}
+        {session && (
+          <>
+            <Divider sx={{ my: 1 }} />
+            {USER_MENU_ITEMS.map((item) => (
+              <ListItem
+                key={item.name}
+                onClick={() => {
+                  handleDrawerToggle();
+                  item.action?.();
+                }}
+                component={item.href ? Link : 'li'}
+                href={item.href}
+                sx={{ py: 1.5 }}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.name} />
               </ListItem>
             ))}
-            <Divider />
-            <ListItem button onClick={logout}>
-              <ListItemText primary="Logout" />
-            </ListItem>
-          </List>
-        </Box>
-      </Drawer>
+          </>
+        )}
+      </List>
+    </Drawer>
+  );
+
+  const renderUserMenu = () => (
+    <Menu
+      anchorEl={anchorEl}
+      open={Boolean(anchorEl)}
+      onClose={handleMenuClose}
+      onClick={handleMenuClose}
+      PaperProps={{
+        sx: {
+          mt: 1.5,
+          minWidth: 220,
+          boxShadow: theme.shadows[8],
+        },
+      }}
+      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+    >
+      <Box sx={{ px: 2, py: 1.5 }}>
+        <Typography variant="subtitle1" noWrap>
+          {session?.user?.name}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" noWrap>
+          {session?.user?.email}
+        </Typography>
+      </Box>
+      <Divider />
+      {USER_MENU_ITEMS.map((item) => (
+        <MenuItem
+          key={item.name}
+          onClick={item.action ? item.action : undefined}
+          component={item.href ? Link : 'li'}
+          href={item.href}
+          sx={{ py: 1.5 }}
+        >
+          <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItemText primary={item.name} />
+        </MenuItem>
+      ))}
+    </Menu>
+  );
+
+  return (
+    <AppBar
+      position="sticky"
+      elevation={0}
+      sx={{
+        backgroundColor: theme.palette.background.default,
+        borderBottom: `1px solid ${theme.palette.divider}`,
+      }}
+    >
+      <Container maxWidth="xl">
+        <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 70 } }}>
+          {/* Logo */}
+          <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <StorefrontIcon
+                sx={{ mr: 1, color: theme.palette.primary.main }}
+              />
+              <Typography
+                variant="h6"
+                noWrap
+                sx={{
+                  fontWeight: 700,
+                  color: theme.palette.text.primary,
+                  display: { xs: 'none', sm: 'block' },
+                }}
+              >
+                Auction
+              </Typography>
+            </Box>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: 'none', md: 'flex' },
+              justifyContent: 'center',
+            }}
+          >
+            {renderNavItems()}
+          </Box>
+
+          {/* User Section */}
+          <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+            {session ? (
+              <>
+                <IconButton
+                  onClick={handleMenuOpen}
+                  sx={{
+                    p: 0,
+                    display: { xs: 'none', md: 'flex' },
+                  }}
+                >
+                  <Avatar
+                    alt={session.user.name || 'User'}
+                    src={session.user.image || ''}
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      border: `2px solid ${theme.palette.primary.main}`,
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                      },
+                    }}
+                  />
+                </IconButton>
+                <IconButton
+                  color="inherit"
+                  edge="end"
+                  onClick={handleDrawerToggle}
+                  sx={{
+                    ml: 1,
+                    display: { md: 'none' },
+                    color: theme.palette.text.primary,
+                  }}
+                >
+                  <MenuIcon />
+                </IconButton>
+              </>
+            ) : (
+              <Button
+                component={Link}
+                href="/auth/signin"
+                variant="contained"
+                color="primary"
+              >
+                Login
+              </Button>
+            )}
+          </Box>
+
+          {!isMobile && renderUserMenu()}
+        </Toolbar>
+      </Container>
+
+      {renderMobileDrawer()}
     </AppBar>
   );
 }

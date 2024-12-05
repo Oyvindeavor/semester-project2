@@ -1,50 +1,59 @@
+// components/forms/EditProfileModal.tsx
+
 'use client';
 
-import { useAuth } from '@/context';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Modal,
+  TextField,
+  Typography,
+  CircularProgress,
+} from '@mui/material';
+import React, { useState } from 'react';
+import { useSession } from 'next-auth/react';
 
-export default function EditProfileForm() {
-  const { user, accessToken, setAuthData } = useAuth();
+const EditProfileModal = React.memo(function EditProfileModal() {
+  const { data: session, status, update } = useSession();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (status !== 'authenticated') {
+      console.error('User not authenticated');
+      return;
+    }
 
     const formData = new FormData(event.currentTarget);
     const bio = formData.get('bio') as string;
     const avatarUrl = formData.get('avatar') as string;
     const bannerUrl = formData.get('banner') as string;
 
-    console.log('Bio:', bio);
-    console.log('Avatar URL:', avatarUrl);
-    console.log('Banner URL:', bannerUrl);
-
-    if (!accessToken || !user?.name) {
+    if (!session) {
       console.error('User not authenticated');
       return;
     }
 
     try {
+      setLoading(true);
       const payload = {
         bio,
-        avatar: {
-          url: avatarUrl,
-          alt: '',
-        },
-        banner: {
-          url: bannerUrl,
-          alt: '',
-        },
+        avatar: { url: avatarUrl, alt: '' },
+        banner: { url: bannerUrl, alt: '' },
       };
 
-      const response = await fetch('/api/profile/edit', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-          'X-User-Name': user.name,
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/profile/edit`,
+        {
+          method: 'PUT',
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await response.json();
 
@@ -52,84 +61,101 @@ export default function EditProfileForm() {
         throw new Error(data.error || 'Failed to update profile');
       }
 
-      console.log('Profile updated successfully:', data.message);
-      alert('Profile updated successfully');
+      update();
 
-      // Update user context and localStorage with updated user data (to reflect changes without reload)
-      const updatedUser = {
-        name: user.name,
-        email: user.email,
-        bio: bio || user.bio,
-        credits: user.credits,
-        avatar: {
-          url: avatarUrl || user.avatar.url,
-          alt: user.avatar.alt,
-        },
-        banner: {
-          url: bannerUrl || user.banner.url,
-          alt: user.banner.alt,
-        },
-        wins: user.wins,
-        listings: user.listings,
-      };
-
-      // Set the new user data in context and localStorage
-      setAuthData(accessToken, updatedUser);
+      handleClose();
     } catch (error) {
       console.error('Error updating profile:', error);
       alert(
         error instanceof Error ? error.message : 'Unexpected error occurred'
       );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Box
-      sx={{
-        margin: '0 auto',
-        width: '400px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-      }}
-      component="form"
-      onSubmit={handleSubmit}
-    >
-      <Typography variant="h5" component="h1" gutterBottom>
-        Edit Profile
-      </Typography>
-      <TextField
-        name="bio"
-        label="Bio"
-        type="text"
-        placeholder="Enter your bio"
-        required
-        fullWidth
-      />
-      <TextField
-        name="avatar"
-        label="Avatar URL"
-        type="url"
-        placeholder="Enter avatar URL"
-        required
-        fullWidth
-      />
-      <TextField
-        name="banner"
-        label="Banner URL"
-        type="url"
-        placeholder="Enter banner URL"
-        required
-        fullWidth
-      />
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        sx={{ marginTop: 2 }}
-      >
+    <>
+      <Button variant="contained" color="primary" onClick={handleOpen}>
         Edit Profile
       </Button>
-    </Box>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="edit-profile-modal"
+        aria-describedby="modal-to-edit-user-profile"
+      >
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            borderRadius: 2,
+          }}
+        >
+          <Typography variant="h5" component="h1" gutterBottom>
+            Edit Profile
+          </Typography>
+          <TextField
+            name="bio"
+            label="Bio"
+            type="text"
+            placeholder="Enter your bio"
+            required
+            fullWidth
+            defaultValue={session?.user.name || ''}
+          />
+          <TextField
+            name="avatar"
+            label="Avatar URL"
+            type="url"
+            placeholder="Enter avatar URL"
+            required
+            fullWidth
+            defaultValue={session?.user?.image || ''}
+          />
+          <TextField
+            name="banner"
+            label="Banner URL"
+            type="url"
+            placeholder="Enter banner URL"
+            required
+            fullWidth
+            defaultValue={session?.user.image || ''}
+          />
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleClose}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} /> : 'Save'}
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+    </>
   );
-}
+});
+
+export default EditProfileModal;

@@ -18,14 +18,14 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/nb'; // Norwegian locale
-import { useAuth } from '@/context';
+
 import { useRouter } from 'next/navigation';
 
 // Set Norwegian locale globally for Day.js
 dayjs.locale('nb');
 
 export default function CreateAuctionForm() {
-  const { accessToken } = useAuth();
+  // const {accessToken} = session
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -65,14 +65,13 @@ export default function CreateAuctionForm() {
       console.log('Submitting Form:', auctionData);
 
       // POST request to /api/create
-      const response = await fetch('/api/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(auctionData),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/create`,
+        {
+          method: 'POST',
+          body: JSON.stringify(auctionData),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -83,10 +82,10 @@ export default function CreateAuctionForm() {
 
       const result = await response.json();
       // get the returned id from the response
-      const { id } = result.data.id;
+      const id = result.data.id;
 
       // Redirect to the newly created auction page
-      router.push(`/listing/${id}`);
+      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/listing/${id}`);
       console.log('Auction created successfully:', result);
       alert('Auction created successfully!');
     } catch (error) {
