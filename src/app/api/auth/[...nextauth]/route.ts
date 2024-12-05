@@ -1,9 +1,9 @@
 import NextAuth from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { NextAuthOptions, Session } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
 import { noAuthHeaders } from '@api/config/headers';
 import { noroffApi } from '@api/config/endpoints';
-import { JWT } from 'next-auth/jwt';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -15,7 +15,10 @@ export const authOptions: NextAuthOptions = {
           type: 'email',
           placeholder: 'email@example.com',
         },
-        password: { label: 'Password', type: 'password' },
+        password: {
+          label: 'Password',
+          type: 'password',
+        },
       },
       async authorize(credentials) {
         if (!credentials) {
@@ -49,7 +52,7 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          const user = {
+          return {
             id: userData.id,
             name: userData.name,
             email: userData.email,
@@ -58,8 +61,6 @@ export const authOptions: NextAuthOptions = {
             accessToken: userData.accessToken,
             bio: userData.bio,
           };
-
-          return user;
         } catch (error) {
           console.error('Authorize error:', error);
           throw new Error('Authentication failed');
