@@ -4,6 +4,13 @@ import Search from '@/components/Search';
 import PopularAuctionsSection from '@/components/PopularAuctionsSection';
 import EndingSoonAuctionsSection from '@/components/EndingSoonSection';
 
+console.log('[API] Starting auction listings fetch');
+console.log('[ENV_CHECK]', {
+  hasApiBase: !!API_BASE,
+  apiBaseUrl: API_BASE,
+  hasApiKey: !!API_KEY,
+});
+
 export default function Home() {
   return (
     <Box>
