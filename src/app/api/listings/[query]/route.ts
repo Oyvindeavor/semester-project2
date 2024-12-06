@@ -3,10 +3,10 @@ import { noAuthHeaders } from '../../config/headers';
 import { API_BASE } from '../../config/endpoints';
 
 export async function GET(
-  request: NextRequest,
-  context: { params: { query: string } }
+  request: Request,
+  { params }: { params: Promise<{ query: string }> }
 ) {
-  const { query } = await context.params;
+  const query = (await params).query;
 
   try {
     const queryString = query.toString();

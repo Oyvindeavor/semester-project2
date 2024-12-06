@@ -3,11 +3,11 @@ import { noroffApi } from '@/app/api/config/endpoints';
 import { headers } from '@/app/api/config/headers';
 
 export async function POST(
-  req: NextRequest,
+  request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
-  const { amount } = await req.json();
+  const { amount } = await request.json();
 
   if (!id || !amount) {
     return NextResponse.json(

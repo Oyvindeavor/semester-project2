@@ -1,10 +1,10 @@
 import { noroffApi } from '@api/config/endpoints';
 import { headers } from '@api/config/headers';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'; // Path to your NextAuth config
+import { authOptions } from '@api/auth/[...nextauth]/options';
 
-export async function PUT(req: Request) {
+export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -18,7 +18,7 @@ export async function PUT(req: Request) {
     const name = session.user.name;
     console.log('Updating profile for user:', name);
 
-    const { avatar, banner, bio } = await req.json();
+    const { avatar, banner, bio } = await request.json();
 
     const response = await fetch(noroffApi.updateProfile(name), {
       method: 'PUT',

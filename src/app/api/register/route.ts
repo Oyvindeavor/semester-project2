@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { noAuthHeaders } from '@api/config/headers';
 import { noroffApi } from '@api/config/endpoints';
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password } = await request.json();
 
     const response = await fetch(noroffApi.register, {
       method: 'POST',

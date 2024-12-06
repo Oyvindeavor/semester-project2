@@ -1,14 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { noroffApi } from '../../../config/endpoints';
 import { headers } from '../../../config/headers';
 
 export async function PUT(
-  req: Request,
+  request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
   try {
-    const { title, description, tags, imageUrl, imageAlt } = await req.json();
+    const { title, description, tags, imageUrl, imageAlt } =
+      await request.json();
 
     if (!id) {
       return NextResponse.json(
