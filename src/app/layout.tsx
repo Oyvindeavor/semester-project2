@@ -8,6 +8,7 @@ import { Roboto } from 'next/font/google';
 import { CssBaseline, Grid, Container } from '@mui/material';
 import SessionProvider from '@/components/SessionProvider';
 import { getServerSession } from 'next-auth';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import Footer from '@/components/footer/footer';
 
@@ -31,6 +32,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       <body className={roboto.variable}>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <SessionProvider session={session}>
+            <SpeedInsights />
             {/* <ThemeProvider theme={theme}> */}
             <CssBaseline />
             <Grid

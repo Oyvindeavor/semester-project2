@@ -24,6 +24,7 @@
     "@mui/material": "^5.16.8",
     "@mui/material-nextjs": "^6.1.9",
     "@mui/x-date-pickers": "^7.23.0",
+    "@vercel/speed-insights": "^1.1.0",
     "dayjs": "^1.11.13",
     "next": "^15.0.3",
     "next-auth": "^4.24.10",
