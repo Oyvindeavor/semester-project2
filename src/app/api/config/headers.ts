@@ -24,3 +24,8 @@ export async function headers(accessToken: string | null = null) {
 
   return headers;
 }
+export function noAuthHeaders() {
+  return {
+    'Content-Type': 'application/json',
+  };
+}
