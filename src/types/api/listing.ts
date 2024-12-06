@@ -23,7 +23,7 @@ export interface Bid {
 }
 
 export interface ListingCount {
-  bids: number;
+  bids?: number;
 }
 
 export interface Listing {

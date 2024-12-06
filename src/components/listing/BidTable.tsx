@@ -18,7 +18,10 @@ interface CustomTableProps {
 }
 
 const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
-  const sortedBids = [...listing.bids].sort((a, b) => b.amount - a.amount); // Sort bids descending
+  // Use a fallback to handle undefined `bids`
+  const sortedBids = [...(listing.bids || [])].sort(
+    (a, b) => b.amount - a.amount
+  );
 
   return (
     <Box

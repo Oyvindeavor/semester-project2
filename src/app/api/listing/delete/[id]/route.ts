@@ -6,9 +6,9 @@ import { headers } from '@/app/api/config/headers';
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const id = (await params).id;
 
   if (!id) {
     return NextResponse.json(

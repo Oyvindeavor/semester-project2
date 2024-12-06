@@ -34,7 +34,7 @@ export interface Seller {
 
 // Count information (e.g., bids)
 export interface ListingCount {
-  bids: number;
+  bids?: number;
 }
 
 // Main listing data type
@@ -47,7 +47,7 @@ export interface Listing {
   created: string;
   updated: string;
   endsAt: string;
-  bids: Bid[];
+  bids?: Bid[];
   seller?: Seller;
   _count: ListingCount;
 }
