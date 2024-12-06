@@ -5,7 +5,7 @@ import { noroffApi } from '@/app/api/config/endpoints';
 import { headers } from '@/app/api/config/headers';
 
 export async function DELETE(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
