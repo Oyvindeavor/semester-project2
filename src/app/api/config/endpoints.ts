@@ -16,6 +16,14 @@ export function validateEnvVars() {
   }
 }
 
+// At the start of your API route
+console.log('[API] Starting auction listings fetch');
+console.log('[ENV_CHECK]', {
+  hasApiBase: !!API_BASE,
+  apiBaseUrl: API_BASE, // Be careful not to log sensitive info
+  hasApiKey: !!API_KEY,
+});
+
 export const noroffApi = {
   // Auth
   login: `${API_BASE}auth/login`,
