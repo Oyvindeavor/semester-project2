@@ -36,7 +36,6 @@ export default function Profile() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -58,9 +57,8 @@ export default function Profile() {
       }
     };
 
-    if (status === 'authenticated') {
+    if (session) {
       fetchProfile();
-      router.push('/profile');
     }
   }, [status]);
 
