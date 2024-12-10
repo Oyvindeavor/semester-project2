@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 // Types for auction single listing
 
 export interface Media {
@@ -29,8 +27,15 @@ export interface ListingCount {
 export interface Seller {
   name: string;
   email: string;
-  bio?: string | null;
-  avatar?: Media;
+  bio: string;
+  avatar: {
+    url: string;
+    alt: string;
+  };
+  banner: {
+    url: string;
+    alt: string;
+  };
 }
 
 export interface Listing {
