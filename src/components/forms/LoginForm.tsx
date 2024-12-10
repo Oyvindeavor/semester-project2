@@ -8,12 +8,13 @@ import {
   Typography,
   Alert,
   Divider,
+  CircularProgress,
 } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import PasswordIcon from '@mui/icons-material/Password';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -25,17 +26,22 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
   const successMessage = searchParams.get('success');
   const [showMessage, setShowMessage] = useState(!!successMessage);
+  const { data: session, status, update } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (successMessage) {
       const timer = setTimeout(() => {
-        setShowMessage(false); // Hide the alert after 5 seconds
+        setShowMessage(false);
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete('success');
+        const newPath = `${window.location.pathname}?${params.toString()}`;
+        router.replace(newPath);
       }, 5000);
 
       return () => clearTimeout(timer);
     }
-  }, [successMessage]);
+  }, [successMessage, searchParams, router]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,6 +55,14 @@ export default function LoginForm() {
     setError(null);
 
     // Validate form fields
+    const errors: { email?: string; password?: string } = {};
+    if (!email) errors.email = 'Email is required.';
+    if (!password) errors.password = 'Password is required.';
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -59,11 +73,13 @@ export default function LoginForm() {
       });
 
       if (res?.error) {
-        // Handle sign-in error
-        setError('Invalid email or password.');
+        setError(res.error);
       } else {
-        // Sign-in successful
-        router.push('/');
+        const updatedSession = await update();
+        console.log('Updated session:', updatedSession);
+
+        const callbackUrl = searchParams.get('callbackUrl') || '/';
+        router.push(callbackUrl);
       }
     } catch (err) {
       setError('An unknown error occurred');
@@ -95,6 +111,7 @@ export default function LoginForm() {
             type="email"
             name="email"
             fullWidth
+            aria-required="true"
             error={Boolean(formErrors.email)}
             helperText={formErrors.email}
             InputProps={{
@@ -109,6 +126,8 @@ export default function LoginForm() {
             type="password"
             name="password"
             fullWidth
+            autoComplete="new-password"
+            aria-required="true"
             error={Boolean(formErrors.password)}
             helperText={formErrors.password}
             InputProps={{
@@ -126,11 +145,18 @@ export default function LoginForm() {
           fullWidth
           disabled={loading}
         >
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? (
+            <>
+              <CircularProgress size={20} sx={{ mr: 1, color: 'white' }} />
+              Logging in...
+            </>
+          ) : (
+            'Login'
+          )}
         </Button>
 
         <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          Dont have an account?{''}
+          Don’t have an account?{' '}
           <Link href="/register" passHref>
             Register
           </Link>
