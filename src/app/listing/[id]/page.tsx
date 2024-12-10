@@ -5,6 +5,7 @@ import { Box } from '@mui/material';
 import AuctionDetails from '@/components/listing/AuctionDetails';
 import BidTable from '@/components/listing/BidTable';
 import PlaceBid from '@/components/listing/placeBid';
+import type { Listing } from '@/types/api/listing';
 
 export default async function ListingPage(props: {
   params: Promise<{ id: string }>;
@@ -12,7 +13,7 @@ export default async function ListingPage(props: {
   const params = await props.params;
   const { id } = params;
 
-  const listing: auctionListing = await fetchListingById(id);
+  const listing = await fetchListingById(id);
 
   if (!listing) {
     console.error('Listing is null or undefined');
