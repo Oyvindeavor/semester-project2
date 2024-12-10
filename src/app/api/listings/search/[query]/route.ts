@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from '../../../config/headers';
 import { API_BASE } from '../../../config/endpoints';
+import { noAuthHeaders } from '../../../config/headers';
 
 export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ query: string }> }
+  request: Request,
+  { params }: { params: Promise<{ query: string }> }
 ) {
-  const { query } = await context.params;
+  const query = (await params).query;
   try {
     const queryString = query.toString();
 
     const response = await fetch(
-      `${API_BASE}auction/listings/search?q=${queryString}`,
+      `${API_BASE}auction/listings/search?${queryString}`,
       {
-        headers: await headers(),
+        headers: noAuthHeaders(),
       }
     );
 

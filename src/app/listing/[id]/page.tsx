@@ -1,7 +1,7 @@
 import { fetchListingById } from '@/utils/api/fetchListingById';
 import React from 'react';
 import { Box } from '@mui/material';
-import Card from '@components/common/listingCard';
+
 import AuctionDetails from '@/components/listing/AuctionDetails';
 import BidTable from '@/components/listing/BidTable';
 import PlaceBid from '@/components/listing/placeBid';
@@ -12,7 +12,7 @@ export default async function ListingPage(props: {
   const params = await props.params;
   const { id } = params;
 
-  const listing = await fetchListingById(id);
+  const listing: auctionListing = await fetchListingById(id);
 
   if (!listing) {
     console.error('Listing is null or undefined');
@@ -38,7 +38,6 @@ export default async function ListingPage(props: {
           gap: 4,
         }}
       >
-        <Card listing={listing} />
         <AuctionDetails listing={listing} />
         <PlaceBid listing={listing} />
         <BidTable listing={listing} />
