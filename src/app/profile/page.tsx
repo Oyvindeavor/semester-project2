@@ -57,10 +57,10 @@ export default function Profile() {
       }
     };
 
-    if (session) {
+    if (status === 'authenticated') {
       fetchProfile();
     }
-  }, [session]);
+  }, [status]);
 
   if (status === 'loading') return <div>Loading session...</div>;
   if (!session) return <div>You must be logged in to view this page.</div>;
