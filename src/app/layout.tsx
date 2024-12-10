@@ -34,39 +34,29 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
           <SessionProvider session={session}>
             {/* <ThemeProvider theme={theme}> */}
             <CssBaseline />
-            <Grid
-              container
-              direction="column"
+
+            {/* Header */}
+
+            <NavBar />
+
+            {/* Main Content */}
+
+            <Container
+              maxWidth="lg"
               sx={{
-                minHeight: '100vh',
-                backgroundColor: 'background.default',
+                mt: 4,
+                mb: 4,
+                flexGrow: 1,
+                display: 'flex',
+                flexDirection: 'column',
               }}
             >
-              {/* Header */}
-              <Grid item component="header">
-                <NavBar />
-              </Grid>
+              {props.children}
+            </Container>
 
-              {/* Main Content */}
-              <Grid item xs>
-                <Container
-                  maxWidth="lg"
-                  sx={{
-                    mt: 4,
-                    mb: 4,
-                    flexGrow: 1,
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}
-                >
-                  {props.children}
-                </Container>
-              </Grid>
+            {/* Footer */}
 
-              {/* Footer */}
-
-              <Footer />
-            </Grid>
+            <Footer />
 
             {/* </ThemeProvider> */}
           </SessionProvider>
