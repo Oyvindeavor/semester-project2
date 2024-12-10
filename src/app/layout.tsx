@@ -32,7 +32,6 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       <body className={roboto.variable}>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <SessionProvider session={session}>
-            <SpeedInsights />
             {/* <ThemeProvider theme={theme}> */}
             <CssBaseline />
             <Grid
