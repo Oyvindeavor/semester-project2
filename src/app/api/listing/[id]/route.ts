@@ -6,10 +6,7 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const id = url.pathname.split('/').pop();
 
-  console.log('Fetching listing with ID:', id);
-
   if (!id) {
-    console.log('Missing ID in request');
     return NextResponse.json({ listing: null });
   }
 
@@ -19,19 +16,14 @@ export async function GET(request: NextRequest) {
       headers: noAuthHeaders(),
     });
 
-    console.log('External API response status:', response.status);
-
     const rawData = await response.json();
-    console.log('Raw data from Noroff API:', rawData);
 
     if (!response.ok) {
-      console.log('Error from Noroff API:', rawData);
       return NextResponse.json({ listing: null });
     }
 
     const data = rawData.data;
     if (!data || Object.keys(data).length === 0) {
-      console.log('Empty or invalid data returned from Noroff API');
       return NextResponse.json({ listing: null });
     }
 
@@ -45,7 +37,6 @@ export async function GET(request: NextRequest) {
       ),
     };
 
-    console.log('Formatted listing:', listing);
     return NextResponse.json({ listing });
   } catch (error) {
     console.error('Unexpected error fetching listing:', error);

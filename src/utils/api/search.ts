@@ -7,7 +7,7 @@ export default async function searchListings(query: string) {
       throw new Error('Failed to fetch listings');
     }
     const data = await response.json();
-    console.log('Fetched listings:', data);
+
     return data;
   } catch (error) {
     console.error('Error fetching listings:', error);

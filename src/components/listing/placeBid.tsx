@@ -10,7 +10,7 @@ interface PlaceBidProps {
 }
 
 const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
-  const [bidAmount, setBidAmount] = useState<number | ''>(''); // State to track input value
+  const [bidAmount, setBidAmount] = useState<number | ''>('');
   const id = listing.id;
   const { data: session } = useSession();
 
@@ -25,8 +25,6 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
       console.error('Invalid bid amount');
       return;
     }
-
-    console.log('Placing bid with amount:', bidAmount);
 
     if (session) {
       await bidOnListing(id, bidAmount);

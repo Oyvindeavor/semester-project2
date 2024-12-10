@@ -8,7 +8,7 @@ import {
   Chip,
   Paper,
 } from '@mui/material';
-import { Timer, TrendingUp, Gavel } from '@mui/icons-material';
+import { Timer, Gavel } from '@mui/icons-material';
 import Link from 'next/link';
 import Image from 'next/image';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';

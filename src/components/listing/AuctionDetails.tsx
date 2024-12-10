@@ -18,7 +18,6 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DescriptionIcon from '@mui/icons-material/Description';
 import PersonIcon from '@mui/icons-material/Person';
 import { getTimeRemaining, formatDate } from '@/utils/dateFormattings';
-import type { Listing } from '@/types/api/listing';
 
 export interface auctionListing {
   id: string;
@@ -70,7 +69,7 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
             sx={{
               position: 'relative',
               mb: 2,
-              // Use aspect ratio container for consistent image sizing
+
               '&::before': {
                 content: '""',
                 display: 'block',

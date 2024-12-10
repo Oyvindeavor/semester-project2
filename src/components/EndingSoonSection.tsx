@@ -17,7 +17,7 @@ interface Auction {
   _count: {
     bids: number;
   };
-  bids: { amount?: number }[]; // Corrected to allow multiple bid objects
+  bids: { amount?: number }[];
 }
 
 interface ProcessedAuction {
@@ -39,7 +39,7 @@ async function fetchEndingSoonAuctions(): Promise<Auction[]> {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    console.log('Fetched auctions:', data.data);
+
     return data.data;
   } catch (error) {
     console.error('Error fetching auctions:', error);

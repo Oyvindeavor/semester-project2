@@ -1,5 +1,3 @@
-// components/forms/EditProfileModal.tsx
-
 'use client';
 
 import {

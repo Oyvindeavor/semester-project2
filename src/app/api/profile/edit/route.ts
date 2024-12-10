@@ -16,7 +16,6 @@ export async function PUT(request: NextRequest) {
     }
 
     const name = session.user.name;
-    console.log('Updating profile for user:', name);
 
     const { avatar, banner, bio } = await request.json();
 
@@ -37,7 +36,6 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    console.log('Profile updated successfully:', result);
     return NextResponse.json({ message: 'Profile updated successfully' });
   } catch (error) {
     console.error('Error in profile update:', error);

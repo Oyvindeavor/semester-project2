@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 export interface NoroffApiErrorDetail {
   code: string;
   message: string;

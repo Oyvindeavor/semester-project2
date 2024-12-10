@@ -16,7 +16,6 @@ export async function GET() {
     }
 
     const name = session.user.name;
-    console.log('Authenticated user name:', name);
 
     const response = await fetch(noroffApi.getSingleProfile(name), {
       method: 'GET',
@@ -34,7 +33,7 @@ export async function GET() {
     }
 
     const data = await response.json();
-    console.log('Fetched profile data:', data);
+
     return NextResponse.json({ profile: data });
   } catch (error) {
     console.error('Unexpected Error:', error);

@@ -109,7 +109,6 @@ const UpdateListingForm = memo(function UpdateListingForm({
         throw new Error(errorData.message || 'Failed to edit listing');
       }
 
-      console.log('Listing updated successfully');
       handleClose();
     } catch (error) {
       console.error('Error updating listing:', error);

@@ -17,8 +17,6 @@ export async function POST(
   }
 
   try {
-    console.log('Processing bid:', { id, amount });
-
     const response = await fetch(noroffApi.bidOnListing(id), {
       method: 'POST',
       headers: await headers(),
@@ -39,7 +37,6 @@ export async function POST(
     }
 
     const responseData = await response.json();
-    console.log('Noroff API Bid Success:', responseData);
 
     return NextResponse.json(responseData);
   } catch (error) {

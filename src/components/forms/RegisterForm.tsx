@@ -84,7 +84,6 @@ export default function RegisterForm() {
       }
 
       const data = await response.json();
-      console.log('Registration successful:', data);
 
       router.push('/login?success=Registration successful');
     } catch (error) {

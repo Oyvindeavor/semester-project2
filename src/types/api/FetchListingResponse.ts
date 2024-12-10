@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 // Media type for images or banners
 export interface Media {
   url: string;

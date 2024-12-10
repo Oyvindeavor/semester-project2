@@ -5,7 +5,6 @@ import { Box } from '@mui/material';
 import AuctionDetails from '@/components/listing/AuctionDetails';
 import BidTable from '@/components/listing/BidTable';
 import PlaceBid from '@/components/listing/placeBid';
-import type { Listing } from '@/types/api/listing';
 
 export default async function ListingPage(props: {
   params: Promise<{ id: string }>;

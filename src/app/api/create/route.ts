@@ -54,7 +54,6 @@ export async function POST(req: NextRequest) {
     }
 
     const responseData = await response.json();
-    console.log('Listing successfully created!', responseData);
 
     return NextResponse.json(responseData, { status: 201 });
   } catch (error) {

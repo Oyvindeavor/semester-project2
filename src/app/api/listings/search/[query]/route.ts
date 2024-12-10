@@ -20,11 +20,9 @@ export async function GET(
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
-      console.log('API error:', response.status);
     }
 
     const data = await response.json();
-    console.log('Fetched auction listings:', data);
 
     return NextResponse.json(data, {
       status: 200,

@@ -21,7 +21,7 @@ interface CustomTableProps {
 
 const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
   const { data: session } = useSession();
-  // Use a fallback to handle undefined `bids`
+
   const sortedBids = [...(listing.bids || [])].sort(
     (a, b) => b.amount - a.amount
   );

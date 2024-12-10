@@ -30,15 +30,12 @@ import Link from 'next/link';
 
 import { useSession, signOut } from 'next-auth/react';
 
+// Main navigation items that are always visible
 const NAVIGATION_ITEMS = [
   { name: 'Marketplace', href: '/marketplace', icon: <StorefrontIcon /> },
 ];
 
-const AUTHENTICATED_ITEMS = [
-  { name: 'Create Auction', href: '/create', icon: <AddCircleIcon /> },
-  { name: 'Profile', href: '/profile', icon: <PersonIcon /> },
-];
-
+// Items that only appear in the user dropdown menu
 const USER_MENU_ITEMS = [
   { name: 'Profile', href: '/profile', icon: <PersonIcon /> },
   { name: 'Create Listing', href: '/create', icon: <AddCircleIcon /> },
@@ -60,12 +57,7 @@ export default function NavBar() {
   const handleMenuClose = () => setAnchorEl(null);
 
   const renderNavItems = (mobile = false) => {
-    const items = [
-      ...NAVIGATION_ITEMS,
-      ...(session ? AUTHENTICATED_ITEMS : []),
-    ];
-
-    return items.map((item) =>
+    return NAVIGATION_ITEMS.map((item) =>
       mobile ? (
         <ListItem
           key={item.name}

@@ -48,7 +48,7 @@ export default function LoginForm() {
     setFormErrors({});
     setError(null);
 
-    // Validate form fields (unchanged)
+    // Validate form fields
 
     setLoading(true);
     try {

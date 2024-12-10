@@ -7,7 +7,6 @@ import ProfileHeader from '@/components/profile/ProfileHeader';
 import AuctionTabs from '@/components/profile/TabPanelProfile';
 import type { Listing } from '@/types/api/listing';
 
-// Define interfaces for type safety
 interface Media {
   url: string;
   alt?: string;
@@ -43,14 +42,13 @@ export default function Profile() {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/profile`
         );
-        console.log('Response:', response);
 
         if (!response.ok) {
           throw new Error('Failed to fetch profile');
         }
 
         const data = await response.json();
-        console.log('Fetched profile data:', data.profile);
+
         setProfile(data.profile);
       } catch (err) {
         console.error('Error fetching profile:', err);

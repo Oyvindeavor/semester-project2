@@ -7,7 +7,6 @@ export async function headers(accessToken: string | null = null) {
   if (!accessToken) {
     const session = await getServerSession(authOptions); // Fetch server session
     accessToken = session?.accessToken || null;
-    console.log('AccessToken retrieved in headers:', accessToken); // Log the accessToken
   }
 
   const headers: Record<string, string> = {
