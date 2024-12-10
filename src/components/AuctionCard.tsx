@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Card,
   CardContent,
-  CardMedia,
   Typography,
   Box,
   Stack,
@@ -11,6 +10,8 @@ import {
 } from '@mui/material';
 import { Timer, TrendingUp, Gavel } from '@mui/icons-material';
 import Link from 'next/link';
+import Image from 'next/image';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 const AuctionCard = ({
   imageUrl = 'https://usercontent.one/wp/www.vocaleurope.eu/wp-content/uploads/no-image.jpg?media=1642546813',
@@ -24,8 +25,8 @@ const AuctionCard = ({
     <Link href={`/listing/${id}`} style={{ textDecoration: 'none' }}>
       <Card
         sx={{
-          width: 300, // Fixed width
-          height: 420, // Fixed height
+          width: 250,
+          height: 420,
           borderRadius: 3,
           boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
           transition: 'all 0.3s ease-in-out',
@@ -37,16 +38,26 @@ const AuctionCard = ({
           },
         }}
       >
-        <CardMedia
-          component="img"
-          height="200"
-          image={imageUrl}
-          alt={title}
+        <Box
           sx={{
-            objectFit: 'cover',
+            position: 'relative',
+            height: 200,
             borderBottom: '1px solid rgba(0,0,0,0.05)',
+            backgroundColor: 'grey.100', // Loading state background
           }}
-        />
+        >
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            style={{
+              objectFit: 'cover',
+            }}
+            sizes="300px"
+            priority={false} // Lazy load images
+            quality={75} // Adjust quality to balance between performance and appearance
+          />
+        </Box>
         <CardContent
           sx={{
             height: 220,
@@ -73,7 +84,6 @@ const AuctionCard = ({
           >
             {title}
           </Typography>
-
           <Box sx={{ mt: 'auto' }}>
             <Stack
               direction="row"
@@ -91,8 +101,12 @@ const AuctionCard = ({
                 }}
               />
               <Chip
-                label={`$${highestBid.toLocaleString()}`}
-                icon={<TrendingUp sx={{ fontSize: '1.2rem' }} />}
+                label={`${highestBid}`}
+                icon={
+                  <MonetizationOnIcon
+                    sx={{ fontSize: '1.2rem', color: 'gold' }}
+                  />
+                }
                 color="success"
                 variant="outlined"
                 sx={{
@@ -101,7 +115,6 @@ const AuctionCard = ({
                 }}
               />
             </Stack>
-
             <Paper
               elevation={0}
               sx={{

@@ -25,11 +25,16 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import LoginIcon from '@mui/icons-material/Login';
 import Link from 'next/link';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { useSession, signOut } from 'next-auth/react';
 
 const NAVIGATION_ITEMS = [
   { name: 'Marketplace', href: '/marketplace', icon: <StorefrontIcon /> },
+];
+
+const AUTHENTICATED_ITEMS = [
   { name: 'Create Auction', href: '/create', icon: <AddCircleIcon /> },
   { name: 'Profile', href: '/profile', icon: <PersonIcon /> },
 ];
@@ -55,9 +60,12 @@ export default function NavBar() {
   const handleMenuClose = () => setAnchorEl(null);
 
   const renderNavItems = (mobile = false) => {
-    if (!session) return null;
+    const items = [
+      ...NAVIGATION_ITEMS,
+      ...(session ? AUTHENTICATED_ITEMS : []),
+    ];
 
-    return NAVIGATION_ITEMS.map((item) =>
+    return items.map((item) =>
       mobile ? (
         <ListItem
           key={item.name}
@@ -130,25 +138,35 @@ export default function NavBar() {
       </Box>
       <List sx={{ pt: 1 }}>
         {renderNavItems(true)}
-        {session && (
-          <>
-            <Divider sx={{ my: 1 }} />
-            {USER_MENU_ITEMS.map((item) => (
-              <ListItem
-                key={item.name}
-                onClick={() => {
-                  handleDrawerToggle();
-                  item.action?.();
-                }}
-                component={item.href ? Link : 'li'}
-                href={item.href}
-                sx={{ py: 1.5 }}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.name} />
-              </ListItem>
-            ))}
-          </>
+        <Divider sx={{ my: 1 }} />
+        {session ? (
+          USER_MENU_ITEMS.map((item) => (
+            <ListItem
+              key={item.name}
+              onClick={() => {
+                handleDrawerToggle();
+                item.action?.();
+              }}
+              component={item.href ? Link : 'li'}
+              href={item.href}
+              sx={{ py: 1.5 }}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.name} />
+            </ListItem>
+          ))
+        ) : (
+          <ListItem
+            component={Link}
+            href="/auth/signin"
+            onClick={handleDrawerToggle}
+            sx={{ py: 1.5 }}
+          >
+            <ListItemIcon>
+              <LoginIcon />
+            </ListItemIcon>
+            <ListItemText primary="Login" />
+          </ListItem>
         )}
       </List>
     </Drawer>
@@ -239,55 +257,55 @@ export default function NavBar() {
           {/* User Section */}
           <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
             {session ? (
-              <>
-                <IconButton
-                  onClick={handleMenuOpen}
+              <IconButton
+                onClick={handleMenuOpen}
+                sx={{
+                  p: 0,
+                  display: { xs: 'none', md: 'flex' },
+                }}
+              >
+                <Avatar
+                  alt={session.user.name || 'User'}
+                  src={session.user.image || ''}
                   sx={{
-                    p: 0,
-                    display: { xs: 'none', md: 'flex' },
+                    width: 40,
+                    height: 40,
+                    border: `2px solid ${theme.palette.primary.main}`,
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                    },
                   }}
-                >
-                  <Avatar
-                    alt={session.user.name || 'User'}
-                    src={session.user.image || ''}
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      border: `2px solid ${theme.palette.primary.main}`,
-                      cursor: 'pointer',
-                      transition: 'transform 0.2s',
-                      '&:hover': {
-                        transform: 'scale(1.05)',
-                      },
-                    }}
-                  />
-                </IconButton>
-                <IconButton
-                  color="inherit"
-                  edge="end"
-                  onClick={handleDrawerToggle}
-                  sx={{
-                    ml: 1,
-                    display: { md: 'none' },
-                    color: theme.palette.text.primary,
-                  }}
-                >
-                  <MenuIcon />
-                </IconButton>
-              </>
+                />
+              </IconButton>
             ) : (
               <Button
                 component={Link}
                 href="/auth/signin"
                 variant="contained"
                 color="primary"
+                sx={{ display: { xs: 'none', md: 'flex' } }}
               >
                 Login
               </Button>
             )}
+            {/* Always show hamburger menu on mobile */}
+            <IconButton
+              color="inherit"
+              edge="end"
+              onClick={handleDrawerToggle}
+              sx={{
+                ml: 1,
+                display: { md: 'none' },
+                color: theme.palette.text.primary,
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
           </Box>
 
-          {!isMobile && renderUserMenu()}
+          {session && !isMobile && renderUserMenu()}
         </Toolbar>
       </Container>
 

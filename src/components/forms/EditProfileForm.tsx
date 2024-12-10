@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { Edit } from '@mui/icons-material';
 
 const EditProfileModal = React.memo(function EditProfileModal() {
   const { data: session, status, update } = useSession();
@@ -77,6 +78,7 @@ const EditProfileModal = React.memo(function EditProfileModal() {
   return (
     <>
       <Button variant="contained" color="primary" onClick={handleOpen}>
+        <Edit />
         Edit Profile
       </Button>
       <Modal

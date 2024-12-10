@@ -7,11 +7,8 @@ import {
   Button,
   Stack,
 } from '@mui/material';
-import {
-  Edit as EditIcon,
-  Settings as SettingsIcon,
-} from '@mui/icons-material';
-
+import EditProfileModal from '../forms/EditProfileForm';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 const ProfileHeader = ({
   username = 'JohnDoe',
   avatarUrl = '/default-avatar.jpg',
@@ -19,6 +16,7 @@ const ProfileHeader = ({
   bio = 'Passionate collector and auction enthusiast',
   totalAuctions = 24,
   totalBids = 156,
+  credits = 1000,
 }) => {
   return (
     <Box sx={{ position: 'relative', mb: 10 }}>
@@ -83,16 +81,15 @@ const ProfileHeader = ({
             </Typography>
 
             {/* Profile Stats */}
-            <Stack
-              direction="row"
-              spacing={3}
-              sx={{ color: 'rgba(255,255,255,0.8)' }}
-            >
+            <Stack direction="row" spacing={3} sx={{ color: 'black' }}>
               <Box>
                 <Typography variant="subtitle1" fontWeight={600}>
-                  {totalAuctions}
+                  {totalAuctions} Auctions
                 </Typography>
-                <Typography variant="body2">Auctions</Typography>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <Typography variant="body2">Credits: {credits}</Typography>
+                  <MonetizationOnIcon style={{ color: 'gold' }} />
+                </Box>
               </Box>
               <Box>
                 <Typography variant="subtitle1" fontWeight={600}>
@@ -105,28 +102,7 @@ const ProfileHeader = ({
 
           {/* Action Buttons */}
           <Stack direction="row" spacing={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<EditIcon />}
-              sx={{ textTransform: 'none' }}
-            >
-              Edit Profile
-            </Button>
-            <Button
-              variant="outlined"
-              color="inherit"
-              startIcon={<SettingsIcon />}
-              sx={{
-                color: 'white',
-                borderColor: 'rgba(255,255,255,0.5)',
-                '&:hover': {
-                  borderColor: 'white',
-                },
-              }}
-            >
-              Settings
-            </Button>
+            <EditProfileModal />
           </Stack>
         </Box>
       </Container>

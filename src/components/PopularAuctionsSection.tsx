@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Container, Typography, Grid } from '@mui/material';
 import AuctionCard from './AuctionCard';
+import { getTimeRemaining } from '@/utils/dateFormattings';
 
 interface Media {
   url: string;
@@ -11,7 +12,7 @@ interface Auction {
   id: string;
   title: string;
   media: Media[];
-  timeLeft?: string;
+  endsAt: string;
   _count: {
     bids: number;
   };
@@ -30,7 +31,7 @@ interface ProcessedAuction {
 async function fetchPopularAuctionsSection(): Promise<Auction[]> {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/listings/limit=10&page=1&sortOrder=desc&_active=true`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/listings/search?limit=8&page=1&sortOrder=desc`
     );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -52,8 +53,8 @@ const PopularAuctionsSection = async () => {
       imageUrl: auction.media[0]?.url,
       alt: auction.media[0]?.alt || `${auction.title} auction image`,
       totalBids: auction._count.bids,
-      highestBid: 0, // Adjust based on your data structure
-      timeLeft: auction.timeLeft || 'Ongoing',
+      highestBid: 0,
+      timeLeft: getTimeRemaining(auction.endsAt),
     })
   );
 

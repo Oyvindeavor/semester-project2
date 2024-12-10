@@ -12,28 +12,36 @@ import {
   InputLabel,
   Chip,
   OutlinedInput,
+  IconButton,
+  Paper,
+  Stack,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
-import 'dayjs/locale/nb'; // Norwegian locale
-
+import dayjs from 'dayjs';
+import 'dayjs/locale/nb';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 import { useRouter } from 'next/navigation';
 
-// Set Norwegian locale globally for Day.js
 dayjs.locale('nb');
 
 export default function CreateAuctionForm() {
-  // const {accessToken} = session
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    tags: string[]; // Change never[] to string[]
+    media: { url: string; alt: string }[];
+    endsAt: dayjs.Dayjs;
+  }>({
     title: '',
     description: '',
-    tags: [] as string[],
+    tags: [], // Ensure this is an array of strings
     media: [{ url: '', alt: '' }],
     endsAt: dayjs(),
   });
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,11 +52,36 @@ export default function CreateAuctionForm() {
     }));
   };
 
-  const handleDateChange = (newValue: Dayjs | null) => {
+  const handleDateChange = (newValue: dayjs.Dayjs | null) => {
     if (newValue) {
       setFormData((prev) => ({
         ...prev,
         endsAt: newValue,
+      }));
+    }
+  };
+
+  const handleMediaChange = (index: number, field: string, value: string) => {
+    const newMedia = [...formData.media];
+    newMedia[index] = { ...newMedia[index], [field]: value };
+    setFormData((prev) => ({
+      ...prev,
+      media: newMedia,
+    }));
+  };
+
+  const addMediaField = () => {
+    setFormData((prev) => ({
+      ...prev,
+      media: [...prev.media, { url: '', alt: '' }],
+    }));
+  };
+
+  const removeMediaField = (index: number) => {
+    if (formData.media.length > 1) {
+      setFormData((prev) => ({
+        ...prev,
+        media: prev.media.filter((_, i) => i !== index),
       }));
     }
   };
@@ -58,13 +91,9 @@ export default function CreateAuctionForm() {
     try {
       const auctionData = {
         ...formData,
-        endsAt: formData.endsAt.toISOString(), // Convert date to ISO format for backend
-        tags: selectedTags,
+        endsAt: formData.endsAt.toISOString(),
       };
 
-      console.log('Submitting Form:', auctionData);
-
-      // POST request to /api/create
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/create`,
         {
@@ -75,150 +104,168 @@ export default function CreateAuctionForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Error creating auction:', errorData.message);
-        alert(errorData.message || 'Failed to create auction.');
-        return;
+        throw new Error(errorData.message || 'Failed to create auction');
       }
 
       const result = await response.json();
-      // get the returned id from the response
-      const id = result.data.id;
-
-      // Redirect to the newly created auction page
-      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/listing/${id}`);
-      console.log('Auction created successfully:', result);
-      alert('Auction created successfully!');
+      router.push(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/listing/${result.data.id}`
+      );
     } catch (error) {
       console.error('Error creating auction:', error);
-      alert('An unexpected error occurred. Please try again later.');
     }
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        maxWidth: 600,
-        mx: 'auto',
-        p: 4,
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: 2,
-        boxShadow: 2,
-        backgroundColor: 'background.paper',
-      }}
-    >
-      <Typography variant="h4" component="h1" gutterBottom textAlign="center">
-        Create Auction
-      </Typography>
-
-      {/* Title */}
-      <TextField
-        label="Title"
-        name="title"
-        required
-        fullWidth
-        value={formData.title}
-        onChange={handleInputChange}
-        margin="normal"
-        placeholder="Enter auction title"
-      />
-
-      {/* Description */}
-      <TextField
-        label="Description"
-        name="description"
-        multiline
-        rows={4}
-        fullWidth
-        value={formData.description}
-        onChange={handleInputChange}
-        margin="normal"
-        placeholder="Enter auction description"
-      />
-
-      {/* Tags */}
-      <FormControl fullWidth margin="normal">
-        <InputLabel>Tags</InputLabel>
-        <Select
-          multiple
-          value={selectedTags}
-          onChange={(e) => setSelectedTags(e.target.value as string[])}
-          input={<OutlinedInput label="Tags" />}
-          renderValue={(selected) => (
-            <Box sx={{ display: 'flex', gap: 0.5 }}>
-              {(selected as string[]).map((value) => (
-                <Chip key={value} label={value} />
-              ))}
-            </Box>
-          )}
+    <Paper elevation={3} sx={{ maxWidth: 800, mx: 'auto', mt: 4, mb: 4 }}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ p: 4 }}>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          align="center"
+          sx={{ mb: 4 }}
         >
-          {['Electronics', 'Fashion', 'Home', 'Toys', 'Vehicles'].map((tag) => (
-            <MenuItem key={tag} value={tag}>
-              {tag}
-            </MenuItem>
+          Create Auction
+        </Typography>
+
+        <Stack spacing={3}>
+          {/* Title */}
+          <TextField
+            label="Title"
+            name="title"
+            required
+            fullWidth
+            value={formData.title}
+            onChange={handleInputChange}
+            placeholder="Enter auction title"
+          />
+
+          {/* Description */}
+          <TextField
+            label="Description"
+            name="description"
+            multiline
+            rows={4}
+            fullWidth
+            value={formData.description}
+            onChange={handleInputChange}
+            placeholder="Enter auction description"
+          />
+
+          {/* Tags */}
+          <FormControl fullWidth>
+            <InputLabel>Tags</InputLabel>
+            <Select
+              multiple
+              value={formData.tags}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  tags: e.target.value as string[],
+                }))
+              }
+              input={<OutlinedInput label="Tags" />}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip key={value} label={value} />
+                  ))}
+                </Box>
+              )}
+            >
+              {['Electronics', 'Fashion', 'Home', 'Toys', 'Vehicles'].map(
+                (tag) => (
+                  <MenuItem key={tag} value={tag}>
+                    {tag}
+                  </MenuItem>
+                )
+              )}
+            </Select>
+          </FormControl>
+
+          {/* Media URLs */}
+          {formData.media.map((item, index) => (
+            <Stack
+              key={index}
+              direction="row"
+              spacing={2}
+              alignItems="flex-start"
+            >
+              <Stack spacing={2} sx={{ flex: 1 }}>
+                <TextField
+                  label="Image URL"
+                  fullWidth
+                  value={item.url}
+                  onChange={(e) =>
+                    handleMediaChange(index, 'url', e.target.value)
+                  }
+                  placeholder="Enter image URL"
+                  required
+                />
+                <TextField
+                  label="Image Description"
+                  fullWidth
+                  value={item.alt}
+                  onChange={(e) =>
+                    handleMediaChange(index, 'alt', e.target.value)
+                  }
+                  placeholder="Enter image description"
+                  required
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                {formData.media.length > 1 && (
+                  <IconButton
+                    onClick={() => removeMediaField(index)}
+                    color="error"
+                    size="small"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+                {index === formData.media.length - 1 && (
+                  <IconButton
+                    onClick={addMediaField}
+                    color="primary"
+                    size="small"
+                  >
+                    <AddIcon />
+                  </IconButton>
+                )}
+              </Stack>
+            </Stack>
           ))}
-        </Select>
-      </FormControl>
 
-      {/* Media */}
-      <TextField
-        label="Media URL"
-        name="url"
-        fullWidth
-        value={formData.media[0].url}
-        onChange={(e) =>
-          setFormData((prev) => ({
-            ...prev,
-            media: [{ ...prev.media[0], url: e.target.value }],
-          }))
-        }
-        margin="normal"
-        placeholder="Enter image URL"
-      />
-      <TextField
-        label="Media Alt Text"
-        name="alt"
-        fullWidth
-        value={formData.media[0].alt}
-        onChange={(e) =>
-          setFormData((prev) => ({
-            ...prev,
-            media: [{ ...prev.media[0], alt: e.target.value }],
-          }))
-        }
-        margin="normal"
-        placeholder="Enter alt text for the image"
-      />
+          {/* End Date */}
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateTimePicker
+              label="End Date and Time"
+              value={formData.endsAt}
+              onChange={handleDateChange}
+              format="DD.MM.YYYY HH:mm"
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  required: true,
+                },
+              }}
+            />
+          </LocalizationProvider>
 
-      {/* Ends At */}
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DateTimePicker
-          label="End Date and Time"
-          value={formData.endsAt}
-          onChange={handleDateChange}
-          format="DD.MM.YYYY HH:mm" // Norwegian format: Day.Month.Year Hour:Minute
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              margin: 'normal',
-              InputLabelProps: { shrink: true },
-            },
-          }}
-        />
-      </LocalizationProvider>
-
-      {/* Submit Button */}
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        fullWidth
-        sx={{ mt: 3 }}
-      >
-        Create Auction
-      </Button>
-    </Box>
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={{ mt: 2 }}
+          >
+            Create Auction
+          </Button>
+        </Stack>
+      </Box>
+    </Paper>
   );
 }

@@ -29,8 +29,8 @@ export interface ListingCount {
 export interface Seller {
   name: string;
   email: string;
-  bio: string | null;
-  avatar: Media;
+  bio?: string | null;
+  avatar?: Media;
 }
 
 export interface Listing {
@@ -44,4 +44,6 @@ export interface Listing {
   endsAt: string;
   bids?: Bid[];
   _count: ListingCount;
+  seller?: Seller;
+  bidder?: Bidder;
 }

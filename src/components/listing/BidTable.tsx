@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import {
   Box,
@@ -12,16 +13,39 @@ import {
   Paper,
 } from '@mui/material';
 import { Listing } from '@/types/api/listing';
+import { useSession } from 'next-auth/react';
 
 interface CustomTableProps {
   listing: Listing;
 }
 
 const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
+  const { data: session } = useSession();
   // Use a fallback to handle undefined `bids`
   const sortedBids = [...(listing.bids || [])].sort(
     (a, b) => b.amount - a.amount
   );
+
+  if (!session) {
+    return (
+      <Box
+        component={Paper}
+        sx={{
+          padding: 3,
+          borderRadius: 2,
+          boxShadow: 3,
+          overflowX: 'auto',
+        }}
+      >
+        <Typography variant="h4" component="h2" fontWeight="bold" gutterBottom>
+          Bids
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Login to view bids.
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box
