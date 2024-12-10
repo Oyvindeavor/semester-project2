@@ -20,6 +20,10 @@ const Footer = () => {
         backgroundColor: '#f4f4f4',
         py: 6,
         color: 'text.secondary',
+        mt: 'auto',
+        position: 'relative',
+        bottom: 0,
+        width: '100%',
       }}
     >
       <Container maxWidth="lg">
