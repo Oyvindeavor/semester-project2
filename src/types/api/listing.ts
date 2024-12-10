@@ -26,6 +26,13 @@ export interface ListingCount {
   bids?: number;
 }
 
+export interface Seller {
+  name: string;
+  email: string;
+  bio: string | null;
+  avatar: Media;
+}
+
 export interface Listing {
   id: string;
   title: string;
