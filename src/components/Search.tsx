@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from 'react';
 import {
   Box,
@@ -7,37 +6,31 @@ import {
   Button,
   Container,
   Grid,
-  MenuItem,
-  Select,
   InputAdornment,
 } from '@mui/material';
-import {
-  Search as SearchIcon,
-  TuneRounded as FilterIcon,
-} from '@mui/icons-material';
+import { Search as SearchIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 
 const AuctionSearchSection = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [category, setCategory] = useState('all');
   const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const categories = [
-    { value: 'all', label: 'All Categories' },
-    { value: 'art', label: 'Art' },
-    { value: 'collectibles', label: 'Collectibles' },
-    { value: 'electronics', label: 'Electronics' },
-    { value: 'vintage', label: 'Vintage' },
-  ];
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      router.push(`/marketplace?q=${encodeURIComponent(searchTerm.trim())}`);
+    } else {
+      router.push('/marketplace?page=1&limit=12');
+    }
+  };
 
-  const handleSearch = async () => {
-    console.log('Searching:', { searchTerm, category });
-
-    router.push(`/marketplace/${searchTerm}`);
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
   };
 
   return (
-    <Container sx={{ py: 4 }}>
+    <Container sx={{ py: 2 }}>
       <Box
         sx={{
           background: 'linear-gradient(145deg, #f0f4f8, #ffffff)',
@@ -54,6 +47,7 @@ const AuctionSearchSection = () => {
               placeholder="Search auctions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={handleKeyPress}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -68,26 +62,6 @@ const AuctionSearchSection = () => {
                 },
               }}
             />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <Select
-              fullWidth
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              variant="outlined"
-              sx={{
-                borderRadius: 2,
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'rgba(0,0,0,0.12)',
-                },
-              }}
-            >
-              {categories.map((cat) => (
-                <MenuItem key={cat.value} value={cat.value}>
-                  {cat.label}
-                </MenuItem>
-              ))}
-            </Select>
           </Grid>
           <Grid item xs={12} md={2}>
             <Button
