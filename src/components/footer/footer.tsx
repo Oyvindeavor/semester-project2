@@ -40,17 +40,27 @@ const Footer = () => {
               Quick Links
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Link href="#" color="inherit" underline="hover" sx={{ mb: 1 }}>
+              <Link href="/" color="inherit" underline="hover" sx={{ mb: 1 }}>
                 Home
               </Link>
-              <Link href="#" color="inherit" underline="hover" sx={{ mb: 1 }}>
+              <Link
+                href="/marketplace"
+                color="inherit"
+                underline="hover"
+                sx={{ mb: 1 }}
+              >
                 Auctions
               </Link>
-              <Link href="#" color="inherit" underline="hover" sx={{ mb: 1 }}>
-                How It Works
+              <Link
+                href="/auth/signin"
+                color="inherit"
+                underline="hover"
+                sx={{ mb: 1 }}
+              >
+                Login
               </Link>
-              <Link href="#" color="inherit" underline="hover">
-                Contact
+              <Link href="/register" color="inherit" underline="hover">
+                Register
               </Link>
             </Box>
           </Grid>
@@ -61,16 +71,28 @@ const Footer = () => {
               Connect With Us
             </Typography>
             <Box>
-              <IconButton href="#" color="inherit">
+              <IconButton
+                href="https://www.facebook.com/"
+                color="inherit"
+                target="blank"
+              >
                 <Facebook />
               </IconButton>
-              <IconButton href="#" color="inherit">
+              <IconButton href="https://x.com/" color="inherit" target="blank">
                 <Twitter />
               </IconButton>
-              <IconButton href="#" color="inherit">
+              <IconButton
+                href="https://www.instagram.com"
+                color="inherit"
+                target="blank"
+              >
                 <Instagram />
               </IconButton>
-              <IconButton href="#" color="inherit">
+              <IconButton
+                href="https://www.linkedin.com"
+                color="inherit"
+                target="blank"
+              >
                 <LinkedIn />
               </IconButton>
             </Box>
