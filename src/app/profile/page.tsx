@@ -6,6 +6,7 @@ import { deleteListingById } from '@/utils/api/deleteListingById';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import AuctionTabs from '@/components/profile/TabPanelProfile';
 import type { Listing } from '@/types/api/listing';
+import { useRouter } from 'next/navigation';
 
 interface Media {
   url: string;
@@ -35,6 +36,7 @@ export default function Profile() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -58,6 +60,7 @@ export default function Profile() {
 
     if (status === 'authenticated') {
       fetchProfile();
+      router.push('/profile');
     }
   }, [status]);
 
@@ -75,7 +78,6 @@ export default function Profile() {
 
       setDeleting(id);
       await deleteListingById(id);
-      alert('Listing deleted successfully!');
 
       setProfile((prevProfile) => {
         if (!prevProfile) return null;
