@@ -26,7 +26,7 @@ export const noroffApi = {
   searchListings: (query: string) =>
     `${API_BASE}auction/listings/search?q=${query}`,
   getSingleListing: (id: string) =>
-    `${API_BASE}auction/listings/${id}?_sellers=true&_bids=true`,
+    `${API_BASE}auction/listings/${id}?_seller=true&_bids=true`,
 
   createListing: `${API_BASE}auction/listings`,
 
