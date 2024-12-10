@@ -55,6 +55,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
         borderRadius: 2,
         boxShadow: 3,
         overflowX: 'auto',
+        mb: 15,
       }}
     >
       <Typography variant="h4" component="h2" fontWeight="bold" gutterBottom>

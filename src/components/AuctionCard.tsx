@@ -54,8 +54,8 @@ const AuctionCard = ({
               objectFit: 'cover',
             }}
             sizes="300px"
-            priority={false} // Lazy load images
-            quality={75} // Adjust quality to balance between performance and appearance
+            priority={true}
+            quality={75}
           />
         </Box>
         <CardContent
