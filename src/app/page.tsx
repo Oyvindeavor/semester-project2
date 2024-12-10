@@ -12,9 +12,6 @@ export default function Home() {
 
       {/* Filter and Sort */}
 
-      {/* Popular auctions section */}
-      <PopularAuctionsSection />
-
       {/* Ending Soon Section */}
       <EndingSoonAuctionsSection />
     </Box>
