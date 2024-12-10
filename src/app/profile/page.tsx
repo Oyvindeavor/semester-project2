@@ -1,30 +1,16 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import EditProfileModal from '@/components/forms/EditProfileForm';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-} from '@mui/material';
+import { Box } from '@mui/material';
 import { deleteListingById } from '@/utils/api/deleteListingById';
-import UpdateListingForm from '@/components/forms/updateListingForm';
 import ProfileHeader from '@/components/profile/ProfileHeader';
+import AuctionTabs from '@/components/profile/TabPanelProfile';
+import type { Listing } from '@/types/api/listing';
 
 // Define interfaces for type safety
 interface Media {
   url: string;
   alt?: string;
-}
-
-interface Listing {
-  id: string;
-  title: string;
-  description: string;
-  media: Media[];
 }
 
 interface ProfileData {
@@ -37,6 +23,8 @@ interface ProfileData {
   };
   bio: string;
   listings: Listing[];
+  credits: number;
+  wins: Listing[];
 }
 
 interface Profile {
@@ -55,9 +43,12 @@ export default function Profile() {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/profile`
         );
+        console.log('Response:', response);
+
         if (!response.ok) {
           throw new Error('Failed to fetch profile');
         }
+
         const data = await response.json();
         console.log('Fetched profile data:', data.profile);
         setProfile(data.profile);
@@ -87,6 +78,7 @@ export default function Profile() {
       setDeleting(id);
       await deleteListingById(id);
       alert('Listing deleted successfully!');
+
       setProfile((prevProfile) => {
         if (!prevProfile) return null;
         return {
@@ -109,60 +101,20 @@ export default function Profile() {
 
   return (
     <div>
-      <EditProfileModal />
       <ProfileHeader
         username={profile.data.name}
         avatarUrl={profile.data.avatar.url}
         bannerUrl={profile.data.banner.url}
         bio={profile.data.bio}
         totalAuctions={profile.data.listings.length}
+        credits={profile.data.credits}
       />
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-        {profile.data.listings.map((listing) => (
-          <Card
-            key={listing.id}
-            sx={{
-              width: 300,
-              boxShadow: 3,
-              borderRadius: 2,
-            }}
-          >
-            <CardContent>
-              <img
-                src={
-                  listing.media.length > 0
-                    ? listing.media[0].url
-                    : '/default-listing.jpg'
-                }
-                alt={
-                  listing.media.length > 0 && listing.media[0].alt
-                    ? listing.media[0].alt
-                    : listing.title
-                }
-                style={{ width: '100%', height: 200, objectFit: 'cover' }}
-              />
-              <Typography variant="h6" component="div" gutterBottom>
-                {listing.title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {listing.description}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <UpdateListingForm id={listing.id} />
-              <Button
-                size="small"
-                color="error"
-                variant="outlined"
-                onClick={() => handleDelete(listing.id)}
-                disabled={deleting === listing.id}
-              >
-                {deleting === listing.id ? 'Deleting...' : 'Delete'}
-              </Button>
-            </CardActions>
-          </Card>
-        ))}
-      </Box>
+      <AuctionTabs
+        activeListings={profile.data.listings}
+        wonListings={profile.data.wins}
+        onDelete={handleDelete}
+        deleting={deleting}
+      />
     </div>
   );
 }
