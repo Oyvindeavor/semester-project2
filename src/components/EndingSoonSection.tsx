@@ -1,6 +1,8 @@
 import React from 'react';
 import { Box, Container, Typography, Grid } from '@mui/material';
 import AuctionCard from './AuctionCard';
+import { getTimeRemaining } from '@/utils/dateFormattings';
+import { getHighestBid } from '@/utils/getHighestBid';
 
 interface Media {
   url: string;
@@ -15,6 +17,7 @@ interface Auction {
   _count: {
     bids: number;
   };
+  bids: { amount?: number }[]; // Corrected to allow multiple bid objects
 }
 
 interface ProcessedAuction {
@@ -30,27 +33,18 @@ interface ProcessedAuction {
 async function fetchEndingSoonAuctions(): Promise<Auction[]> {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/listings/limit=10&page=1&sort=endsAt&sortOrder=asc&_active=true`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/listings/limit=12&page=1&sort=endsAt&sortOrder=asc`
     );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+    console.log('Fetched auctions:', data.data);
     return data.data;
   } catch (error) {
     console.error('Error fetching auctions:', error);
     return [];
   }
-}
-
-function calculateTimeLeft(endsAt: string): string {
-  const end = new Date(endsAt);
-  const now = new Date();
-  const diff = end.getTime() - now.getTime();
-  if (diff <= 0) return 'Ended';
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  return `${hours}h ${minutes}m`;
 }
 
 const EndingSoonAuctionsSection = async () => {
@@ -62,8 +56,8 @@ const EndingSoonAuctionsSection = async () => {
       imageUrl: auction.media[0]?.url,
       alt: auction.media[0]?.alt || `${auction.title} auction image`,
       totalBids: auction._count.bids,
-      highestBid: 0,
-      timeLeft: calculateTimeLeft(auction.endsAt),
+      highestBid: getHighestBid(auction.bids),
+      timeLeft: getTimeRemaining(auction.endsAt),
     })
   );
 
