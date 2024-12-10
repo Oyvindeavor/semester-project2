@@ -54,7 +54,9 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 ## Project Structure
 
 - `src/app` Contains the application logic and page components.
-- `src/styles` Contains global styles, variables, and mixins for a modular approach.
+- `src/app/api` Contains custom server api points
+-
+- `src/styles` Contains global styles, variables, and mixins
   - \_variables.scss
   - \_mixins.scss
   - \_typography.scss
