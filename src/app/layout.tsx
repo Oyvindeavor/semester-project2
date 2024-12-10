@@ -5,10 +5,10 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 // import { ThemeProvider } from '@mui/material/styles';
 // import theme from '@/theme';
 import { Roboto } from 'next/font/google';
-import { CssBaseline, Grid, Container } from '@mui/material';
+import { CssBaseline, Container } from '@mui/material';
 import SessionProvider from '@/components/SessionProvider';
 import { getServerSession } from 'next-auth';
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import Box from '@mui/material/Box';
 
 import Footer from '@/components/footer/footer';
 
@@ -32,33 +32,41 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       <body className={roboto.variable}>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <SessionProvider session={session}>
-            {/* <ThemeProvider theme={theme}> */}
-            <CssBaseline />
-
-            {/* Header */}
-
-            <NavBar />
-
-            {/* Main Content */}
-
-            <Container
-              maxWidth="lg"
+            <Box
               sx={{
-                mt: 4,
-                mb: 4,
-                flexGrow: 1,
                 display: 'flex',
                 flexDirection: 'column',
+                minHeight: '100vh',
               }}
             >
-              {props.children}
-            </Container>
+              {/* <ThemeProvider theme={theme}> */}
+              <CssBaseline />
 
-            {/* Footer */}
+              {/* Header */}
 
-            <Footer />
+              <NavBar />
 
-            {/* </ThemeProvider> */}
+              {/* Main Content */}
+
+              <Container
+                maxWidth="lg"
+                sx={{
+                  mt: 4,
+                  mb: 4,
+                  flexGrow: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {props.children}
+              </Container>
+
+              {/* Footer */}
+
+              <Footer />
+
+              {/* </ThemeProvider> */}
+            </Box>
           </SessionProvider>
         </AppRouterCacheProvider>
       </body>
