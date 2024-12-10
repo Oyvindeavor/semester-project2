@@ -27,7 +27,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import Link from 'next/link';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+
 import { useSession, signOut } from 'next-auth/react';
 
 const NAVIGATION_ITEMS = [
@@ -117,7 +117,7 @@ export default function NavBar() {
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           <StorefrontIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
           <Typography variant="h6" color="primary">
-            Auction Platform
+            Auction Hub
           </Typography>
         </Box>
         {session && (
@@ -238,7 +238,7 @@ export default function NavBar() {
                   display: { xs: 'none', sm: 'block' },
                 }}
               >
-                Auction
+                Auction Hub
               </Typography>
             </Box>
           </Link>
