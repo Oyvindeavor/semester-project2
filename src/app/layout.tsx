@@ -5,11 +5,11 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 // import { ThemeProvider } from '@mui/material/styles';
 // import theme from '@/theme';
 import { Roboto } from 'next/font/google';
-import { CssBaseline, Container } from '@mui/material';
+import { CssBaseline, Container, ThemeProvider } from '@mui/material';
 import SessionProvider from '@/components/SessionProvider';
 import { getServerSession } from 'next-auth';
 import Box from '@mui/material/Box';
-
+import theme from '@/app/theme/theme';
 import Footer from '@/components/footer/footer';
 
 const roboto = Roboto({
@@ -20,8 +20,8 @@ const roboto = Roboto({
 });
 
 export const metadata = {
-  title: 'My Joy UI App',
-  description: 'A Next.js app with Joy UI',
+  title: 'Peregrine Auctions',
+  description: 'Discover new auctions and bid on your favorite items.',
 };
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
@@ -39,33 +39,32 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                 minHeight: '100vh',
               }}
             >
-              {/* <ThemeProvider theme={theme}> */}
-              <CssBaseline />
+              <ThemeProvider theme={theme}>
+                <CssBaseline />
 
-              {/* Header */}
+                {/* Header */}
 
-              <NavBar />
+                <NavBar />
 
-              {/* Main Content */}
+                {/* Main Content */}
 
-              <Container
-                maxWidth="lg"
-                sx={{
-                  mt: 4,
-                  mb: 4,
-                  flexGrow: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {props.children}
-              </Container>
+                <Container
+                  maxWidth="lg"
+                  sx={{
+                    mt: 6,
+                    mb: 10,
+                    flexGrow: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  {props.children}
+                </Container>
 
-              {/* Footer */}
+                {/* Footer */}
 
-              <Footer />
-
-              {/* </ThemeProvider> */}
+                <Footer />
+              </ThemeProvider>
             </Box>
           </SessionProvider>
         </AppRouterCacheProvider>
