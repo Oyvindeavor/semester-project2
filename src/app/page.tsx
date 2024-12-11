@@ -8,6 +8,8 @@ export default function Home() {
   return (
     <Box>
       {/* Header */}
+
+      {/* Search */}
       <Search />
 
       {/* Filter and Sort */}

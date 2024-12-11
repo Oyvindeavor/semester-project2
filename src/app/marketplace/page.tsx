@@ -8,12 +8,14 @@ import {
   Pagination,
   Stack,
   Typography,
+  Divider,
 } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import FilterSort from '@/components/FilterSort';
 import AuctionCard from '@/components/AuctionCard';
 import { getTimeRemaining } from '@/utils/dateFormattings';
 import { getHighestBid } from '@/utils/getHighestBid';
+import Paper from '@mui/material/Paper';
 
 interface Bid {
   id: string;
@@ -180,60 +182,127 @@ export default function Marketplace() {
   );
 
   return (
-    <Container maxWidth="xl">
-      <Box sx={{ width: '100%', py: 4 }}>
+    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
+      <Container maxWidth="lg">
         <FilterSort
           onFilterChange={handleFilterChange}
           onSortChange={handleSortChange}
         />
 
-        {loading ? (
-          <Box display="flex" justifyContent="center" p={4}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            <Grid container spacing={7} sx={{ mt: 10 }}>
-              {listings.map((listing) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={listing.id}>
-                  <AuctionCard
-                    id={listing.id}
-                    title={listing.title}
-                    imageUrl={listing.media[0]?.url}
-                    totalBids={listing._count.bids}
-                    highestBid={getHighestBid(listing.bids)}
-                    timeLeft={getTimeRemaining(listing.endsAt)}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-
-            {listings.length > 0 && (
-              <Stack
-                spacing={2}
-                sx={{ mt: 4 }}
-                alignItems="center"
-                justifyContent="center"
+        <Paper
+          elevation={0}
+          sx={{
+            mt: 4,
+            p: { xs: 2, md: 4 },
+            borderRadius: '12px',
+            bgcolor: 'background.paper',
+          }}
+        >
+          {loading ? (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                py: 8,
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : (
+            <>
+              <Grid
+                container
+                spacing={5}
+                sx={{
+                  px: { xs: 0, md: 2 },
+                  py: 2,
+                }}
               >
-                <Typography variant="body2" color="text.secondary">
-                  Showing {startIndex}-{endIndex} of {pagination.totalCount}{' '}
-                  items
-                </Typography>
-                <Pagination
-                  count={pagination.pageCount}
-                  page={pagination.currentPage}
-                  onChange={handlePageChange}
-                  color="primary"
-                  size="large"
-                  disabled={loading}
-                  showFirstButton
-                  showLastButton
-                />
-              </Stack>
-            )}
-          </>
-        )}
-      </Box>
-    </Container>
+                {listings.map((listing) => (
+                  <Grid
+                    item
+                    key={listing.id}
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    lg={3}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <AuctionCard
+                        id={listing.id}
+                        title={listing.title}
+                        imageUrl={listing.media[0]?.url}
+                        totalBids={listing._count.bids}
+                        highestBid={getHighestBid(listing.bids)}
+                        timeLeft={getTimeRemaining(listing.endsAt)}
+                      />
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+
+              {listings.length > 0 ? (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 2,
+                    mt: 6,
+                    pb: 2,
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontWeight: 500 }}
+                  >
+                    Showing {startIndex}-{endIndex} of {pagination.totalCount}{' '}
+                    items
+                  </Typography>
+                  <Pagination
+                    count={pagination.pageCount}
+                    page={pagination.currentPage}
+                    onChange={handlePageChange}
+                    color="primary"
+                    size="large"
+                    disabled={loading}
+                    showFirstButton
+                    showLastButton
+                    sx={{
+                      '& .MuiPaginationItem-root': {
+                        mx: 0.5,
+                      },
+                    }}
+                  />
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    py: 8,
+                  }}
+                >
+                  <Typography variant="h6" color="text.secondary">
+                    No items found.
+                  </Typography>
+                </Box>
+              )}
+            </>
+          )}
+        </Paper>
+      </Container>
+    </Box>
   );
 }

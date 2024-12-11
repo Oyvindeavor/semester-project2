@@ -5,6 +5,7 @@ import { Box } from '@mui/material';
 import AuctionDetails from '@/components/listing/AuctionDetails';
 import BidTable from '@/components/listing/BidTable';
 import PlaceBid from '@/components/listing/placeBid';
+import { BidsProvider } from '@/components/listing/BidsContext';
 
 export default async function ListingPage(props: {
   params: Promise<{ id: string }>;
@@ -20,28 +21,30 @@ export default async function ListingPage(props: {
   }
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        maxWidth: 1200,
-        margin: '0 auto',
-        padding: 4,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 4,
-      }}
-    >
+    <BidsProvider initialBids={listing.bids || []}>
       <Box
         sx={{
+          width: '100%',
+          maxWidth: 1200,
+          margin: '0 auto',
+          padding: 4,
           display: 'flex',
-          flexDirection: { xs: 'column', md: 'column' },
+          flexDirection: 'column',
           gap: 4,
         }}
       >
-        <AuctionDetails listing={listing} />
-        <PlaceBid listing={listing} />
-        <BidTable listing={listing} />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'column' },
+            gap: 4,
+          }}
+        >
+          <AuctionDetails listing={listing} />
+          <PlaceBid listing={listing} />
+          <BidTable listing={listing} />
+        </Box>
       </Box>
-    </Box>
+    </BidsProvider>
   );
 }

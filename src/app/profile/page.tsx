@@ -62,7 +62,6 @@ export default function Profile() {
     }
   }, [status]);
 
-  if (status === 'loading') return <div>Loading session...</div>;
   if (!session) return <div>You must be logged in to view this page.</div>;
   if (error) return <div>{error}</div>;
   if (!profile) return <div>Loading profile...</div>;
