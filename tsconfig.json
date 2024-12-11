@@ -14,7 +14,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    
+
     "plugins": [
       {
         "name": "next"
@@ -35,7 +35,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/profile/[name]/loading.js"
+    "src/app/profile/[name]/loading.js",
+    "src/app/theme/**/*"
   ],
   "exclude": ["node_modules"]
 }
