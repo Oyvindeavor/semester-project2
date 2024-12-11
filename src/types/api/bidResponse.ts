@@ -37,5 +37,6 @@ export interface Listing {
 }
 
 export interface ListingResponse {
+  id: string;
   listing: Listing;
 }
