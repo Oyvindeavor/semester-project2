@@ -26,7 +26,6 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
   const successMessage = searchParams.get('success');
   const [showMessage, setShowMessage] = useState(!!successMessage);
-  const { data: session, status, update } = useSession();
   const router = useRouter();
 
   useEffect(() => {
@@ -75,9 +74,6 @@ export default function LoginForm() {
       if (res?.error) {
         setError(res.error);
       } else {
-        const updatedSession = await update();
-        console.log('Updated session:', updatedSession);
-
         const callbackUrl = searchParams.get('callbackUrl') || '/';
         router.push(callbackUrl);
       }
