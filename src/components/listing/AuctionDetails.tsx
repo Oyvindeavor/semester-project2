@@ -18,6 +18,8 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DescriptionIcon from '@mui/icons-material/Description';
 import PersonIcon from '@mui/icons-material/Person';
 import { getTimeRemaining, formatDate } from '@/utils/dateFormattings';
+import Divider from '@mui/material/Divider';
+import Image from 'next/image';
 
 export interface auctionListing {
   id: string;
@@ -61,220 +63,264 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, width: '100%' }}>
-      <Grid container spacing={{ xs: 2, sm: 4 }}>
-        {/* Image Gallery - Mobile Optimized */}
+    <Paper
+      elevation={2}
+      sx={{
+        p: { xs: 2, sm: 3, md: 4 },
+        borderRadius: 3,
+        bgcolor: 'background.paper',
+        width: '100%',
+      }}
+    >
+      <Grid container spacing={4}>
+        {/* Image Gallery Section */}
         <Grid item xs={12} md={7}>
           <Card
+            elevation={0}
             sx={{
               position: 'relative',
               mb: 2,
-
-              '&::before': {
-                content: '""',
-                display: 'block',
-                paddingTop: { xs: '100%', sm: '75%' }, // 1:1 on mobile, 4:3 on tablet/desktop
-              },
+              borderRadius: 2,
+              bgcolor: 'grey.50',
+              aspectRatio: { xs: '1/1', sm: '4/3' },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            <CardMedia
-              component="img"
-              image={
-                listing.media[currentImageIndex]?.url ||
-                '/placeholder-image.jpg'
-              }
-              alt={listing.media[currentImageIndex]?.alt || listing.title}
+            <Box
               sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
+                position: 'relative',
                 width: '100%',
                 height: '100%',
-                objectFit: 'contain',
-                bgcolor: 'grey.100',
+                p: 2,
               }}
-            />
+            >
+              <Image
+                src={
+                  listing.media[currentImageIndex]?.url ||
+                  '/placeholder-image.jpg'
+                }
+                alt={listing.media[currentImageIndex]?.alt || listing.title}
+                fill={true}
+                style={{
+                  objectFit: 'cover',
+                }}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                priority={currentImageIndex === 0}
+              />
+            </Box>
+
             {listing.media.length > 1 && (
               <>
                 <IconButton
+                  onClick={handlePrevImage}
                   sx={{
                     position: 'absolute',
                     left: { xs: 8, sm: 16 },
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    bgcolor: 'rgba(255, 255, 255, 0.9)',
-                    '&:hover': { bgcolor: 'rgba(255, 255, 255, 1)' },
-                    width: { xs: 40, sm: 48 },
-                    height: { xs: 40, sm: 48 },
+                    bgcolor: 'white',
+                    boxShadow: 2,
+                    zIndex: 2,
+                    '&:hover': {
+                      bgcolor: 'white',
+                      transform: 'translateY(-50%) scale(1.1)',
+                    },
+                    transition: 'transform 0.2s',
                   }}
-                  onClick={handlePrevImage}
                 >
-                  <NavigateBeforeIcon sx={{ fontSize: { xs: 24, sm: 28 } }} />
+                  <NavigateBeforeIcon />
                 </IconButton>
                 <IconButton
+                  onClick={handleNextImage}
                   sx={{
                     position: 'absolute',
                     right: { xs: 8, sm: 16 },
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    bgcolor: 'rgba(255, 255, 255, 0.9)',
-                    '&:hover': { bgcolor: 'rgba(255, 255, 255, 1)' },
-                    width: { xs: 40, sm: 48 },
-                    height: { xs: 40, sm: 48 },
+                    bgcolor: 'white',
+                    boxShadow: 2,
+                    zIndex: 2,
+                    '&:hover': {
+                      bgcolor: 'white',
+                      transform: 'translateY(-50%) scale(1.1)',
+                    },
+                    transition: 'transform 0.2s',
                   }}
-                  onClick={handleNextImage}
                 >
-                  <NavigateNextIcon sx={{ fontSize: { xs: 24, sm: 28 } }} />
+                  <NavigateNextIcon />
                 </IconButton>
               </>
             )}
           </Card>
 
-          {/* Thumbnail Strip - Mobile Optimized */}
+          {/* Thumbnails */}
           {listing.media.length > 1 && (
             <Stack
               direction="row"
-              spacing={1}
+              spacing={2}
               sx={{
                 overflowX: 'auto',
-                pb: 1,
+                py: 2,
                 px: { xs: 1, sm: 0 },
                 '::-webkit-scrollbar': {
-                  height: '8px',
+                  height: 8,
+                  borderRadius: 2,
                 },
                 '::-webkit-scrollbar-track': {
-                  background: '#f1f1f1',
-                  borderRadius: '4px',
+                  background: 'grey.100',
+                  borderRadius: 2,
                 },
                 '::-webkit-scrollbar-thumb': {
-                  background: '#888',
-                  borderRadius: '4px',
-                },
-                '::-webkit-scrollbar-thumb:hover': {
-                  background: '#555',
+                  background: 'grey.400',
+                  borderRadius: 2,
+                  '&:hover': {
+                    background: 'grey.500',
+                  },
                 },
               }}
             >
               {listing.media.map((media, index) => (
                 <Card
                   key={index}
-                  sx={{
-                    width: { xs: 80, sm: 100 },
-                    height: { xs: 80, sm: 100 },
-                    cursor: 'pointer',
-                    border: currentImageIndex === index ? '2px solid' : 'none',
-                    borderColor: 'primary.main',
-                    flexShrink: 0,
-                    borderRadius: 1,
-                  }}
                   onClick={() => setCurrentImageIndex(index)}
+                  sx={{
+                    position: 'relative',
+                    width: { xs: 70, sm: 80 },
+                    height: { xs: 70, sm: 80 },
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                    borderRadius: 2,
+                    border:
+                      currentImageIndex === index
+                        ? '2px solid'
+                        : '2px solid transparent',
+                    borderColor:
+                      currentImageIndex === index
+                        ? 'primary.main'
+                        : 'transparent',
+                    transition: 'all 0.2s',
+                    overflow: 'hidden',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                    },
+                  }}
                 >
-                  <CardMedia
-                    component="img"
-                    height="100%"
-                    image={media.url || '/placeholder-image.jpg'}
-                    alt={media.alt || `Image ${index + 1}`}
-                    sx={{ objectFit: 'cover' }}
-                  />
+                  <Box
+                    sx={{ position: 'relative', width: '100%', height: '100%' }}
+                  >
+                    <Image
+                      src={media.url || '/placeholder-image.jpg'}
+                      alt={media.alt || `Image ${index + 1}`}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                      sizes="80px"
+                    />
+                  </Box>
                 </Card>
               ))}
             </Stack>
           )}
         </Grid>
 
-        {/* Auction Details - Mobile Optimized */}
+        {/* Details Section */}
         <Grid item xs={12} md={5}>
-          <Stack spacing={{ xs: 2, sm: 3 }}>
-            {/* Title and Seller Info */}
-            <Box>
-              <Stack
-                direction="row"
-                spacing={2}
-                alignItems="center"
-                sx={{ mb: 2 }}
+          <Stack spacing={3}>
+            {/* Seller Info */}
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Avatar
+                src={listing.seller?.avatar.url}
+                alt={listing.seller?.name}
+                sx={{
+                  width: 56,
+                  height: 56,
+                  border: '2px solid',
+                  borderColor: 'primary.light',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                }}
               >
-                <Avatar
-                  src={listing.seller?.avatar.url}
-                  alt={listing.seller?.avatar.alt}
-                  sx={{
-                    width: { xs: 40, sm: 48 },
-                    height: { xs: 40, sm: 48 },
-                    border: '2px solid white',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                  }}
-                >
-                  <PersonIcon />
-                </Avatar>
-                <Typography variant="subtitle1" color="text.secondary">
-                  {listing.seller?.name}
+                <PersonIcon />
+              </Avatar>
+              <Box>
+                <Typography variant="subtitle2" color="text.secondary">
+                  Listed by
                 </Typography>
-              </Stack>
+                <Typography variant="h6">
+                  {listing.seller?.name || 'Anonymous'}
+                </Typography>
+              </Box>
+            </Stack>
 
+            <Divider />
+
+            {/* Title and Tags */}
+            <Box>
               <Typography
                 variant="h4"
-                component="h1"
-                gutterBottom
                 sx={{
-                  fontSize: { xs: '1.5rem', sm: '2rem' },
+                  fontSize: { xs: '1.75rem', sm: '2rem' },
+                  fontWeight: 600,
+                  mb: 2,
                 }}
               >
                 {listing.title}
               </Typography>
 
               {listing.tags && listing.tags.length > 0 && (
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  sx={{
-                    mb: 2,
-                    flexWrap: 'wrap',
-                    gap: 1,
-                  }}
-                >
+                <Stack direction="row" spacing={1} flexWrap="wrap">
                   {listing.tags.map((tag) => (
-                    <Chip key={tag} label={tag} size="small" sx={{ mb: 1 }} />
+                    <Chip
+                      key={tag}
+                      label={tag}
+                      size="small"
+                      sx={{
+                        mb: 1,
+                        bgcolor: 'primary.50',
+                        color: 'primary.main',
+                        '&:hover': { bgcolor: 'primary.100' },
+                      }}
+                    />
                   ))}
                 </Stack>
               )}
             </Box>
 
-            <Box sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 1 }}>
-              <Stack
-                direction="row"
-                alignItems="center"
-                spacing={1}
-                sx={{ mb: 1 }}
-              >
-                <AccessTimeIcon color="action" />
-                <Typography variant="subtitle1" color="text.secondary">
-                  {getTimeRemaining(listing.endsAt)}
+            {/* Time Remaining */}
+            <Paper
+              elevation={0}
+              sx={{
+                bgcolor: 'warning.50',
+                p: 2,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'warning.100',
+              }}
+            >
+              <Stack spacing={1}>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <AccessTimeIcon color="warning" />
+                  <Typography variant="h6" color="warning.dark">
+                    {getTimeRemaining(listing.endsAt)}
+                  </Typography>
+                </Stack>
+                <Typography variant="body2" color="text.secondary">
+                  Auction ends: {formatDate(listing.endsAt)}
                 </Typography>
               </Stack>
+            </Paper>
 
-              <Typography
-                variant="caption"
-                display="block"
-                color="text.secondary"
-              >
-                Ends at: {formatDate(listing.endsAt)}
-              </Typography>
-            </Box>
-
+            {/* Description */}
             <Box>
-              <Stack
-                direction="row"
-                alignItems="center"
-                spacing={1}
-                sx={{ mb: 1 }}
-              >
-                <DescriptionIcon color="action" />
+              <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                <DescriptionIcon color="primary" />
                 <Typography variant="h6">Description</Typography>
               </Stack>
               <Typography
                 variant="body1"
                 sx={{
-                  ml: 4,
-                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                  color: 'text.secondary',
+                  lineHeight: 1.7,
                 }}
               >
                 {listing.description || 'No description available'}

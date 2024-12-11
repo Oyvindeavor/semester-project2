@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -7,24 +8,37 @@ import {
   TextField,
   Typography,
   CircularProgress,
+  Paper,
+  IconButton,
+  Stack,
+  Alert,
+  Fade,
 } from '@mui/material';
-import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Edit } from '@mui/icons-material';
+import { Edit as EditIcon, Close as CloseIcon } from '@mui/icons-material';
 
 const EditProfileModal = React.memo(function EditProfileModal() {
   const { data: session, status, update } = useSession();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleOpen = () => {
+    setOpen(true);
+    setError(null);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setError(null);
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(null);
 
     if (status !== 'authenticated') {
-      console.error('User not authenticated');
+      setError('You must be logged in to edit your profile');
       return;
     }
 
@@ -34,7 +48,7 @@ const EditProfileModal = React.memo(function EditProfileModal() {
     const bannerUrl = formData.get('banner') as string;
 
     if (!session) {
-      console.error('User not authenticated');
+      setError('Session not found');
       return;
     }
 
@@ -42,14 +56,17 @@ const EditProfileModal = React.memo(function EditProfileModal() {
       setLoading(true);
       const payload = {
         bio,
-        avatar: { url: avatarUrl, alt: '' },
-        banner: { url: bannerUrl, alt: '' },
+        avatar: { url: avatarUrl, alt: session.user?.name || 'User avatar' },
+        banner: { url: bannerUrl, alt: session.user?.name || 'User banner' },
       };
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/profile/edit`,
         {
           method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify(payload),
         }
       );
@@ -60,13 +77,11 @@ const EditProfileModal = React.memo(function EditProfileModal() {
         throw new Error(data.error || 'Failed to update profile');
       }
 
-      update();
-
+      await update();
       handleClose();
     } catch (error) {
-      console.error('Error updating profile:', error);
-      alert(
-        error instanceof Error ? error.message : 'Unexpected error occurred'
+      setError(
+        error instanceof Error ? error.message : 'Failed to update profile'
       );
     } finally {
       setLoading(false);
@@ -75,84 +90,145 @@ const EditProfileModal = React.memo(function EditProfileModal() {
 
   return (
     <>
-      <Button variant="contained" color="primary" onClick={handleOpen}>
-        <Edit />
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={handleOpen}
+        startIcon={<EditIcon />}
+        size="small"
+        sx={{
+          borderRadius: 1,
+          textTransform: 'none',
+          px: 2,
+        }}
+      >
         Edit Profile
       </Button>
+
       <Modal
         open={open}
         onClose={handleClose}
+        closeAfterTransition
         aria-labelledby="edit-profile-modal"
-        aria-describedby="modal-to-edit-user-profile"
       >
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            borderRadius: 2,
-          }}
-        >
-          <Typography variant="h5" component="h1" gutterBottom>
-            Edit Profile
-          </Typography>
-          <TextField
-            name="bio"
-            label="Bio"
-            type="text"
-            placeholder="Enter your bio"
-            required
-            fullWidth
-            defaultValue={session?.user.name || ''}
-          />
-          <TextField
-            name="avatar"
-            label="Avatar URL"
-            type="url"
-            placeholder="Enter avatar URL"
-            required
-            fullWidth
-            defaultValue={session?.user?.image || ''}
-          />
-          <TextField
-            name="banner"
-            label="Banner URL"
-            type="url"
-            placeholder="Enter banner URL"
-            required
-            fullWidth
-            defaultValue={session?.user.image || ''}
-          />
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleClose}
-              disabled={loading}
+        <Fade in={open}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: { xs: '90%', sm: 450 },
+              maxHeight: '90vh',
+              outline: 'none',
+            }}
+          >
+            <Paper
+              elevation={2}
+              sx={{
+                p: 3,
+                borderRadius: 2,
+                bgcolor: 'background.paper',
+              }}
             >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={loading}
-            >
-              {loading ? <CircularProgress size={24} /> : 'Save'}
-            </Button>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 3,
+                }}
+              >
+                <Typography variant="h6" component="h2">
+                  Edit Profile
+                </Typography>
+                <IconButton
+                  onClick={handleClose}
+                  size="small"
+                  aria-label="close"
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+
+              {error && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {error}
+                </Alert>
+              )}
+
+              <Box component="form" onSubmit={handleSubmit}>
+                <Stack spacing={2.5}>
+                  <TextField
+                    name="bio"
+                    label="Bio"
+                    multiline
+                    rows={3}
+                    placeholder="Tell us about yourself"
+                    defaultValue={session?.user.name || ''}
+                    fullWidth
+                    required
+                  />
+
+                  <TextField
+                    name="avatar"
+                    label="Avatar URL"
+                    type="url"
+                    placeholder="Enter your avatar image URL"
+                    defaultValue={session?.user?.image || ''}
+                    fullWidth
+                    required
+                    helperText="Enter a valid image URL for your profile picture"
+                  />
+
+                  <TextField
+                    name="banner"
+                    label="Banner URL"
+                    type="url"
+                    placeholder="Enter your banner image URL"
+                    defaultValue={session?.user?.image || ''}
+                    fullWidth
+                    required
+                    helperText="Enter a valid image URL for your profile banner"
+                  />
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      gap: 2,
+                      justifyContent: 'flex-end',
+                      mt: 2,
+                    }}
+                  >
+                    <Button
+                      variant="outlined"
+                      onClick={handleClose}
+                      disabled={loading}
+                      sx={{ textTransform: 'none' }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disabled={loading}
+                      sx={{
+                        textTransform: 'none',
+                        minWidth: 100,
+                      }}
+                    >
+                      {loading ? (
+                        <CircularProgress size={24} />
+                      ) : (
+                        'Save Changes'
+                      )}
+                    </Button>
+                  </Box>
+                </Stack>
+              </Box>
+            </Paper>
           </Box>
-        </Box>
+        </Fade>
       </Modal>
     </>
   );

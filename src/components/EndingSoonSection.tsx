@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Container, Typography, Grid } from '@mui/material';
+import { Box, Container, Typography, Grid, Divider } from '@mui/material';
 import AuctionCard from './AuctionCard';
 import { getTimeRemaining } from '@/utils/dateFormattings';
 import { getHighestBid } from '@/utils/getHighestBid';
@@ -64,9 +64,9 @@ const EndingSoonAuctionsSection = async () => {
   return (
     <Box
       sx={{
-        background:
-          'linear-gradient(180deg, rgba(255,245,245,0.3) 0%, rgba(255,255,255,0.5) 100%)',
         py: 6,
+        borderRadius: '12px 12px 0 0',
+        backgroundColor: 'background.paper',
       }}
     >
       <Container maxWidth="lg">
@@ -113,6 +113,7 @@ const EndingSoonAuctionsSection = async () => {
             Don&apos;t miss out on these auctions closing soon. Place your bids
             before time runs out!
           </Typography>
+          <Divider sx={{ mt: 3 }} />
         </Box>
 
         <Grid
@@ -155,6 +156,7 @@ const EndingSoonAuctionsSection = async () => {
             </Grid>
           ))}
         </Grid>
+        <Divider sx={{ my: 6 }} />
 
         {endingSoonAuctions.length === 0 && (
           <Box

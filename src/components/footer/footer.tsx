@@ -17,16 +17,16 @@ const Footer = () => {
     <Box
       component="footer"
       sx={{
-        backgroundColor: '#f4f4f4',
         py: 6,
         color: 'text.secondary',
+        background: '',
         mt: 'auto',
         position: 'relative',
         bottom: 0,
         width: '100%',
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{ backgroundColor: 'main.secondary' }}>
         <Grid container spacing={4}>
           {/* Company Info Column */}
           <Grid item xs={12} md={4}>

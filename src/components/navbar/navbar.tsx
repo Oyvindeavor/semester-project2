@@ -27,6 +27,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { useSession, signOut } from 'next-auth/react';
 
@@ -107,9 +108,14 @@ export default function NavBar() {
     >
       <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <StorefrontIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
+          <Image
+            src="/peregrineAuctions.svg"
+            width={30}
+            height={30}
+            alt="Peregrine Auctions Logo"
+          />
           <Typography variant="h6" color="primary">
-            Auction Hub
+            Peregrine Auctions
           </Typography>
         </Box>
         {session && (
@@ -209,7 +215,7 @@ export default function NavBar() {
       position="sticky"
       elevation={0}
       sx={{
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: theme.palette.background.paper,
         borderBottom: `1px solid ${theme.palette.divider}`,
       }}
     >
@@ -218,9 +224,14 @@ export default function NavBar() {
           {/* Logo */}
           <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <StorefrontIcon
-                sx={{ mr: 1, color: theme.palette.primary.main }}
-              />
+              <Box sx={{ mr: 1, color: theme.palette.primary.main }}>
+                <Image
+                  src="/peregrineAuctions.svg"
+                  width={40}
+                  height={40}
+                  alt="Peregrine Auctions Logo"
+                />
+              </Box>
               <Typography
                 variant="h6"
                 noWrap
@@ -230,7 +241,7 @@ export default function NavBar() {
                   display: { xs: 'none', sm: 'block' },
                 }}
               >
-                Auction Hub
+                Peregrine Auctions
               </Typography>
             </Box>
           </Link>

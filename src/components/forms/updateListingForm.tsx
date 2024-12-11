@@ -9,10 +9,13 @@ import {
   Typography,
   CircularProgress,
   Autocomplete,
-  AutocompleteChangeReason,
-  AutocompleteChangeDetails,
+  Paper,
+  Stack,
+  IconButton,
+  Alert,
+  Fade,
 } from '@mui/material';
-
+import { Edit as EditIcon, Close as CloseIcon } from '@mui/icons-material';
 import { fetchListingById } from '@/utils/api/fetchListingById';
 
 const predefinedTags = [
@@ -46,24 +49,27 @@ const UpdateListingForm = memo(function UpdateListingForm({
   });
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleOpen = () => {
     setOpen(true);
     fetchListingDetails();
   };
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setError(null);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setError(null);
   };
 
   const handleTagsChange = (
-    _event: React.SyntheticEvent<Element, Event>,
-    newValue: string[],
-    _reason: AutocompleteChangeReason,
-    _details?: AutocompleteChangeDetails<string>
+    _: React.ChangeEvent<unknown>,
+    newValue: string[]
   ) => {
     setFormData((prev) => ({ ...prev, tags: newValue }));
   };
@@ -72,10 +78,7 @@ const UpdateListingForm = memo(function UpdateListingForm({
     setInitializing(true);
     try {
       const listing = await fetchListingById(id);
-
-      if (!listing) {
-        throw new Error('Listing not found or failed to fetch listing details');
-      }
+      if (!listing) throw new Error('Listing not found');
 
       setFormData({
         title: listing.title,
@@ -85,7 +88,8 @@ const UpdateListingForm = memo(function UpdateListingForm({
         imageAlt: listing.media[0]?.alt || '',
       });
     } catch (error) {
-      console.error('Error fetching listing details:', error);
+      setError('Failed to fetch listing details');
+      console.error('Error:', error);
     } finally {
       setInitializing(false);
     }
@@ -94,6 +98,8 @@ const UpdateListingForm = memo(function UpdateListingForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/listing/edit/${id}`,
@@ -106,12 +112,14 @@ const UpdateListingForm = memo(function UpdateListingForm({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to edit listing');
+        throw new Error(errorData.message || 'Failed to update listing');
       }
 
       handleClose();
     } catch (error) {
-      console.error('Error updating listing:', error);
+      setError(
+        error instanceof Error ? error.message : 'Failed to update listing'
+      );
     } finally {
       setLoading(false);
     }
@@ -119,114 +127,163 @@ const UpdateListingForm = memo(function UpdateListingForm({
 
   return (
     <>
-      <Button variant="contained" color="primary" onClick={handleOpen}>
-        Update Listing
-      </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="update-listing-modal"
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={handleOpen}
+        startIcon={<EditIcon />}
+        sx={{
+          borderRadius: 1,
+          textTransform: 'none',
+        }}
       >
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-          }}
-        >
-          <Typography variant="h6" component="h2" gutterBottom>
-            Update Listing
-          </Typography>
+        Edit
+      </Button>
 
-          {initializing ? (
-            <CircularProgress />
-          ) : (
-            <>
-              <TextField
-                label="Title"
-                name="title"
-                fullWidth
-                margin="normal"
-                value={formData.title}
-                onChange={handleInputChange}
-                required
-              />
-
-              <TextField
-                label="Description"
-                name="description"
-                multiline
-                rows={4}
-                fullWidth
-                margin="normal"
-                value={formData.description}
-                onChange={handleInputChange}
-                required
-              />
-
-              <Autocomplete
-                multiple
-                options={predefinedTags}
-                getOptionLabel={(option) => option}
-                value={formData.tags}
-                onChange={handleTagsChange}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Tags"
-                    placeholder="Select or add tags"
-                    margin="normal"
-                    fullWidth
-                  />
-                )}
-                freeSolo
-              />
-
-              <TextField
-                label="Image URL"
-                name="imageUrl"
-                fullWidth
-                margin="normal"
-                value={formData.imageUrl}
-                onChange={handleInputChange}
-                placeholder="Enter the image URL"
-              />
-
-              <TextField
-                label="Image Alt Text"
-                name="imageAlt"
-                fullWidth
-                margin="normal"
-                value={formData.imageAlt}
-                onChange={handleInputChange}
-                placeholder="Enter alternative text for the image"
-              />
-            </>
-          )}
-
-          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
-            <Button variant="outlined" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={loading || initializing}
+      <Modal open={open} onClose={handleClose} closeAfterTransition>
+        <Fade in={open}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: { xs: '90%', sm: 500 },
+              maxHeight: '90vh',
+              overflow: 'auto',
+            }}
+          >
+            <Paper
+              elevation={2}
+              sx={{
+                p: 3,
+                borderRadius: 2,
+                bgcolor: 'background.paper',
+              }}
             >
-              {loading ? <CircularProgress size={24} /> : 'Update'}
-            </Button>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 2,
+                }}
+              >
+                <Typography variant="h6" component="h2">
+                  Update Listing
+                </Typography>
+                <IconButton onClick={handleClose} size="small">
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+
+              {error && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {error}
+                </Alert>
+              )}
+
+              {initializing ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <Box component="form" onSubmit={handleSubmit}>
+                  <Stack spacing={2}>
+                    <TextField
+                      label="Title"
+                      name="title"
+                      fullWidth
+                      value={formData.title}
+                      onChange={handleInputChange}
+                      required
+                    />
+
+                    <TextField
+                      label="Description"
+                      name="description"
+                      multiline
+                      rows={4}
+                      fullWidth
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      required
+                    />
+
+                    <Autocomplete
+                      multiple
+                      options={predefinedTags}
+                      value={formData.tags}
+                      onChange={handleTagsChange}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Tags"
+                          placeholder="Select or add tags"
+                        />
+                      )}
+                      freeSolo
+                      ChipProps={{
+                        sx: {
+                          bgcolor: 'primary.50',
+                          '& .MuiChip-deleteIcon': {
+                            color: 'primary.main',
+                          },
+                        },
+                      }}
+                    />
+
+                    <TextField
+                      label="Image URL"
+                      name="imageUrl"
+                      fullWidth
+                      value={formData.imageUrl}
+                      onChange={handleInputChange}
+                      placeholder="Enter the image URL"
+                    />
+
+                    <TextField
+                      label="Image Alt Text"
+                      name="imageAlt"
+                      fullWidth
+                      value={formData.imageAlt}
+                      onChange={handleInputChange}
+                      placeholder="Enter alternative text for the image"
+                    />
+
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        gap: 2,
+                        justifyContent: 'flex-end',
+                        mt: 2,
+                      }}
+                    >
+                      <Button
+                        variant="outlined"
+                        onClick={handleClose}
+                        sx={{ textTransform: 'none' }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={loading}
+                        sx={{
+                          textTransform: 'none',
+                          minWidth: 100,
+                        }}
+                      >
+                        {loading ? <CircularProgress size={24} /> : 'Update'}
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Box>
+              )}
+            </Paper>
           </Box>
-        </Box>
+        </Fade>
       </Modal>
     </>
   );

@@ -31,13 +31,13 @@ export default function CreateAuctionForm() {
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
-    tags: string[]; // Change never[] to string[]
+    tags: string[];
     media: { url: string; alt: string }[];
     endsAt: dayjs.Dayjs;
   }>({
     title: '',
     description: '',
-    tags: [], // Ensure this is an array of strings
+    tags: [],
     media: [{ url: '', alt: '' }],
     endsAt: dayjs(),
   });

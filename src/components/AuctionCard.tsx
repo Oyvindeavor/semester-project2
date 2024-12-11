@@ -22,16 +22,29 @@ const AuctionCard = ({
   id = 'id',
 }) => {
   return (
-    <Link href={`/listing/${id}`} style={{ textDecoration: 'none' }}>
+    <Link
+      href={`/listing/${id}`}
+      style={{ textDecoration: 'none', width: '100%' }}
+    >
       <Card
         sx={{
-          width: 250,
-          height: 420,
+          width: {
+            xs: '100%',
+            sm: 260,
+            md: 260,
+            lg: 250,
+          },
+          height: {
+            xs: 480,
+            sm: 440,
+            md: 420,
+            lg: 400,
+          },
           borderRadius: 3,
           boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
           transition: 'all 0.3s ease-in-out',
           position: 'relative',
-          backgroundColor: 'white',
+          mx: 'auto',
           '&:hover': {
             transform: 'translateY(-8px)',
             boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
@@ -41,9 +54,14 @@ const AuctionCard = ({
         <Box
           sx={{
             position: 'relative',
-            height: 200,
+            height: {
+              xs: 240,
+              sm: 220,
+              md: 200,
+              lg: 190,
+            },
             borderBottom: '1px solid rgba(0,0,0,0.05)',
-            backgroundColor: 'grey.100', // Loading state background
+            backgroundColor: 'grey.100',
           }}
         >
           <Image
@@ -53,17 +71,23 @@ const AuctionCard = ({
             style={{
               objectFit: 'cover',
             }}
-            sizes="300px"
+            sizes="(max-width: 600px) 100vw, (max-width: 960px) 260px, 250px"
             priority={true}
             quality={75}
           />
         </Box>
         <CardContent
           sx={{
-            height: 220,
+            height: {
+              xs: 240,
+              sm: 220,
+              md: 220,
+              lg: 210,
+            },
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
+            p: { xs: 3, sm: 2 },
           }}
         >
           <Typography
@@ -72,7 +96,11 @@ const AuctionCard = ({
             component="div"
             sx={{
               fontWeight: 600,
-              fontSize: '1.1rem',
+              fontSize: {
+                xs: '1.25rem',
+                sm: '1.1rem',
+                lg: '1rem',
+              },
               lineHeight: 1.3,
               height: '2.6rem',
               overflow: 'hidden',
@@ -96,8 +124,7 @@ const AuctionCard = ({
                 label={`${totalBids} Bids`}
                 icon={<Gavel sx={{ fontSize: '1.2rem' }} />}
                 sx={{
-                  backgroundColor: 'rgba(25, 118, 210, 0.08)',
-                  '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.12)' },
+                  fontSize: { xs: '1rem', sm: '0.875rem' },
                 }}
               />
               <Chip
@@ -110,6 +137,7 @@ const AuctionCard = ({
                 color="success"
                 variant="outlined"
                 sx={{
+                  fontSize: { xs: '1rem', sm: '0.875rem' },
                   fontWeight: 600,
                   '&:hover': { backgroundColor: 'rgba(76, 175, 80, 0.08)' },
                 }}
@@ -121,17 +149,23 @@ const AuctionCard = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1,
-                p: 1,
+                p: { xs: 1.5, sm: 1 },
                 backgroundColor: 'rgba(255, 152, 0, 0.08)',
                 borderRadius: 2,
               }}
             >
-              <Timer color="warning" sx={{ fontSize: '1.2rem' }} />
+              <Timer
+                color="warning"
+                sx={{
+                  fontSize: { xs: '1.4rem', sm: '1.2rem' },
+                }}
+              />
               <Typography
                 variant="body2"
                 sx={{
                   color: 'warning.dark',
                   fontWeight: 500,
+                  fontSize: { xs: '1rem', sm: '0.875rem' },
                 }}
               >
                 {timeLeft}
