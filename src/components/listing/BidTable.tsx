@@ -1,5 +1,4 @@
 'use client';
-
 import React from 'react';
 import {
   Box,
@@ -24,7 +23,6 @@ interface CustomTableProps {
 const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
   const { data: session } = useSession();
   const { bids } = useBids();
-
   const sortedBids = [...(bids || [])].sort((a, b) => b.amount - a.amount);
 
   if (!session) {
@@ -75,7 +73,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
             {sortedBids.length > 0 ? (
               sortedBids.map((bid) => (
                 <TableRow
-                  key={bid.id}
+                  key={`bid-${bid.id}`}
                   sx={{
                     '&:last-child td, &:last-child th': { border: 0 },
                     transition: 'background-color 0.3s',
