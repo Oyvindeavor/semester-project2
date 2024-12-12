@@ -37,9 +37,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <Box>
-      {/* Banner Image */}
+    <Box component="header" role="banner" aria-label="Profile header">
       <Box
+        role="img"
+        aria-label="Profile banner"
         sx={{
           height: { xs: 200, sm: 250, md: 300 },
           width: '100%',
@@ -51,8 +52,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           position: 'relative',
         }}
       >
-        {/* Gradient Overlay */}
         <Box
+          aria-hidden="true"
           sx={{
             position: 'absolute',
             top: 0,
@@ -85,10 +86,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               gap: { xs: 2, sm: 3 },
             }}
           >
-            {/* Avatar Section */}
             <Box sx={{ position: 'relative' }}>
               <Avatar
-                alt={username}
+                alt={`${username}'s profile picture`}
                 src={avatarUrl}
                 sx={{
                   width: { xs: 120, sm: 140, md: 160 },
@@ -97,16 +97,17 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                   boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
                 }}
               />
-              {/* Edit Button for mobile */}
               {isMobile && (
-                <Box sx={{ position: 'absolute', right: -16, top: -8 }}>
+                <Box sx={{ position: 'absolute', right: -140, top: -8 }}>
                   <EditProfileModal />
                 </Box>
               )}
             </Box>
 
-            {/* Profile Details */}
-            <Box sx={{ flex: 1, textAlign: { xs: 'center', sm: 'left' } }}>
+            <Box
+              sx={{ flex: 1, textAlign: { xs: 'center', sm: 'left' } }}
+              component="article"
+            >
               <Box
                 sx={{
                   display: 'flex',
@@ -115,15 +116,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                   mb: 2,
                 }}
               >
-                <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight={700}>
+                <Typography
+                  variant={isMobile ? 'h5' : 'h4'}
+                  component="h1"
+                  fontWeight={700}
+                >
                   {username}
                 </Typography>
-                {/* Edit Button for tablet/desktop */}
                 {!isMobile && <EditProfileModal />}
               </Box>
 
               <Typography
                 variant="body1"
+                paragraph
                 sx={{
                   mb: 3,
                   color: 'text.secondary',
@@ -133,38 +138,58 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 {bio}
               </Typography>
 
-              {/* Profile Stats */}
               <Stack
                 direction="row"
                 spacing={{ xs: 3, sm: 4 }}
                 sx={{
                   justifyContent: { xs: 'center', sm: 'flex-start' },
                 }}
+                component="dl"
               >
-                <Box>
-                  <Typography variant="h6" fontWeight={600}>
+                <Box component="div">
+                  <Typography component="h2" variant="h6" fontWeight={600}>
                     {totalAuctions}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    component="dd"
+                  >
                     Auctions
                   </Typography>
                 </Box>
-                <Box>
-                  <Typography variant="h6" fontWeight={600}>
+                <Box component="div">
+                  <Typography component="h2" variant="h6" fontWeight={600}>
                     {totalBids}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    component="dd"
+                  >
                     Bids
                   </Typography>
                 </Box>
-                <Box>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Typography variant="h6" fontWeight={600}>
+                <Box component="div">
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={1}
+                    component="dt"
+                  >
+                    <Typography component="h2" variant="h6" fontWeight={600}>
                       {credits}
                     </Typography>
-                    <MonetizationOnIcon sx={{ color: 'warning.main' }} />
+                    <MonetizationOnIcon
+                      sx={{ color: 'warning.main' }}
+                      aria-hidden="true"
+                    />
                   </Stack>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    component="dd"
+                  >
                     Credits
                   </Typography>
                 </Box>

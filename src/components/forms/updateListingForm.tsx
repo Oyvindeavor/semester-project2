@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useEffect, useRef } from 'react';
 import {
   Box,
   Button,
@@ -50,10 +50,26 @@ const UpdateListingForm = memo(function UpdateListingForm({
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
 
-  const handleOpen = () => {
+  useEffect(() => {
+    if (error) {
+      errorRef.current?.focus();
+    }
+  }, [error]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open) handleClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [open]);
+
+  const handleOpen = async () => {
     setOpen(true);
-    fetchListingDetails();
+    await fetchListingDetails();
   };
 
   const handleClose = () => {
@@ -89,7 +105,6 @@ const UpdateListingForm = memo(function UpdateListingForm({
       });
     } catch (error) {
       setError('Failed to fetch listing details');
-      console.error('Error:', error);
     } finally {
       setInitializing(false);
     }
@@ -131,18 +146,26 @@ const UpdateListingForm = memo(function UpdateListingForm({
         variant="outlined"
         color="primary"
         onClick={handleOpen}
-        startIcon={<EditIcon />}
-        sx={{
-          borderRadius: 1,
-          textTransform: 'none',
-        }}
+        startIcon={<EditIcon aria-hidden="true" />}
+        aria-label="Edit listing"
+        sx={{ borderRadius: 1, textTransform: 'none' }}
       >
         Edit
       </Button>
 
-      <Modal open={open} onClose={handleClose} closeAfterTransition>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        aria-labelledby="edit-listing-title"
+        aria-describedby="edit-listing-description"
+      >
         <Fade in={open}>
           <Box
+            ref={modalRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
             sx={{
               position: 'absolute',
               top: '50%',
@@ -169,26 +192,42 @@ const UpdateListingForm = memo(function UpdateListingForm({
                   mb: 2,
                 }}
               >
-                <Typography variant="h6" component="h2">
+                <Typography id="edit-listing-title" variant="h6" component="h2">
                   Update Listing
                 </Typography>
-                <IconButton onClick={handleClose} size="small">
-                  <CloseIcon />
+                <IconButton
+                  onClick={handleClose}
+                  size="small"
+                  aria-label="Close modal"
+                >
+                  <CloseIcon aria-hidden="true" />
                 </IconButton>
               </Box>
 
               {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
+                <Alert
+                  severity="error"
+                  ref={errorRef}
+                  tabIndex={-1}
+                  sx={{ mb: 2 }}
+                >
                   {error}
                 </Alert>
               )}
 
               {initializing ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-                  <CircularProgress />
+                <Box
+                  sx={{ display: 'flex', justifyContent: 'center', p: 4 }}
+                  aria-label="Loading listing details"
+                >
+                  <CircularProgress aria-hidden="true" />
                 </Box>
               ) : (
-                <Box component="form" onSubmit={handleSubmit}>
+                <Box
+                  component="form"
+                  onSubmit={handleSubmit}
+                  aria-label="Update listing form"
+                >
                   <Stack spacing={2}>
                     <TextField
                       label="Title"
@@ -197,6 +236,10 @@ const UpdateListingForm = memo(function UpdateListingForm({
                       value={formData.title}
                       onChange={handleInputChange}
                       required
+                      inputProps={{
+                        'aria-label': 'Listing title',
+                        'aria-required': 'true',
+                      }}
                     />
 
                     <TextField
@@ -208,6 +251,10 @@ const UpdateListingForm = memo(function UpdateListingForm({
                       value={formData.description}
                       onChange={handleInputChange}
                       required
+                      inputProps={{
+                        'aria-label': 'Listing description',
+                        'aria-required': 'true',
+                      }}
                     />
 
                     <Autocomplete
@@ -220,6 +267,7 @@ const UpdateListingForm = memo(function UpdateListingForm({
                           {...params}
                           label="Tags"
                           placeholder="Select or add tags"
+                          aria-label="Listing tags"
                         />
                       )}
                       freeSolo
@@ -240,6 +288,9 @@ const UpdateListingForm = memo(function UpdateListingForm({
                       value={formData.imageUrl}
                       onChange={handleInputChange}
                       placeholder="Enter the image URL"
+                      inputProps={{
+                        'aria-label': 'Image URL',
+                      }}
                     />
 
                     <TextField
@@ -249,6 +300,9 @@ const UpdateListingForm = memo(function UpdateListingForm({
                       value={formData.imageAlt}
                       onChange={handleInputChange}
                       placeholder="Enter alternative text for the image"
+                      inputProps={{
+                        'aria-label': 'Image description',
+                      }}
                     />
 
                     <Box
@@ -262,6 +316,8 @@ const UpdateListingForm = memo(function UpdateListingForm({
                       <Button
                         variant="outlined"
                         onClick={handleClose}
+                        disabled={loading}
+                        aria-label="Cancel update"
                         sx={{ textTransform: 'none' }}
                       >
                         Cancel
@@ -270,12 +326,20 @@ const UpdateListingForm = memo(function UpdateListingForm({
                         type="submit"
                         variant="contained"
                         disabled={loading}
+                        aria-busy={loading}
                         sx={{
                           textTransform: 'none',
                           minWidth: 100,
                         }}
                       >
-                        {loading ? <CircularProgress size={24} /> : 'Update'}
+                        {loading ? (
+                          <>
+                            <CircularProgress size={24} aria-hidden="true" />
+                            <span className="sr-only">Updating...</span>
+                          </>
+                        ) : (
+                          'Update'
+                        )}
                       </Button>
                     </Box>
                   </Stack>

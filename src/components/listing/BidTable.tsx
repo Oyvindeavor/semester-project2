@@ -29,6 +29,8 @@ const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
     return (
       <Paper
         elevation={0}
+        component="section"
+        aria-label="Bids section - Sign in required"
         sx={{
           p: 3,
           borderRadius: 2,
@@ -36,7 +38,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
           borderColor: 'divider',
         }}
       >
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" component="h2" gutterBottom>
           Bids
         </Typography>
         <Typography variant="body1" color="text.secondary">
@@ -49,6 +51,8 @@ const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
   return (
     <Paper
       elevation={0}
+      component="section"
+      aria-label="Bids history"
       sx={{
         p: 3,
         borderRadius: 2,
@@ -57,16 +61,27 @@ const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
         mb: 4,
       }}
     >
-      <Typography variant="h6" gutterBottom>
+      <Typography
+        variant="h6"
+        component="h2"
+        gutterBottom
+        id="bids-table-title"
+      >
         Bids
       </Typography>
       <TableContainer>
-        <Table size="medium">
+        <Table size="medium" aria-labelledby="bids-table-title" role="table">
           <TableHead>
             <TableRow>
-              <TableCell>Bidder</TableCell>
-              <TableCell align="right">Bid Amount</TableCell>
-              <TableCell align="right">Time</TableCell>
+              <TableCell role="columnheader" scope="col">
+                Bidder
+              </TableCell>
+              <TableCell role="columnheader" scope="col" align="right">
+                Bid Amount
+              </TableCell>
+              <TableCell role="columnheader" scope="col" align="right">
+                Time
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -80,11 +95,16 @@ const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
                     '&:hover': { bgcolor: 'action.hover' },
                   }}
                 >
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <TableCell role="cell">
+                    <Box
+                      sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
+                      component="div"
+                      aria-label={`Bid by ${bid.bidder.name || 'Unknown'}`}
+                    >
                       <Avatar
                         src={bid.bidder.avatar.url}
-                        alt={bid.bidder.name || 'Unknown'}
+                        alt=""
+                        aria-hidden="true"
                         sx={{
                           width: 32,
                           height: 32,
@@ -97,21 +117,24 @@ const CustomTable: React.FC<CustomTableProps> = ({ listing }) => {
                       </Typography>
                     </Box>
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell role="cell" align="right">
                     <Typography variant="body2" fontWeight="600">
                       ${bid.amount.toFixed(2)}
                     </Typography>
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell role="cell" align="right">
                     <Typography variant="body2" color="text.secondary">
-                      {new Date(bid.created).toLocaleString()}
+                      {new Date(bid.created).toLocaleString(undefined, {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
                     </Typography>
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={3} align="center">
+                <TableCell colSpan={3} align="center" role="cell">
                   <Typography color="text.secondary">
                     No bids available yet
                   </Typography>

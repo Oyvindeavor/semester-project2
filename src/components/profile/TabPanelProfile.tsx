@@ -19,6 +19,7 @@ import UpdateListingForm from '../forms/updateListingForm';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Listing } from '@/types/api/listing';
+import Container from '@mui/material/Container';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -33,10 +34,11 @@ function TabPanel({ children, value, index, ...other }: TabPanelProps) {
       hidden={value !== index}
       id={`auction-tabpanel-${index}`}
       aria-labelledby={`auction-tab-${index}`}
+      tabIndex={0}
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>{children}</Box>
+        <Box sx={{ p: { xs: 3, sm: 2, md: 2 } }}>{children}</Box>
       )}
     </div>
   );
@@ -64,8 +66,10 @@ export default function AuctionTabs({
   const renderEmptyState = (message: string) => (
     <Paper
       elevation={0}
+      role="status"
+      aria-label="No auctions found"
       sx={{
-        p: 4,
+        p: 5,
         textAlign: 'center',
         borderRadius: 2,
         bgcolor: 'background.paper',
@@ -73,7 +77,12 @@ export default function AuctionTabs({
         borderColor: 'divider',
       }}
     >
-      <Typography variant="h6" color="text.secondary" gutterBottom>
+      <Typography
+        component="h2"
+        variant="h6"
+        color="text.secondary"
+        gutterBottom
+      >
         No Auctions Found
       </Typography>
       <Typography variant="body2" color="text.secondary">
@@ -86,6 +95,8 @@ export default function AuctionTabs({
     <Grid item xs={12} sm={6} md={4} lg={3} key={listing.id}>
       <Card
         elevation={0}
+        component="article"
+        aria-labelledby={`listing-title-${listing.id}`}
         sx={{
           height: '100%',
           display: 'flex',
@@ -98,16 +109,21 @@ export default function AuctionTabs({
             transform: 'translateY(-4px)',
             boxShadow: 2,
           },
+          '&:focus-within': {
+            outline: '2px solid currentColor',
+            outlineOffset: '2px',
+          },
         }}
       >
         <Link
           href={`/listing/${listing.id}`}
           style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}
+          aria-label={`View details for ${listing.title}`}
         >
           <Box sx={{ position: 'relative', paddingTop: '75%' }}>
             <Image
               src={listing.media[0]?.url || '/default-listing.jpg'}
-              alt={listing.media[0]?.alt || listing.title}
+              alt={`Image of ${listing.title}`}
               fill
               style={{ objectFit: 'cover' }}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -116,6 +132,8 @@ export default function AuctionTabs({
           <CardContent>
             <Typography
               variant="h6"
+              component="h2"
+              id={`listing-title-${listing.id}`}
               sx={{
                 fontSize: '1.1rem',
                 fontWeight: 600,
@@ -129,12 +147,20 @@ export default function AuctionTabs({
             >
               {listing.title}
             </Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 1 }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              flexWrap="wrap"
+              sx={{ gap: 1 }}
+              role="list"
+              aria-label="Tags"
+            >
               {listing.tags?.slice(0, 3).map((tag) => (
                 <Chip
                   key={tag}
                   label={tag}
                   size="small"
+                  role="listitem"
                   sx={{
                     bgcolor: 'primary.50',
                     color: 'primary.main',
@@ -155,9 +181,14 @@ export default function AuctionTabs({
               onClick={() => onDelete(listing.id)}
               disabled={deleting === listing.id}
               fullWidth
+              aria-busy={deleting === listing.id}
               sx={{
                 borderRadius: 1,
                 textTransform: 'none',
+                '&:focus': {
+                  outline: '2px solid currentColor',
+                  outlineOffset: '2px',
+                },
               }}
             >
               {deleting === listing.id ? 'Deleting...' : 'Delete'}
@@ -170,66 +201,89 @@ export default function AuctionTabs({
   );
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        width: '100%',
-        borderRadius: 3,
-        border: '1px solid',
-        borderColor: 'divider',
-        overflow: 'hidden',
-      }}
-    >
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="auction tabs"
-          variant="fullWidth"
-          sx={{
-            '& .MuiTab-root': {
-              textTransform: 'none',
-              fontSize: '1rem',
-              fontWeight: 500,
-            },
-          }}
-        >
-          <Tab
-            label={`Active Auctions (${activeListings.length})`}
-            id="auction-tab-0"
-          />
-          <Tab
-            label={`Won Auctions (${wonListings.length})`}
-            id="auction-tab-1"
-          />
-        </Tabs>
-      </Box>
+    <Container maxWidth="lg">
+      <Paper
+        elevation={0}
+        component="section"
+        aria-label="Auction listings"
+        sx={{
+          width: 'sm',
+          borderRadius: 3,
+          border: '1px solid',
+          borderColor: 'divider',
+          overflow: 'hidden',
+          margin: 'auto',
+        }}
+      >
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="Auction categories"
+            variant="fullWidth"
+            sx={{
+              '& .MuiTab-root': {
+                textTransform: 'none',
+                fontSize: '1rem',
+                fontWeight: 500,
+                '&:focus': {
+                  outline: '2px solid currentColor',
+                  outlineOffset: '-2px',
+                },
+              },
+            }}
+          >
+            <Tab
+              label={`Active Auctions (${activeListings.length})`}
+              id="auction-tab-0"
+              aria-controls="auction-tabpanel-0"
+            />
+            <Tab
+              label={`Won Auctions (${wonListings.length})`}
+              id="auction-tab-1"
+              aria-controls="auction-tabpanel-1"
+            />
+          </Tabs>
+        </Box>
 
-      <TabPanel value={value} index={0}>
-        <Grid container spacing={3} key="active-listings-grid">
-          {activeListings.length > 0 ? (
-            activeListings.map((listing) => renderListing(listing, true))
-          ) : (
-            <Grid item xs={12} key="active-empty">
-              {renderEmptyState(
-                "You don't have any active auctions at the moment."
-              )}
-            </Grid>
-          )}
-        </Grid>
-      </TabPanel>
+        <TabPanel value={value} index={0}>
+          <Grid
+            container
+            spacing={3}
+            key="active-listings-grid"
+            role="list"
+            aria-label="Active auction listings"
+          >
+            {activeListings.length > 0 ? (
+              activeListings.map((listing) => renderListing(listing, true))
+            ) : (
+              <Grid item xs={12} key="active-empty">
+                {renderEmptyState(
+                  "You don't have any active auctions at the moment."
+                )}
+              </Grid>
+            )}
+          </Grid>
+        </TabPanel>
 
-      <TabPanel value={value} index={1}>
-        <Grid container spacing={3} key="won-listings-grid">
-          {wonListings.length > 0 ? (
-            wonListings.map((listing) => renderListing(listing, false))
-          ) : (
-            <Grid item xs={12} key="won-empty">
-              {renderEmptyState("You haven't won any auctions yet.")}
-            </Grid>
-          )}
-        </Grid>
-      </TabPanel>
-    </Paper>
+        <TabPanel value={value} index={1}>
+          <Grid
+            container
+            spacing={3}
+            key="won-listings-grid"
+            role="list"
+            aria-label="Won auction listings"
+          >
+            {wonListings.length > 0 ? (
+              wonListings.map((listing) => renderListing(listing, false))
+            ) : (
+              <Grid item xs={12} key="won-empty">
+                {renderEmptyState("You haven't won any auctions yet.")}
+              </Grid>
+            )}
+          </Grid>
+        </TabPanel>
+      </Paper>
+    </Container>
   );
 }

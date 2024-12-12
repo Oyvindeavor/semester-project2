@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TextField,
   Button,
@@ -41,13 +41,20 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
       return 'Please enter a valid bid amount';
     }
     if (amount <= currentHighestBid) {
-      return `Bid must be higher than the current highest bid (${currentHighestBid})`;
+      return `Bid must be higher than the current highest bid ($${currentHighestBid})`;
     }
     if (amount < minimumBid) {
-      return `Minimum bid amount is ${minimumBid}`;
+      return `Minimum bid amount is $${minimumBid}`;
     }
     return null;
   };
+
+  useEffect(() => {
+    if (error) {
+      const errorElement = document.getElementById('bid-error');
+      errorElement?.focus();
+    }
+  }, [error]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -76,6 +83,10 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
         const newBid = await bidOnListing(listing.id, bidAmount);
         setIsSuccess(true);
         setBidAmount('');
+
+        // Announce success to screen readers
+        const successMessage = document.getElementById('bid-success');
+        successMessage?.focus();
 
         addBid({
           id: newBid.id,
@@ -108,7 +119,9 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
   if (!session) {
     return (
       <Paper
+        component="section"
         elevation={0}
+        aria-labelledby="sign-in-title"
         sx={{
           p: 3,
           bgcolor: 'primary.50',
@@ -118,8 +131,16 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
         }}
       >
         <Stack spacing={2} alignItems="center">
-          <Lock sx={{ fontSize: 40, color: 'primary.main' }} />
-          <Typography variant="h6" align="center" color="primary.main">
+          <Lock
+            sx={{ fontSize: 40, color: 'primary.main' }}
+            aria-hidden="true"
+          />
+          <Typography
+            id="sign-in-title"
+            variant="h6"
+            align="center"
+            color="primary.main"
+          >
             Sign in to Place a Bid
           </Typography>
           <Button
@@ -127,6 +148,7 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
             size="large"
             fullWidth
             href="/api/auth/signin"
+            aria-label="Sign in to place a bid"
             sx={{
               py: 1.5,
               textTransform: 'none',
@@ -142,7 +164,14 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
 
   return (
     <Paper
+      component="form"
       elevation={0}
+      role="form"
+      aria-labelledby="bid-form-title"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handlePlaceBid();
+      }}
       sx={{
         p: 3,
         borderRadius: 2,
@@ -152,18 +181,28 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
       }}
     >
       <Stack spacing={2}>
-        <Typography variant="h6" gutterBottom>
+        <Typography
+          id="bid-form-title"
+          variant="h6"
+          component="h2"
+          gutterBottom
+        >
           Place Your Bid
         </Typography>
 
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity="error" id="bid-error" tabIndex={-1} sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
 
         {isSuccess && (
-          <Alert severity="success" sx={{ mb: 2 }}>
+          <Alert
+            severity="success"
+            id="bid-success"
+            tabIndex={-1}
+            sx={{ mb: 2 }}
+          >
             Bid placed successfully!
           </Alert>
         )}
@@ -177,10 +216,17 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
           fullWidth
           error={!!error}
           disabled={isSubmitting}
+          required
+          inputProps={{
+            'aria-label': 'Enter bid amount',
+            'aria-describedby': 'minimum-bid-help',
+            min: minimumBid,
+            step: '0.01',
+          }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <MonetizationOn color="action" />
+                <MonetizationOn color="action" aria-hidden="true" />
               </InputAdornment>
             ),
           }}
@@ -193,16 +239,24 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
         />
 
         {currentHighestBid > 0 && (
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            id="minimum-bid-help"
+          >
             Current highest bid: ${currentHighestBid.toFixed(2)}
+            {minimumBid > currentHighestBid &&
+              ` - Minimum bid required: $${minimumBid.toFixed(2)}`}
           </Typography>
         )}
 
         <Button
+          type="submit"
           variant="contained"
           size="large"
           onClick={handlePlaceBid}
           disabled={isSubmitting || bidAmount === '' || !!error}
+          aria-busy={isSubmitting}
           sx={{
             py: 1.5,
             textTransform: 'none',
@@ -210,10 +264,13 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
           }}
         >
           {isSubmitting ? (
-            <CircularProgress size={24} color="inherit" />
+            <CircularProgress size={24} color="inherit" aria-hidden="true" />
           ) : (
-            'Place Bid'
+            ''
           )}
+          <span className="sr-only">
+            {isSubmitting ? 'Placing bid...' : 'Place bid'}
+          </span>
         </Button>
       </Stack>
     </Paper>

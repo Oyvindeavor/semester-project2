@@ -97,11 +97,17 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
     '&:hover .MuiOutlinedInput-notchedOutline': {
       borderColor: 'primary.main',
     },
+    '&:focus-within': {
+      outline: '2px solid currentColor',
+      outlineOffset: '2px',
+    },
   };
 
   return (
     <Paper
       elevation={2}
+      component="section"
+      aria-label="Filter and sort options"
       sx={{
         p: 3,
         borderRadius: 3,
@@ -109,34 +115,41 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
       }}
     >
       {currentSearchTerm && (
-        <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box
+          sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}
+          role="status"
+          aria-live="polite"
+        >
           <Typography variant="body2" color="text.secondary">
-            Showing results for `{currentSearchTerm}`
+            Showing results for `{currentSearchTerm}``
           </Typography>
           <Button
             size="small"
             variant="outlined"
             onClick={handleClearSearch}
-            startIcon={<ClearIcon />}
+            startIcon={<ClearIcon aria-hidden="true" />}
             sx={{ borderRadius: 2, textTransform: 'none' }}
+            aria-label="Clear search results"
           >
             Clear search
           </Button>
         </Box>
       )}
 
-      <Grid container spacing={2}>
+      <Grid container spacing={2} role="search">
         <Grid item xs={12}>
           <TextField
             fullWidth
+            label="Search Auctions"
             placeholder="Search auctions..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            aria-label="Search auctions"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon color="action" />
+                  <SearchIcon color="action" aria-hidden="true" />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -146,8 +159,9 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
                       size="small"
                       onClick={() => setSearchInput('')}
                       sx={{ mr: 1 }}
+                      aria-label="Clear search input"
                     >
-                      <ClearIcon fontSize="small" />
+                      <ClearIcon fontSize="small" aria-hidden="true" />
                     </IconButton>
                   )}
                   <Button
@@ -159,6 +173,7 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
                       borderRadius: 1,
                       textTransform: 'none',
                     }}
+                    aria-label="Submit search"
                   >
                     Search
                   </Button>
@@ -171,16 +186,18 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
 
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-            <InputLabel>All Categories</InputLabel>
+            <InputLabel id="category-label">Categories</InputLabel>
             <Select
+              labelId="category-label"
               value={filters.category}
               label="All Categories"
               defaultValue="all"
               onChange={(e) => handleFilterChange('category', e.target.value)}
               disabled={!!currentSearchTerm}
               sx={commonInputStyles}
+              aria-label="Filter by category"
             >
-              <MenuItem value="all">All Categories</MenuItem>
+              <MenuItem value="">All Categories</MenuItem>
               <MenuItem value="electronics">Electronics</MenuItem>
               <MenuItem value="art">Art</MenuItem>
               <MenuItem value="home">Home</MenuItem>
@@ -189,10 +206,11 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
             {currentSearchTerm && (
               <Typography
                 variant="caption"
-                color="text.secondary"
+                color="text.primary"
                 sx={{ mt: 1, ml: 1 }}
+                role="alert"
               >
-                Not available during search
+                Category filter not available during search
               </Typography>
             )}
           </FormControl>
@@ -200,19 +218,20 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
 
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-            <InputLabel>All Auctions</InputLabel>
+            <InputLabel id="sort-label">Sort By</InputLabel>
             <Select
+              labelId="sort-label"
               defaultValue="desc&sort=created"
-              label="All Auctions"
+              label="Sor By:"
               onChange={(e: SelectChangeEvent<string>) =>
                 onSortChange(e.target.value)
               }
               sx={commonInputStyles}
+              aria-label="Sort auctions"
             >
               <MenuItem value="desc&sort=created">Newest First</MenuItem>
-              <MenuItem value="asc">Price: Low to High</MenuItem>
-              <MenuItem value="desc">Price: High to Low</MenuItem>
-              <MenuItem value="popular">Most Popular</MenuItem>
+
+              <MenuItem value="asc&sort=created">Oldest first</MenuItem>
               <MenuItem value="asc&sort=endsAt">Ending Soon</MenuItem>
             </Select>
           </FormControl>

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   TextField,
@@ -9,6 +9,7 @@ import {
   Typography,
   Alert,
   Link,
+  CircularProgress,
 } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import PasswordIcon from '@mui/icons-material/Password';
@@ -23,6 +24,13 @@ export default function RegisterForm() {
   }>({});
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (error || Object.keys(formErrors).length > 0) {
+      errorRef.current?.focus();
+    }
+  }, [error, formErrors]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -32,30 +40,26 @@ export default function RegisterForm() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    // Reset error states
     setFormErrors({});
     setError(null);
 
-    // Validate form fields
     const errors: { name?: string; email?: string; password?: string } = {};
-
-    // Name validation
     const nameRegex = /^[a-zA-Z0-9_]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!name) {
       errors.name = 'Name is required.';
     } else if (!nameRegex.test(name)) {
-      errors.name = 'Please enter a valid name.';
+      errors.name =
+        'Please enter a valid name (letters, numbers, and underscores only).';
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
       errors.email = 'Email is required.';
     } else if (!emailRegex.test(email)) {
       errors.email = 'Please enter a valid email address.';
     }
 
-    // Password validation
     if (!password) {
       errors.password = 'Password is required.';
     } else if (password.length < 8) {
@@ -67,14 +71,11 @@ export default function RegisterForm() {
       return;
     }
 
-    // Start loading state
     setLoading(true);
     try {
       const response = await fetch('/api/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       });
 
@@ -83,31 +84,30 @@ export default function RegisterForm() {
         throw new Error(data.error || 'Failed to register.');
       }
 
-      const data = await response.json();
-
       router.push('/login?success=Registration successful');
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError('An unknown error occurred');
-      }
+      setError(
+        error instanceof Error ? error.message : 'An unknown error occurred'
+      );
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Card sx={{ margin: '0 auto', width: '400px', padding: 3 }}>
-      <form onSubmit={handleSubmit} noValidate>
-        {/* Display General Error as an Alert */}
+    <Card
+      component="main"
+      role="main"
+      aria-labelledby="register-title"
+      sx={{ margin: '0 auto', padding: 3 }}
+    >
+      <form onSubmit={handleSubmit} noValidate aria-label="Registration form">
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity="error" ref={errorRef} tabIndex={-1} sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
 
-        {/* Username field */}
         <Box sx={{ mb: 2 }}>
           <TextField
             label="Username"
@@ -115,15 +115,19 @@ export default function RegisterForm() {
             type="text"
             placeholder="Username"
             fullWidth
+            required
             error={Boolean(formErrors.name)}
             helperText={formErrors.name}
             InputProps={{
-              startAdornment: <PersonIcon sx={{ mr: 1 }} />,
+              startAdornment: <PersonIcon sx={{ mr: 1 }} aria-hidden="true" />,
+              'aria-label': 'Username',
+              'aria-required': 'true',
+              'aria-invalid': Boolean(formErrors.name),
+              'aria-describedby': formErrors.name ? 'name-error' : undefined,
             }}
           />
         </Box>
 
-        {/* Email field */}
         <Box sx={{ mb: 2 }}>
           <TextField
             label="Email"
@@ -131,15 +135,19 @@ export default function RegisterForm() {
             type="email"
             placeholder="Email"
             fullWidth
+            required
             error={Boolean(formErrors.email)}
             helperText={formErrors.email}
             InputProps={{
-              startAdornment: <EmailIcon sx={{ mr: 1 }} />,
+              startAdornment: <EmailIcon sx={{ mr: 1 }} aria-hidden="true" />,
+              'aria-label': 'Email address',
+              'aria-required': 'true',
+              'aria-invalid': Boolean(formErrors.email),
+              'aria-describedby': formErrors.email ? 'email-error' : undefined,
             }}
           />
         </Box>
 
-        {/* Password field */}
         <Box sx={{ mb: 2 }}>
           <TextField
             label="Password"
@@ -147,10 +155,19 @@ export default function RegisterForm() {
             type="password"
             placeholder="Password"
             fullWidth
+            required
             error={Boolean(formErrors.password)}
             helperText={formErrors.password}
             InputProps={{
-              startAdornment: <PasswordIcon sx={{ mr: 1 }} />,
+              startAdornment: (
+                <PasswordIcon sx={{ mr: 1 }} aria-hidden="true" />
+              ),
+              'aria-label': 'Password',
+              'aria-required': 'true',
+              'aria-invalid': Boolean(formErrors.password),
+              'aria-describedby': formErrors.password
+                ? 'password-error'
+                : undefined,
             }}
           />
         </Box>
@@ -161,13 +178,25 @@ export default function RegisterForm() {
           color="primary"
           fullWidth
           disabled={loading}
+          aria-busy={loading}
         >
-          {loading ? 'Registering...' : 'Register'}
+          {loading ? (
+            <>
+              <CircularProgress size={20} sx={{ mr: 1 }} aria-hidden="true" />
+              <span>Registering...</span>
+            </>
+          ) : (
+            'Register'
+          )}
         </Button>
 
         <Typography variant="body2" align="center" sx={{ mt: 2 }}>
           Already have an account?{' '}
-          <Link href="/login" underline="hover">
+          <Link
+            href="/auth/signin"
+            underline="hover"
+            aria-label="Go to login page"
+          >
             Login
           </Link>
         </Typography>
