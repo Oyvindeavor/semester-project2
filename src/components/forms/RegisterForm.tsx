@@ -17,6 +17,7 @@ import PersonIcon from '@mui/icons-material/Person';
 
 export default function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<{
     name?: string;
     email?: string;
@@ -27,10 +28,10 @@ export default function RegisterForm() {
   const errorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (error || Object.keys(formErrors).length > 0) {
+    if (error || success || Object.keys(formErrors).length > 0) {
       errorRef.current?.focus();
     }
-  }, [error, formErrors]);
+  }, [error, success, formErrors]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -42,6 +43,7 @@ export default function RegisterForm() {
 
     setFormErrors({});
     setError(null);
+    setSuccess(null);
 
     const errors: { name?: string; email?: string; password?: string } = {};
     const nameRegex = /^[a-zA-Z0-9_]+$/;
@@ -84,7 +86,10 @@ export default function RegisterForm() {
         throw new Error(data.error || 'Failed to register.');
       }
 
-      router.push('/login?success=Registration successful');
+      setSuccess('Registration successful! Redirecting to login page...');
+      setTimeout(() => {
+        router.push('/auth/signin');
+      }, 3000);
     } catch (error) {
       setError(
         error instanceof Error ? error.message : 'An unknown error occurred'
@@ -105,6 +110,12 @@ export default function RegisterForm() {
         {error && (
           <Alert severity="error" ref={errorRef} tabIndex={-1} sx={{ mb: 2 }}>
             {error}
+          </Alert>
+        )}
+
+        {success && (
+          <Alert severity="success" ref={errorRef} tabIndex={-1} sx={{ mb: 2 }}>
+            {success}
           </Alert>
         )}
 
