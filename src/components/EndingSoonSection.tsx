@@ -4,6 +4,7 @@ import AuctionCard from './AuctionCard';
 import { getTimeRemaining } from '@/utils/dateFormattings';
 import { getHighestBid } from '@/utils/getHighestBid';
 
+// Types remain the same
 interface Media {
   url: string;
   alt?: string;
@@ -39,7 +40,6 @@ async function fetchEndingSoonAuctions(): Promise<Auction[]> {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-
     return data.data;
   } catch (error) {
     console.error('Error fetching auctions:', error);
@@ -63,6 +63,8 @@ const EndingSoonAuctionsSection = async () => {
 
   return (
     <Box
+      component="section"
+      aria-labelledby="ending-soon-title"
       sx={{
         py: 6,
         borderRadius: '12px 12px 0 0',
@@ -79,6 +81,7 @@ const EndingSoonAuctionsSection = async () => {
           <Typography
             variant="h3"
             component="h2"
+            id="ending-soon-title"
             sx={{
               fontWeight: 700,
               color: 'text.primary',
@@ -102,6 +105,7 @@ const EndingSoonAuctionsSection = async () => {
           </Typography>
           <Typography
             variant="h6"
+            component={'h3'}
             color="text.secondary"
             sx={{
               maxWidth: '600px',
@@ -113,7 +117,7 @@ const EndingSoonAuctionsSection = async () => {
             Don&apos;t miss out on these auctions closing soon. Place your bids
             before time runs out!
           </Typography>
-          <Divider sx={{ mt: 3 }} />
+          <Divider sx={{ mt: 3 }} aria-hidden="true" />
         </Box>
 
         <Grid
@@ -123,6 +127,8 @@ const EndingSoonAuctionsSection = async () => {
           sx={{
             px: { xs: 2, md: 0 },
           }}
+          role="list"
+          aria-label="Auctions ending soon"
         >
           {endingSoonAuctions.map((auction) => (
             <Grid
@@ -136,6 +142,7 @@ const EndingSoonAuctionsSection = async () => {
                 display: 'flex',
                 justifyContent: 'center',
               }}
+              role="listitem"
             >
               <Box
                 sx={{
@@ -156,7 +163,8 @@ const EndingSoonAuctionsSection = async () => {
             </Grid>
           ))}
         </Grid>
-        <Divider sx={{ my: 6 }} />
+
+        <Divider sx={{ my: 6 }} aria-hidden="true" />
 
         {endingSoonAuctions.length === 0 && (
           <Box
@@ -164,6 +172,8 @@ const EndingSoonAuctionsSection = async () => {
               textAlign: 'center',
               py: 8,
             }}
+            role="status"
+            aria-label="No auctions available"
           >
             <Typography variant="h6" color="text.secondary">
               No auctions ending soon at the moment.
@@ -171,6 +181,9 @@ const EndingSoonAuctionsSection = async () => {
           </Box>
         )}
       </Container>
+
+      {/* Status announcer for dynamic updates */}
+      <div role="status" aria-live="polite" className="sr-only" />
     </Box>
   );
 };

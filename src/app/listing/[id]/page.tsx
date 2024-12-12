@@ -1,7 +1,6 @@
 import { fetchListingById } from '@/utils/api/fetchListingById';
 import React from 'react';
-import { Box } from '@mui/material';
-
+import { Box, Typography, Alert } from '@mui/material';
 import AuctionDetails from '@/components/listing/AuctionDetails';
 import BidTable from '@/components/listing/BidTable';
 import PlaceBid from '@/components/listing/placeBid';
@@ -13,38 +12,62 @@ export default async function ListingPage(props: {
   const params = await props.params;
   const { id } = params;
 
-  const listing = await fetchListingById(id);
+  try {
+    const listing = await fetchListingById(id);
 
-  if (!listing) {
-    console.error('Listing is null or undefined');
-    return <div>Listing not found</div>;
-  }
+    if (!listing) {
+      return (
+        <Box component="main" role="main" aria-label="Listing not found">
+          <Alert severity="error" role="alert">
+            Listing not found
+          </Alert>
+        </Box>
+      );
+    }
 
-  return (
-    <BidsProvider initialBids={listing.bids || []}>
-      <Box
-        sx={{
-          width: '100%',
-          maxWidth: 1200,
-          margin: '0 auto',
-          padding: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 4,
-        }}
-      >
+    return (
+      <BidsProvider initialBids={listing.bids || []}>
         <Box
+          component="main"
+          role="main"
+          aria-label={`Auction details for ${listing.title}`}
           sx={{
+            width: '100%',
+            maxWidth: 1200,
+            margin: '0 auto',
+            padding: 2,
             display: 'flex',
-            flexDirection: { xs: 'column', md: 'column' },
+            flexDirection: 'column',
             gap: 4,
           }}
         >
-          <AuctionDetails listing={listing} />
-          <PlaceBid listing={listing} />
-          <BidTable listing={listing} />
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'column' },
+              gap: 4,
+            }}
+          >
+            <AuctionDetails listing={listing} aria-label="Auction details" />
+
+            <PlaceBid listing={listing} aria-label="Place bid section" />
+
+            <BidTable listing={listing} aria-label="Bid history" />
+          </Box>
+
+          {/* Screen reader announcer for bid updates */}
+          <div role="status" aria-live="polite" className="sr-only" />
         </Box>
+      </BidsProvider>
+    );
+  } catch (error) {
+    console.error('Error fetching listing:', error);
+    return (
+      <Box component="main" role="main" aria-label="Error">
+        <Alert severity="error" role="alert">
+          Failed to load auction listing. Please try again later.
+        </Alert>
       </Box>
-    </BidsProvider>
-  );
+    );
+  }
 }

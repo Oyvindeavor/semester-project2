@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -22,6 +22,17 @@ const EditProfileModal = React.memo(function EditProfileModal() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && open) {
+        handleClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [open]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -64,16 +75,13 @@ const EditProfileModal = React.memo(function EditProfileModal() {
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/profile/edit`,
         {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         }
       );
 
-      const data = await response.json();
-
       if (!response.ok) {
+        const data = await response.json();
         throw new Error(data.error || 'Failed to update profile');
       }
 
@@ -83,6 +91,8 @@ const EditProfileModal = React.memo(function EditProfileModal() {
       setError(
         error instanceof Error ? error.message : 'Failed to update profile'
       );
+      const errorElement = document.getElementById('modal-error');
+      errorElement?.focus();
     } finally {
       setLoading(false);
     }
@@ -94,13 +104,10 @@ const EditProfileModal = React.memo(function EditProfileModal() {
         variant="outlined"
         color="primary"
         onClick={handleOpen}
-        startIcon={<EditIcon />}
+        startIcon={<EditIcon aria-hidden="true" />}
         size="small"
-        sx={{
-          borderRadius: 1,
-          textTransform: 'none',
-          px: 2,
-        }}
+        aria-label="Edit your profile"
+        sx={{ borderRadius: 1, textTransform: 'none', px: 2 }}
       >
         Edit Profile
       </Button>
@@ -109,10 +116,13 @@ const EditProfileModal = React.memo(function EditProfileModal() {
         open={open}
         onClose={handleClose}
         closeAfterTransition
-        aria-labelledby="edit-profile-modal"
+        aria-labelledby="edit-profile-title"
+        aria-describedby="edit-profile-description"
       >
         <Fade in={open}>
           <Box
+            role="dialog"
+            aria-modal="true"
             sx={{
               position: 'absolute',
               top: '50%',
@@ -139,25 +149,34 @@ const EditProfileModal = React.memo(function EditProfileModal() {
                   mb: 3,
                 }}
               >
-                <Typography variant="h6" component="h2">
+                <Typography id="edit-profile-title" variant="h6" component="h2">
                   Edit Profile
                 </Typography>
                 <IconButton
                   onClick={handleClose}
                   size="small"
-                  aria-label="close"
+                  aria-label="Close edit profile modal"
                 >
-                  <CloseIcon />
+                  <CloseIcon aria-hidden="true" />
                 </IconButton>
               </Box>
 
               {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
+                <Alert
+                  severity="error"
+                  id="modal-error"
+                  tabIndex={-1}
+                  sx={{ mb: 2 }}
+                >
                   {error}
                 </Alert>
               )}
 
-              <Box component="form" onSubmit={handleSubmit}>
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                id="edit-profile-description"
+              >
                 <Stack spacing={2.5}>
                   <TextField
                     name="bio"
@@ -165,9 +184,8 @@ const EditProfileModal = React.memo(function EditProfileModal() {
                     multiline
                     rows={3}
                     placeholder="Tell us about yourself"
-                    defaultValue={session?.user.name || ''}
+                    defaultValue={session?.user.bio || ''}
                     fullWidth
-                    required
                   />
 
                   <TextField
@@ -177,8 +195,11 @@ const EditProfileModal = React.memo(function EditProfileModal() {
                     placeholder="Enter your avatar image URL"
                     defaultValue={session?.user?.image || ''}
                     fullWidth
-                    required
                     helperText="Enter a valid image URL for your profile picture"
+                    inputProps={{
+                      'aria-label': 'Avatar image URL',
+                      'aria-required': 'true',
+                    }}
                   />
 
                   <TextField
@@ -190,6 +211,10 @@ const EditProfileModal = React.memo(function EditProfileModal() {
                     fullWidth
                     required
                     helperText="Enter a valid image URL for your profile banner"
+                    inputProps={{
+                      'aria-label': 'Banner image URL',
+                      'aria-required': 'true',
+                    }}
                   />
 
                   <Box
@@ -212,16 +237,20 @@ const EditProfileModal = React.memo(function EditProfileModal() {
                       type="submit"
                       variant="contained"
                       disabled={loading}
+                      aria-busy={loading}
                       sx={{
                         textTransform: 'none',
                         minWidth: 100,
                       }}
                     >
                       {loading ? (
-                        <CircularProgress size={24} />
+                        <CircularProgress size={24} aria-hidden="true" />
                       ) : (
                         'Save Changes'
                       )}
+                      <span className="sr-only">
+                        {loading ? 'Saving changes...' : 'Save changes'}
+                      </span>
                     </Button>
                   </Box>
                 </Stack>

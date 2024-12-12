@@ -25,21 +25,12 @@ const AuctionCard = ({
     <Link
       href={`/listing/${id}`}
       style={{ textDecoration: 'none', width: '100%' }}
+      aria-label={`${title}. Current bid: ${highestBid}. ${totalBids} bids. ${timeLeft} remaining`}
     >
       <Card
         sx={{
-          width: {
-            xs: '100%',
-            sm: 260,
-            md: 260,
-            lg: 250,
-          },
-          height: {
-            xs: 480,
-            sm: 440,
-            md: 420,
-            lg: 400,
-          },
+          width: { xs: '100%', sm: 260, md: 260, lg: 250 },
+          height: { xs: 480, sm: 440, md: 420, lg: 400 },
           borderRadius: 3,
           boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
           transition: 'all 0.3s ease-in-out',
@@ -49,28 +40,27 @@ const AuctionCard = ({
             transform: 'translateY(-8px)',
             boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
           },
+          '&:focus-within': {
+            outline: '2px solid currentColor',
+            outlineOffset: '2px',
+          },
         }}
+        tabIndex={0}
+        role="article"
       >
         <Box
           sx={{
             position: 'relative',
-            height: {
-              xs: 240,
-              sm: 220,
-              md: 200,
-              lg: 190,
-            },
+            height: { xs: 240, sm: 220, md: 200, lg: 190 },
             borderBottom: '1px solid rgba(0,0,0,0.05)',
             backgroundColor: 'grey.100',
           }}
         >
           <Image
             src={imageUrl}
-            alt={title}
+            alt={`Image of ${title}`}
             fill
-            style={{
-              objectFit: 'cover',
-            }}
+            style={{ objectFit: 'cover' }}
             sizes="(max-width: 600px) 100vw, (max-width: 960px) 260px, 250px"
             priority={true}
             quality={75}
@@ -78,12 +68,7 @@ const AuctionCard = ({
         </Box>
         <CardContent
           sx={{
-            height: {
-              xs: 240,
-              sm: 220,
-              md: 220,
-              lg: 210,
-            },
+            height: { xs: 240, sm: 220, md: 220, lg: 210 },
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -91,16 +76,11 @@ const AuctionCard = ({
           }}
         >
           <Typography
-            gutterBottom
             variant="h6"
-            component="div"
+            component="h2"
             sx={{
               fontWeight: 600,
-              fontSize: {
-                xs: '1.25rem',
-                sm: '1.1rem',
-                lg: '1rem',
-              },
+              fontSize: { xs: '1.25rem', sm: '1.1rem', lg: '1rem' },
               lineHeight: 1.3,
               height: '2.6rem',
               overflow: 'hidden',
@@ -112,6 +92,7 @@ const AuctionCard = ({
           >
             {title}
           </Typography>
+
           <Box sx={{ mt: 'auto' }}>
             <Stack
               direction="row"
@@ -122,16 +103,17 @@ const AuctionCard = ({
             >
               <Chip
                 label={`${totalBids} Bids`}
-                icon={<Gavel sx={{ fontSize: '1.2rem' }} />}
-                sx={{
-                  fontSize: { xs: '1rem', sm: '0.875rem' },
-                }}
+                icon={<Gavel sx={{ fontSize: '1.2rem' }} aria-hidden="true" />}
+                sx={{ fontSize: { xs: '1rem', sm: '0.875rem' } }}
+                role="status"
+                aria-label={`${totalBids} bids placed`}
               />
               <Chip
                 label={`${highestBid}`}
                 icon={
                   <MonetizationOnIcon
                     sx={{ fontSize: '1.2rem', color: 'gold' }}
+                    aria-hidden="true"
                   />
                 }
                 color="success"
@@ -141,6 +123,8 @@ const AuctionCard = ({
                   fontWeight: 600,
                   '&:hover': { backgroundColor: 'rgba(76, 175, 80, 0.08)' },
                 }}
+                role="status"
+                aria-label={`Current highest bid: ${highestBid}`}
               />
             </Stack>
             <Paper
@@ -153,12 +137,13 @@ const AuctionCard = ({
                 backgroundColor: 'rgba(255, 152, 0, 0.08)',
                 borderRadius: 2,
               }}
+              role="status"
+              aria-label={`Time remaining: ${timeLeft}`}
             >
               <Timer
                 color="warning"
-                sx={{
-                  fontSize: { xs: '1.4rem', sm: '1.2rem' },
-                }}
+                sx={{ fontSize: { xs: '1.4rem', sm: '1.2rem' } }}
+                aria-hidden="true"
               />
               <Typography
                 variant="body2"

@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Card,
@@ -14,7 +14,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import PasswordIcon from '@mui/icons-material/Password';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -27,6 +27,13 @@ export default function LoginForm() {
   const successMessage = searchParams.get('success');
   const [showMessage, setShowMessage] = useState(!!successMessage);
   const router = useRouter();
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (error || Object.keys(formErrors).length > 0) {
+      errorRef.current?.focus();
+    }
+  }, [error, formErrors]);
 
   useEffect(() => {
     if (successMessage) {
@@ -34,8 +41,7 @@ export default function LoginForm() {
         setShowMessage(false);
         const params = new URLSearchParams(searchParams.toString());
         params.delete('success');
-        const newPath = `${window.location.pathname}?${params.toString()}`;
-        router.replace(newPath);
+        router.replace(`${window.location.pathname}?${params.toString()}`);
       }, 5000);
 
       return () => clearTimeout(timer);
@@ -49,11 +55,9 @@ export default function LoginForm() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    // Reset error states
     setFormErrors({});
     setError(null);
 
-    // Validate form fields
     const errors: { email?: string; password?: string } = {};
     if (!email) errors.email = 'Email is required.';
     if (!password) errors.password = 'Password is required.';
@@ -86,10 +90,15 @@ export default function LoginForm() {
   }
 
   return (
-    <Card sx={{ maxWidth: '400px', margin: '0 auto', padding: 3 }}>
-      <form onSubmit={handleSubmit} noValidate>
+    <Card
+      component="section"
+      role="section"
+      aria-labelledby="login-title"
+      sx={{ padding: 3 }}
+    >
+      <form onSubmit={handleSubmit} noValidate aria-label="Login form">
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity="error" ref={errorRef} tabIndex={-1} sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
@@ -107,11 +116,15 @@ export default function LoginForm() {
             type="email"
             name="email"
             fullWidth
-            aria-required="true"
+            required
             error={Boolean(formErrors.email)}
             helperText={formErrors.email}
             InputProps={{
-              startAdornment: <EmailIcon sx={{ mr: 1 }} />,
+              startAdornment: <EmailIcon sx={{ mr: 1 }} aria-hidden="true" />,
+              'aria-label': 'Email address',
+              'aria-required': 'true',
+              'aria-invalid': Boolean(formErrors.email),
+              'aria-describedby': formErrors.email ? 'email-error' : undefined,
             }}
           />
         </Box>
@@ -122,12 +135,20 @@ export default function LoginForm() {
             type="password"
             name="password"
             fullWidth
-            autoComplete="new-password"
-            aria-required="true"
+            required
+            autoComplete="current-password"
             error={Boolean(formErrors.password)}
             helperText={formErrors.password}
             InputProps={{
-              startAdornment: <PasswordIcon sx={{ mr: 1 }} />,
+              startAdornment: (
+                <PasswordIcon sx={{ mr: 1 }} aria-hidden="true" />
+              ),
+              'aria-label': 'Password',
+              'aria-required': 'true',
+              'aria-invalid': Boolean(formErrors.password),
+              'aria-describedby': formErrors.password
+                ? 'password-error'
+                : undefined,
             }}
           />
         </Box>
@@ -140,11 +161,16 @@ export default function LoginForm() {
           color="primary"
           fullWidth
           disabled={loading}
+          aria-busy={loading}
         >
           {loading ? (
             <>
-              <CircularProgress size={20} sx={{ mr: 1, color: 'white' }} />
-              Logging in...
+              <CircularProgress
+                size={20}
+                sx={{ mr: 1, color: 'white' }}
+                aria-hidden="true"
+              />
+              <span>Logging in...</span>
             </>
           ) : (
             'Login'
@@ -152,8 +178,8 @@ export default function LoginForm() {
         </Button>
 
         <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          Don’t have an account?{' '}
-          <Link href="/register" passHref>
+          Don`t have an account?{' '}
+          <Link href="/register" aria-label="Register for a new account">
             Register
           </Link>
         </Typography>

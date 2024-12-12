@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   TextField,
-  Typography,
   Select,
   MenuItem,
   FormControl,
@@ -15,6 +14,7 @@ import {
   IconButton,
   Paper,
   Stack,
+  Alert,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -28,46 +28,36 @@ import { useRouter } from 'next/navigation';
 dayjs.locale('nb');
 
 export default function CreateAuctionForm() {
-  const [formData, setFormData] = useState<{
-    title: string;
-    description: string;
-    tags: string[];
-    media: { url: string; alt: string }[];
-    endsAt: dayjs.Dayjs;
-  }>({
+  const [formData, setFormData] = useState({
     title: '',
     description: '',
-    tags: [],
+    tags: [] as string[],
     media: [{ url: '', alt: '' }],
     endsAt: dayjs(),
   });
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null);
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleDateChange = (newValue: dayjs.Dayjs | null) => {
     if (newValue) {
-      setFormData((prev) => ({
-        ...prev,
-        endsAt: newValue,
-      }));
+      setError(null);
+      setFormData((prev) => ({ ...prev, endsAt: newValue }));
     }
   };
 
   const handleMediaChange = (index: number, field: string, value: string) => {
+    setError(null);
     const newMedia = [...formData.media];
     newMedia[index] = { ...newMedia[index], [field]: value };
-    setFormData((prev) => ({
-      ...prev,
-      media: newMedia,
-    }));
+    setFormData((prev) => ({ ...prev, media: newMedia }));
   };
 
   const addMediaField = () => {
@@ -88,6 +78,9 @@ export default function CreateAuctionForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
     try {
       const auctionData = {
         ...formData,
@@ -112,22 +105,30 @@ export default function CreateAuctionForm() {
         `${process.env.NEXT_PUBLIC_BASE_URL}/listing/${result.data.id}`
       );
     } catch (error) {
-      console.error('Error creating auction:', error);
+      setError(
+        error instanceof Error ? error.message : 'Failed to create auction'
+      );
+      const errorElement = document.getElementById('form-error');
+      errorElement?.focus();
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Paper elevation={3} sx={{ maxWidth: 800, mx: 'auto', mt: 4, mb: 4 }}>
-      <Box component="form" onSubmit={handleSubmit} sx={{ p: 4 }}>
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          align="center"
-          sx={{ mb: 4 }}
-        >
-          Create Auction
-        </Typography>
+    <Paper elevation={3}>
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{ p: 4 }}
+        role="form"
+        aria-label="Create auction form"
+      >
+        {error && (
+          <Alert severity="error" id="form-error" tabIndex={-1} sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
 
         <Stack spacing={3}>
           {/* Title */}
@@ -155,8 +156,9 @@ export default function CreateAuctionForm() {
 
           {/* Tags */}
           <FormControl fullWidth>
-            <InputLabel>Tags</InputLabel>
+            <InputLabel id="tags-label">Tags</InputLabel>
             <Select
+              labelId="tags-label"
               multiple
               value={formData.tags}
               onChange={(e) =>
@@ -184,7 +186,7 @@ export default function CreateAuctionForm() {
             </Select>
           </FormControl>
 
-          {/* Media URLs */}
+          {/* Media */}
           {formData.media.map((item, index) => (
             <Stack
               key={index}
@@ -194,7 +196,7 @@ export default function CreateAuctionForm() {
             >
               <Stack spacing={2} sx={{ flex: 1 }}>
                 <TextField
-                  label="Image URL"
+                  label={`Image ${index + 1} URL`}
                   fullWidth
                   value={item.url}
                   onChange={(e) =>
@@ -204,7 +206,7 @@ export default function CreateAuctionForm() {
                   required
                 />
                 <TextField
-                  label="Image Description"
+                  label={`Image ${index + 1} Description`}
                   fullWidth
                   value={item.alt}
                   onChange={(e) =>
@@ -221,8 +223,9 @@ export default function CreateAuctionForm() {
                     onClick={() => removeMediaField(index)}
                     color="error"
                     size="small"
+                    aria-label={`Remove image ${index + 1}`}
                   >
-                    <DeleteIcon />
+                    <DeleteIcon aria-hidden="true" />
                   </IconButton>
                 )}
                 {index === formData.media.length - 1 && (
@@ -230,21 +233,21 @@ export default function CreateAuctionForm() {
                     onClick={addMediaField}
                     color="primary"
                     size="small"
+                    aria-label="Add another image"
                   >
-                    <AddIcon />
+                    <AddIcon aria-hidden="true" />
                   </IconButton>
                 )}
               </Stack>
             </Stack>
           ))}
 
-          {/* End Date */}
+          {/* End Date and Time */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateTimePicker
               label="End Date and Time"
               value={formData.endsAt}
               onChange={handleDateChange}
-              format="DD.MM.YYYY HH:mm"
               slotProps={{
                 textField: {
                   fullWidth: true,
@@ -260,9 +263,11 @@ export default function CreateAuctionForm() {
             variant="contained"
             color="primary"
             size="large"
+            disabled={isSubmitting}
+            aria-busy={isSubmitting}
             sx={{ mt: 2 }}
           >
-            Create Auction
+            {isSubmitting ? 'Creating...' : 'Create Auction'}
           </Button>
         </Stack>
       </Box>

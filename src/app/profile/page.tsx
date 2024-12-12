@@ -1,12 +1,12 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Box } from '@mui/material';
+import { Box, CircularProgress, Alert } from '@mui/material';
 import { deleteListingById } from '@/utils/api/deleteListingById';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import AuctionTabs from '@/components/profile/TabPanelProfile';
 import type { Listing } from '@/types/api/listing';
-import { useRouter } from 'next/navigation';
 
 interface Media {
   url: string;
@@ -36,24 +36,27 @@ export default function Profile() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/profile`
         );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch profile');
+          throw new Error(`Failed to fetch profile: ${response.statusText}`);
         }
 
         const data = await response.json();
-
         setProfile(data.profile);
       } catch (err) {
         console.error('Error fetching profile:', err);
-        setError('Error loading profile');
+        setError('Unable to load profile. Please try again later.');
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -62,16 +65,16 @@ export default function Profile() {
     }
   }, [status]);
 
-  if (!session) return <div>You must be logged in to view this page.</div>;
-  if (error) return <div>{error}</div>;
-  if (!profile) return <div>Loading profile...</div>;
-
   const handleDelete = async (id: string) => {
     try {
-      const confirmation = confirm(
-        'Are you sure you want to delete this listing?'
-      );
-      if (!confirmation) return;
+      // Use a more accessible confirmation dialog
+      if (
+        !window.confirm(
+          'Are you sure you want to delete this listing? This action cannot be undone.'
+        )
+      ) {
+        return;
+      }
 
       setDeleting(id);
       await deleteListingById(id);
@@ -88,16 +91,71 @@ export default function Profile() {
           },
         };
       });
+
+      // Announce successful deletion to screen readers
+      const announcer = document.getElementById('status-announcer');
+      if (announcer) {
+        announcer.textContent = 'Listing successfully deleted';
+      }
     } catch (error) {
       console.error('Error deleting listing:', error);
-      alert('Failed to delete listing. Please try again.');
+      setError('Failed to delete listing. Please try again.');
     } finally {
       setDeleting(null);
     }
   };
 
+  // Loading state
+  if (status === 'loading' || isLoading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="50vh"
+        role="status"
+        aria-label="Loading profile"
+      >
+        <CircularProgress aria-label="Loading" />
+      </Box>
+    );
+  }
+
+  // Authentication check
+  if (!session) {
+    return (
+      <Box p={4}>
+        <Alert severity="warning" role="alert">
+          You must be logged in to view this page.
+        </Alert>
+      </Box>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <Box p={4}>
+        <Alert severity="error" role="alert">
+          {error}
+        </Alert>
+      </Box>
+    );
+  }
+
+  // No profile data
+  if (!profile) {
+    return (
+      <Box p={4}>
+        <Alert severity="info" role="alert">
+          No profile data available.
+        </Alert>
+      </Box>
+    );
+  }
+
   return (
-    <div>
+    <Box aria-label="User Profile">
       <ProfileHeader
         username={profile.data.name}
         avatarUrl={profile.data.avatar.url}
@@ -106,12 +164,21 @@ export default function Profile() {
         totalAuctions={profile.data.listings.length}
         credits={profile.data.credits}
       />
+
       <AuctionTabs
         activeListings={profile.data.listings}
         wonListings={profile.data.wins}
         onDelete={handleDelete}
         deleting={deleting}
       />
-    </div>
+
+      {/* Status announcer for screen readers */}
+      <div
+        id="status-announcer"
+        role="status"
+        aria-live="polite"
+        className="sr-only"
+      />
+    </Box>
   );
 }

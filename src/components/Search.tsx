@@ -32,7 +32,11 @@ const AuctionSearchSection = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', bgcolor: 'background.default', py: 4 }}>
+    <Box
+      component="section"
+      sx={{ width: '100%', bgcolor: 'background.default', py: 4 }}
+      aria-label="Auction search"
+    >
       <Container maxWidth={false}>
         <Paper
           elevation={2}
@@ -42,19 +46,31 @@ const AuctionSearchSection = () => {
             bgcolor: 'background.paper',
           }}
         >
-          <Grid container spacing={2} alignItems="stretch">
+          <Grid
+            container
+            spacing={2}
+            alignItems="stretch"
+            component="form"
+            role="search"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSearch();
+            }}
+          >
             <Grid item xs={12} md={10}>
               <TextField
                 fullWidth
                 variant="outlined"
                 placeholder="Search auctions..."
+                label="Search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={handleKeyPress}
+                aria-label="Search auctions"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon color="action" />
+                      <SearchIcon color="action" aria-hidden="true" />
                     </InputAdornment>
                   ),
                   sx: {
@@ -65,6 +81,10 @@ const AuctionSearchSection = () => {
                     '&:hover .MuiOutlinedInput-notchedOutline': {
                       borderColor: 'primary.main',
                     },
+                    '&:focus-within': {
+                      outline: '2px solid currentColor',
+                      outlineOffset: '2px',
+                    },
                   },
                 }}
               />
@@ -73,14 +93,15 @@ const AuctionSearchSection = () => {
               <Button
                 fullWidth
                 variant="contained"
-                color="primary"
-                startIcon={<SearchIcon />}
+                startIcon={<SearchIcon aria-hidden="true" />}
                 onClick={handleSearch}
+                type="submit"
                 sx={{
                   height: '100%',
                   minHeight: '56px',
                   textTransform: 'none',
                   boxShadow: 2,
+                  color: 'white',
                 }}
               >
                 Search
@@ -89,6 +110,9 @@ const AuctionSearchSection = () => {
           </Grid>
         </Paper>
       </Container>
+
+      {/* Screen reader announcer */}
+      <div role="status" aria-live="polite" className="sr-only" />
     </Box>
   );
 };

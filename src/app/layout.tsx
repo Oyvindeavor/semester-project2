@@ -1,9 +1,6 @@
 import * as React from 'react';
 import NavBar from '@/components/navbar/navbar';
-
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-// import { ThemeProvider } from '@mui/material/styles';
-// import theme from '@/theme';
 import { Roboto } from 'next/font/google';
 import { CssBaseline, Container, ThemeProvider } from '@mui/material';
 import SessionProvider from '@/components/SessionProvider';
@@ -11,6 +8,7 @@ import { getServerSession } from 'next-auth';
 import Box from '@mui/material/Box';
 import theme from '@/app/theme/theme';
 import Footer from '@/components/footer/footer';
+import { Viewport } from 'next';
 
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
@@ -22,33 +20,54 @@ const roboto = Roboto({
 export const metadata = {
   title: 'Peregrine Auctions',
   description: 'Discover new auctions and bid on your favorite items.',
+  manifest: '/manifest.json',
+  other: {
+    'apple-mobile-web-app-capable': 'yes',
+    'mobile-web-app-capable': 'yes',
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const session = await getServerSession();
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${roboto.variable}`}>
+      <head>
+        <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className={roboto.variable}>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <SessionProvider session={session}>
             <Box
+              component="div"
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 minHeight: '100vh',
               }}
+              role="presentation"
             >
               <ThemeProvider theme={theme}>
                 <CssBaseline />
 
-                {/* Header */}
+                {/* Header landmark */}
+                <header role="banner">
+                  <NavBar />
+                </header>
 
-                <NavBar />
-
-                {/* Main Content */}
-
+                {/* Main content landmark */}
                 <Container
+                  component="main"
+                  role="main"
                   maxWidth="lg"
                   sx={{
                     mt: 6,
@@ -62,8 +81,9 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                 </Container>
 
                 {/* Footer */}
-
-                <Footer />
+                <Box component="footer" role="contentinfo">
+                  <Footer />
+                </Box>
               </ThemeProvider>
             </Box>
           </SessionProvider>

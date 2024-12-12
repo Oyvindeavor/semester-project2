@@ -1,4 +1,5 @@
 'use client';
+
 import React from 'react';
 import {
   AppBar,
@@ -28,19 +29,21 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import Link from 'next/link';
 import Image from 'next/image';
-
 import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
-// Main navigation items that are always visible
 const NAVIGATION_ITEMS = [
   { name: 'Marketplace', href: '/marketplace', icon: <StorefrontIcon /> },
 ];
 
-// Items that only appear in the user dropdown menu
 const USER_MENU_ITEMS = [
   { name: 'Profile', href: '/profile', icon: <PersonIcon /> },
   { name: 'Create Listing', href: '/create', icon: <AddCircleIcon /> },
-  { name: 'Logout', icon: <LogoutIcon />, action: () => signOut() },
+  {
+    name: 'Logout',
+    icon: <LogoutIcon />,
+    action: () => signOut({ redirect: false, callbackUrl: '/' }),
+  },
 ];
 
 export default function NavBar() {
@@ -49,6 +52,7 @@ export default function NavBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const router = useRouter();
 
   if (status === 'loading') return null;
 
@@ -66,8 +70,9 @@ export default function NavBar() {
           href={item.href}
           onClick={handleDrawerToggle}
           sx={{ py: 1.5 }}
+          role="menuitem"
         >
-          <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItemIcon aria-hidden="true">{item.icon}</ListItemIcon>
           <ListItemText primary={item.name} />
         </ListItem>
       ) : (
@@ -82,7 +87,12 @@ export default function NavBar() {
             '&:hover': {
               backgroundColor: theme.palette.action.hover,
             },
+            '&:focus': {
+              outline: '2px solid currentColor',
+              outlineOffset: '2px',
+            },
           }}
+          aria-label={item.name}
         >
           {item.name}
         </Button>
@@ -97,6 +107,7 @@ export default function NavBar() {
       open={mobileOpen}
       onClose={handleDrawerToggle}
       ModalProps={{ keepMounted: true }}
+      aria-label="Mobile navigation menu"
       sx={{
         display: { xs: 'block', md: 'none' },
         '& .MuiDrawer-paper': {
@@ -106,7 +117,10 @@ export default function NavBar() {
         },
       }}
     >
-      <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
+      <Box
+        sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}
+        role="banner"
+      >
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           <Image
             src="/peregrineAuctions.svg"
@@ -119,10 +133,13 @@ export default function NavBar() {
           </Typography>
         </Box>
         {session && (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box
+            sx={{ display: 'flex', alignItems: 'center' }}
+            role="complementary"
+          >
             <Avatar
               src={session.user.image || ''}
-              alt={session.user.name || 'User'}
+              alt={session.user.name || 'User avatar'}
               sx={{ width: 32, height: 32, mr: 1 }}
             />
             <Box>
@@ -134,7 +151,7 @@ export default function NavBar() {
           </Box>
         )}
       </Box>
-      <List sx={{ pt: 1 }}>
+      <List sx={{ pt: 1 }} role="menu" aria-label="Navigation menu">
         {renderNavItems(true)}
         <Divider sx={{ my: 1 }} />
         {session ? (
@@ -148,8 +165,9 @@ export default function NavBar() {
               component={item.href ? Link : 'li'}
               href={item.href}
               sx={{ py: 1.5 }}
+              role="menuitem"
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemIcon aria-hidden="true">{item.icon}</ListItemIcon>
               <ListItemText primary={item.name} />
             </ListItem>
           ))
@@ -159,8 +177,9 @@ export default function NavBar() {
             href="/auth/signin"
             onClick={handleDrawerToggle}
             sx={{ py: 1.5 }}
+            role="menuitem"
           >
-            <ListItemIcon>
+            <ListItemIcon aria-hidden="true">
               <LoginIcon />
             </ListItemIcon>
             <ListItemText primary="Login" />
@@ -185,6 +204,8 @@ export default function NavBar() {
       }}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      role="menu"
+      aria-label="User menu"
     >
       <Box sx={{ px: 2, py: 1.5 }}>
         <Typography variant="subtitle1" noWrap>
@@ -201,9 +222,16 @@ export default function NavBar() {
           onClick={item.action ? item.action : undefined}
           component={item.href ? Link : 'li'}
           href={item.href}
-          sx={{ py: 1.5 }}
+          sx={{
+            py: 1.5,
+            '&:focus': {
+              outline: '2px solid currentColor',
+              outlineOffset: '-2px',
+            },
+          }}
+          role="menuitem"
         >
-          <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItemIcon aria-hidden="true">{item.icon}</ListItemIcon>
           <ListItemText primary={item.name} />
         </MenuItem>
       ))}
@@ -214,6 +242,7 @@ export default function NavBar() {
     <AppBar
       position="sticky"
       elevation={0}
+      component="nav"
       sx={{
         backgroundColor: theme.palette.background.paper,
         borderBottom: `1px solid ${theme.palette.divider}`,
@@ -221,15 +250,19 @@ export default function NavBar() {
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 70 } }}>
-          {/* Logo */}
-          <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Link
+            href="/"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+            aria-label="Home"
+          >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Box sx={{ mr: 1, color: theme.palette.primary.main }}>
                 <Image
                   src="/peregrineAuctions.svg"
                   width={40}
                   height={40}
-                  alt="Peregrine Auctions Logo"
+                  alt=""
+                  aria-hidden="true"
                 />
               </Box>
               <Typography
@@ -246,18 +279,18 @@ export default function NavBar() {
             </Box>
           </Link>
 
-          {/* Desktop Navigation */}
           <Box
             sx={{
               flexGrow: 1,
               display: { xs: 'none', md: 'flex' },
               justifyContent: 'center',
             }}
+            role="navigation"
+            aria-label="Main navigation"
           >
             {renderNavItems()}
           </Box>
 
-          {/* User Section */}
           <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
             {session ? (
               <IconButton
@@ -266,9 +299,12 @@ export default function NavBar() {
                   p: 0,
                   display: { xs: 'none', md: 'flex' },
                 }}
+                aria-label="Open user menu"
+                aria-expanded={Boolean(anchorEl)}
+                aria-haspopup="true"
               >
                 <Avatar
-                  alt={session.user.name || 'User'}
+                  alt={session.user.name || 'User avatar'}
                   src={session.user.image || ''}
                   sx={{
                     width: 40,
@@ -293,7 +329,6 @@ export default function NavBar() {
                 Login
               </Button>
             )}
-            {/* Always show hamburger menu on mobile */}
             <IconButton
               color="inherit"
               edge="end"
@@ -303,6 +338,9 @@ export default function NavBar() {
                 display: { md: 'none' },
                 color: theme.palette.text.primary,
               }}
+              aria-label="Open mobile menu"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
             >
               <MenuIcon />
             </IconButton>
