@@ -31,9 +31,8 @@ export default function RegisterPage() {
           }}
         >
           Create Your Account
-        </Typography>
+        </Typography>{' '}
         <Divider sx={{ mb: 4 }} />
-
         {/* Form Container */}
         <Box
           component="div"

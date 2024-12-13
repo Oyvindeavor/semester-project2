@@ -73,26 +73,13 @@ const AuctionSearchSection = () => {
                       <SearchIcon color="action" aria-hidden="true" />
                     </InputAdornment>
                   ),
-                  sx: {
-                    height: '100%',
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'divider',
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'primary.main',
-                    },
-                    '&:focus-within': {
-                      outline: '2px solid currentColor',
-                      outlineOffset: '2px',
-                    },
-                  },
                 }}
               />
             </Grid>
             <Grid item xs={12} md={2}>
               <Button
                 fullWidth
-                variant="contained"
+                variant="outlined"
                 startIcon={<SearchIcon aria-hidden="true" />}
                 onClick={handleSearch}
                 type="submit"

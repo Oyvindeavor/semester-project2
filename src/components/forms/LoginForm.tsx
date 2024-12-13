@@ -157,11 +157,12 @@ export default function LoginForm() {
 
         <Button
           type="submit"
-          variant="contained"
+          variant="outlined"
           color="primary"
           fullWidth
           disabled={loading}
           aria-busy={loading}
+          sx={{ color: 'white' }}
         >
           {loading ? (
             <>
@@ -177,11 +178,26 @@ export default function LoginForm() {
           )}
         </Button>
 
-        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{ mt: 2, color: 'white' }}
+        >
           Don`t have an account?{' '}
-          <Link href="/register" aria-label="Register for a new account">
+          <Box
+            component={Link}
+            href="/register"
+            aria-label="Register for a new account"
+            sx={{
+              textDecoration: 'none',
+              color: 'inherit',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
+          >
             Register
-          </Link>
+          </Box>
         </Typography>
       </form>
     </Card>

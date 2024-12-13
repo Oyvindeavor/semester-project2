@@ -163,7 +163,7 @@ export default function AuctionTabs({
                   role="listitem"
                   sx={{
                     bgcolor: 'primary.50',
-                    color: 'primary.main',
+                    color: 'white',
                     '&:hover': { bgcolor: 'primary.100' },
                   }}
                 />
@@ -226,10 +226,14 @@ export default function AuctionTabs({
                 textTransform: 'none',
                 fontSize: '1rem',
                 fontWeight: 500,
-                '&:focus': {
-                  outline: '2px solid currentColor',
-                  outlineOffset: '-2px',
-                },
+                color: 'white',
+              },
+              '& .Mui-selected': {
+                color: 'white',
+              },
+
+              '& .MuiTab-root.Mui-selected': {
+                color: 'white',
               },
             }}
           >

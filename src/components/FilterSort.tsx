@@ -89,20 +89,6 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
     updateURL(new URLSearchParams());
   };
 
-  const commonInputStyles = {
-    borderRadius: 2,
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'divider',
-    },
-    '&:hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'primary.main',
-    },
-    '&:focus-within': {
-      outline: '2px solid currentColor',
-      outlineOffset: '2px',
-    },
-  };
-
   return (
     <Paper
       elevation={2}
@@ -112,6 +98,7 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
         p: 3,
         borderRadius: 3,
         bgcolor: 'background.paper',
+        color: 'white',
       }}
     >
       {currentSearchTerm && (
@@ -128,7 +115,7 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
             variant="outlined"
             onClick={handleClearSearch}
             startIcon={<ClearIcon aria-hidden="true" />}
-            sx={{ borderRadius: 2, textTransform: 'none' }}
+            sx={{ borderRadius: 2, textTransform: 'none', color: 'white' }}
             aria-label="Clear search results"
           >
             Clear search
@@ -165,13 +152,14 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
                     </IconButton>
                   )}
                   <Button
-                    variant="contained"
+                    variant="outlined"
                     onClick={handleSearch}
                     sx={{
                       minWidth: 'unset',
                       px: 3,
                       borderRadius: 1,
                       textTransform: 'none',
+                      color: 'white',
                     }}
                     aria-label="Submit search"
                   >
@@ -179,7 +167,6 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
                   </Button>
                 </InputAdornment>
               ),
-              sx: commonInputStyles,
             }}
           />
         </Grid>
@@ -191,22 +178,32 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
               labelId="category-label"
               value={filters.category}
               label="All Categories"
-              defaultValue="all"
+              defaultValue=""
               onChange={(e) => handleFilterChange('category', e.target.value)}
               disabled={!!currentSearchTerm}
-              sx={commonInputStyles}
               aria-label="Filter by category"
+              sx={{ color: 'white' }}
             >
-              <MenuItem value="">All Categories</MenuItem>
-              <MenuItem value="electronics">Electronics</MenuItem>
-              <MenuItem value="art">Art</MenuItem>
-              <MenuItem value="home">Home</MenuItem>
-              <MenuItem value="sports">Sports</MenuItem>
+              <MenuItem value="" sx={{ color: 'white' }}>
+                All Categories
+              </MenuItem>
+              <MenuItem value="electronics" sx={{ color: 'white' }}>
+                Electronics
+              </MenuItem>
+              <MenuItem value="art" sx={{ color: 'white' }}>
+                Art
+              </MenuItem>
+              <MenuItem value="home" sx={{ color: 'white' }}>
+                Home
+              </MenuItem>
+              <MenuItem value="sports" sx={{ color: 'white' }}>
+                Sports
+              </MenuItem>
             </Select>
             {currentSearchTerm && (
               <Typography
                 variant="caption"
-                color="text.primary"
+                color="white"
                 sx={{ mt: 1, ml: 1 }}
                 role="alert"
               >
@@ -222,12 +219,12 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
             <Select
               labelId="sort-label"
               defaultValue="desc&sort=created"
-              label="Sor By:"
+              label="Sort By:"
               onChange={(e: SelectChangeEvent<string>) =>
                 onSortChange(e.target.value)
               }
-              sx={commonInputStyles}
               aria-label="Sort auctions"
+              sx={{ color: 'white' }}
             >
               <MenuItem value="desc&sort=created">Newest First</MenuItem>
 

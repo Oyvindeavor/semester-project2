@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   TextField,
   Button,
@@ -8,8 +9,9 @@ import {
   Box,
   Typography,
   Alert,
-  Link,
+  Link as MuiLink,
   CircularProgress,
+  Divider,
 } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import PasswordIcon from '@mui/icons-material/Password';
@@ -182,14 +184,15 @@ export default function RegisterForm() {
             }}
           />
         </Box>
-
+        <Divider sx={{ my: 2 }} />
         <Button
           type="submit"
-          variant="contained"
+          variant="outlined"
           color="primary"
           fullWidth
           disabled={loading}
           aria-busy={loading}
+          sx={{ color: 'white', mt: 2 }}
         >
           {loading ? (
             <>
@@ -201,15 +204,26 @@ export default function RegisterForm() {
           )}
         </Button>
 
-        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{ mt: 2, color: 'white' }}
+        >
           Already have an account?{' '}
-          <Link
+          <Box
+            component={Link}
             href="/auth/signin"
-            underline="hover"
-            aria-label="Go to login page"
+            aria-label="Login to your account"
+            sx={{
+              textDecoration: 'none',
+              color: 'inherit',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
           >
             Login
-          </Link>
+          </Box>
         </Typography>
       </form>
     </Card>

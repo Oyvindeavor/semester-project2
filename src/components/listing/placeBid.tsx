@@ -252,7 +252,7 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
 
         <Button
           type="submit"
-          variant="contained"
+          variant="outlined"
           size="large"
           onClick={handlePlaceBid}
           disabled={isSubmitting || bidAmount === '' || !!error}

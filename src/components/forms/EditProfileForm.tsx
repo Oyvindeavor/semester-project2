@@ -102,12 +102,11 @@ const EditProfileModal = React.memo(function EditProfileModal() {
     <>
       <Button
         variant="outlined"
-        color="primary"
         onClick={handleOpen}
         startIcon={<EditIcon aria-hidden="true" />}
         size="small"
         aria-label="Edit your profile"
-        sx={{ borderRadius: 1, textTransform: 'none', px: 2 }}
+        sx={{ borderRadius: 1, textTransform: 'none', px: 2, color: 'white' }}
       >
         Edit Profile
       </Button>

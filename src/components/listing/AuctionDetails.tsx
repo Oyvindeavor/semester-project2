@@ -325,7 +325,7 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
                       sx={{
                         mb: 1,
                         bgcolor: 'primary.50',
-                        color: 'primary.main',
+                        color: 'white',
                         '&:hover': { bgcolor: 'primary.100' },
                       }}
                     />

@@ -260,12 +260,11 @@ export default function CreateAuctionForm() {
           {/* Submit Button */}
           <Button
             type="submit"
-            variant="contained"
-            color="primary"
+            variant="outlined"
             size="large"
             disabled={isSubmitting}
             aria-busy={isSubmitting}
-            sx={{ mt: 2 }}
+            sx={{ mt: 2, color: 'white' }}
           >
             {isSubmitting ? 'Creating...' : 'Create Auction'}
           </Button>

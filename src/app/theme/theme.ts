@@ -17,20 +17,20 @@ const theme = createTheme({
       paper: '#344054',
     },
     primary: {
-      main: '#5B9AF9',
+      main: '#406FB6',
       light: '#7FB1FA',
       dark: '#4785E5',
       contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#38BDF8',
+      main: '#416FB6',
       light: '#60CAFA',
       dark: '#0EA5E9',
       contrastText: '#FFFFFF',
     },
     text: {
-      primary: '#FFFFFF', // Accessible with both background.default and background.paper
-      secondary: '#B4C0D3', // Accessible with both background.default and background.paper
+      primary: '#FFFFFF',
+      secondary: '#B4C0D3',
     },
     divider: 'rgba(255, 255, 255, 0.12)',
     error: {

@@ -81,6 +81,7 @@ export default function NavBar() {
           component={Link}
           href={item.href}
           startIcon={item.icon}
+          variant="outlined"
           sx={{
             color: theme.palette.text.primary,
             mx: 1,
@@ -322,9 +323,9 @@ export default function NavBar() {
               <Button
                 component={Link}
                 href="/auth/signin"
-                variant="contained"
+                variant="outlined"
                 color="primary"
-                sx={{ display: { xs: 'none', md: 'flex' } }}
+                sx={{ display: { xs: 'none', md: 'flex', color: 'white' } }}
               >
                 Login
               </Button>

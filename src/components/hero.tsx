@@ -26,8 +26,22 @@ export default function Hero() {
       }}
     >
       {/* Hero Title */}
-      <Typography variant="h1" sx={{ mb: 2, fontWeight: 700 }}>
-        Bid Swiftly on the Best Auctions
+      <Typography
+        variant="h1"
+        sx={{ mb: 2, fontWeight: 700 }}
+        aria-label="Bid Swiftly on the Best Auctions"
+      >
+        Bid{' '}
+        <Box
+          component="span"
+          sx={{
+            color: 'yellow',
+            textDecoration: 'underline',
+          }}
+        >
+          Swiftly
+        </Box>{' '}
+        on the Best Auctions
       </Typography>
 
       <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary' }}>
@@ -36,7 +50,7 @@ export default function Hero() {
 
       {/* Call-to-Action Button */}
       <Button
-        variant="contained"
+        variant="outlined"
         onClick={handleViewMarketplace}
         sx={{
           borderRadius: 16,
@@ -44,6 +58,7 @@ export default function Hero() {
           py: 1.5,
           fontWeight: 600,
           textTransform: 'none',
+          color: 'white',
         }}
         aria-label="View Marketplace"
       >
