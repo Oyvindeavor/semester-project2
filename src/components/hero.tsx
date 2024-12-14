@@ -50,15 +50,14 @@ export default function Hero() {
 
       {/* Call-to-Action Button */}
       <Button
-        variant="outlined"
+        variant="contained"
+        color="primary"
         onClick={handleViewMarketplace}
         sx={{
-          borderRadius: 16,
           px: 4,
           py: 1.5,
           fontWeight: 600,
           textTransform: 'none',
-          color: 'white',
         }}
         aria-label="View Marketplace"
       >

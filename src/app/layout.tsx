@@ -47,18 +47,17 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       <body className={roboto.variable}>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <SessionProvider session={session}>
-            <Box
-              component="div"
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                minHeight: '100vh',
-              }}
-              role="presentation"
-            >
-              <ThemeProvider theme={theme}>
-                <CssBaseline />
-
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <Box
+                component="div"
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: '100vh',
+                }}
+                role="presentation"
+              >
                 {/* Header landmark */}
                 <header role="banner">
                   <NavBar />
@@ -81,11 +80,10 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                 </Container>
 
                 {/* Footer */}
-                <Box component="footer" role="contentinfo">
-                  <Footer />
-                </Box>
-              </ThemeProvider>
-            </Box>
+
+                <Footer />
+              </Box>
+            </ThemeProvider>
           </SessionProvider>
         </AppRouterCacheProvider>
       </body>

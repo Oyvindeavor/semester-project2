@@ -32,11 +32,7 @@ const AuctionSearchSection = () => {
   };
 
   return (
-    <Box
-      component="section"
-      sx={{ width: '100%', bgcolor: 'background.default', py: 4 }}
-      aria-label="Auction search"
-    >
+    <Box component="section" sx={{ width: '100%' }} aria-label="Auction search">
       <Container maxWidth={false}>
         <Paper
           elevation={2}
@@ -79,7 +75,8 @@ const AuctionSearchSection = () => {
             <Grid item xs={12} md={2}>
               <Button
                 fullWidth
-                variant="outlined"
+                color="primary"
+                variant="contained"
                 startIcon={<SearchIcon aria-hidden="true" />}
                 onClick={handleSearch}
                 type="submit"
@@ -88,7 +85,6 @@ const AuctionSearchSection = () => {
                   minHeight: '56px',
                   textTransform: 'none',
                   boxShadow: 2,
-                  color: 'white',
                 }}
               >
                 Search
@@ -97,9 +93,6 @@ const AuctionSearchSection = () => {
           </Grid>
         </Paper>
       </Container>
-
-      {/* Screen reader announcer */}
-      <div role="status" aria-live="polite" className="sr-only" />
     </Box>
   );
 };

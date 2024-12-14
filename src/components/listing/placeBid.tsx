@@ -145,7 +145,7 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
           </Typography>
           <Button
             variant="contained"
-            size="large"
+            size="small"
             fullWidth
             href="/api/auth/signin"
             aria-label="Sign in to place a bid"
@@ -252,8 +252,8 @@ const PlaceBid: React.FC<PlaceBidProps> = ({ listing }) => {
 
         <Button
           type="submit"
-          variant="outlined"
-          size="large"
+          variant="contained"
+          size="small"
           onClick={handlePlaceBid}
           disabled={isSubmitting || bidAmount === '' || !!error}
           aria-busy={isSubmitting}

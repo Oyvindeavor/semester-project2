@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   Box,
@@ -6,10 +8,10 @@ import {
   Grid,
   IconButton,
   Divider,
-  Link,
 } from '@mui/material';
 import { Facebook, Twitter, Instagram, LinkedIn } from '@mui/icons-material';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -21,7 +23,7 @@ const Footer = () => {
       aria-label="Site footer"
       sx={{
         py: 6,
-        color: 'text.secondary',
+
         mt: 'auto',
         position: 'relative',
         bottom: 0,
@@ -78,13 +80,17 @@ const Footer = () => {
                   { href: '/register', text: 'Register' },
                 ].map((link) => (
                   <li key={link.href}>
-                    <Link
+                    <Box
+                      component={Link}
                       href={link.href}
-                      color="inherit"
-                      underline="hover"
                       sx={{
                         mb: 1,
                         display: 'inline-block',
+                        color: 'inherit',
+                        textDecoration: 'none',
+                        '&:hover': {
+                          textDecoration: 'underline',
+                        },
                         '&:focus': {
                           outline: '2px solid currentColor',
                           outlineOffset: '2px',
@@ -92,7 +98,7 @@ const Footer = () => {
                       }}
                     >
                       {link.text}
-                    </Link>
+                    </Box>
                   </li>
                 ))}
               </Box>
@@ -163,12 +169,16 @@ const Footer = () => {
             © {currentYear} Peregrine Auctions, All Rights Reserved.
           </Typography>
           <nav aria-label="Legal links">
-            <Link
+            <Box
+              component={Link}
               href="/privacy-policy"
-              color="inherit"
-              underline="hover"
               sx={{
                 mr: 2,
+                color: 'inherit',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
                 '&:focus': {
                   outline: '2px solid currentColor',
                   outlineOffset: '2px',
@@ -176,12 +186,16 @@ const Footer = () => {
               }}
             >
               Privacy Policy
-            </Link>
-            <Link
+            </Box>
+            <Box
+              component={Link}
               href="/terms-of-service"
-              color="inherit"
-              underline="hover"
               sx={{
+                color: 'inherit',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
                 '&:focus': {
                   outline: '2px solid currentColor',
                   outlineOffset: '2px',
@@ -189,7 +203,7 @@ const Footer = () => {
               }}
             >
               Terms of Service
-            </Link>
+            </Box>
           </nav>
         </Box>
       </Container>

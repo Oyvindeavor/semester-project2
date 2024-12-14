@@ -143,7 +143,7 @@ const UpdateListingForm = memo(function UpdateListingForm({
   return (
     <>
       <Button
-        variant="outlined"
+        variant="contained"
         color="primary"
         onClick={handleOpen}
         startIcon={<EditIcon aria-hidden="true" />}
@@ -309,15 +309,16 @@ const UpdateListingForm = memo(function UpdateListingForm({
                       sx={{
                         display: 'flex',
                         gap: 2,
-                        justifyContent: 'flex-end',
+                        justifyContent: 'space-between',
                         mt: 2,
                       }}
                     >
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         onClick={handleClose}
                         disabled={loading}
                         aria-label="Cancel update"
+                        color="error"
                         sx={{ textTransform: 'none' }}
                       >
                         Cancel

@@ -157,7 +157,7 @@ export default function LoginForm() {
 
         <Button
           type="submit"
-          variant="outlined"
+          variant="contained"
           color="primary"
           fullWidth
           disabled={loading}

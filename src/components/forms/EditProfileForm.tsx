@@ -101,7 +101,7 @@ const EditProfileModal = React.memo(function EditProfileModal() {
   return (
     <>
       <Button
-        variant="outlined"
+        variant="contained"
         onClick={handleOpen}
         startIcon={<EditIcon aria-hidden="true" />}
         size="small"
@@ -220,12 +220,13 @@ const EditProfileModal = React.memo(function EditProfileModal() {
                     sx={{
                       display: 'flex',
                       gap: 2,
-                      justifyContent: 'flex-end',
+                      justifyContent: 'space-between',
                       mt: 2,
                     }}
                   >
                     <Button
-                      variant="outlined"
+                      variant="contained"
+                      color="error"
                       onClick={handleClose}
                       disabled={loading}
                       sx={{ textTransform: 'none' }}
@@ -248,7 +249,7 @@ const EditProfileModal = React.memo(function EditProfileModal() {
                         'Save Changes'
                       )}
                       <span className="sr-only">
-                        {loading ? 'Saving changes...' : 'Save changes'}
+                        {loading ? 'Saving changes...' : ''}
                       </span>
                     </Button>
                   </Box>

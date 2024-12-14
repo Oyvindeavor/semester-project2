@@ -260,7 +260,7 @@ export default function CreateAuctionForm() {
           {/* Submit Button */}
           <Button
             type="submit"
-            variant="outlined"
+            variant="contained"
             size="large"
             disabled={isSubmitting}
             aria-busy={isSubmitting}

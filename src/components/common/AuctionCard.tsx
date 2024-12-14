@@ -37,6 +37,7 @@ const AuctionCard = ({
           position: 'relative',
           mx: 'auto',
           '&:hover': {
+            outline: '2px solid currentColor',
             transform: 'translateY(-8px)',
             boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
           },
@@ -52,8 +53,6 @@ const AuctionCard = ({
           sx={{
             position: 'relative',
             height: { xs: 240, sm: 220, md: 200, lg: 190 },
-            borderBottom: '1px solid rgba(0,0,0,0.05)',
-            backgroundColor: 'grey.100',
           }}
         >
           <Image
@@ -134,7 +133,7 @@ const AuctionCard = ({
                 alignItems: 'center',
                 gap: 1,
                 p: { xs: 1.5, sm: 1 },
-                backgroundColor: 'rgba(255, 152, 0, 0.08)',
+
                 borderRadius: 2,
               }}
               role="status"
