@@ -9,6 +9,8 @@ import {
   Stack,
   IconButton,
   Avatar,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { useState, useCallback, useEffect } from 'react';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -47,6 +49,8 @@ interface AuctionDetailsProps {
 }
 
 const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const totalImages = listing.media.length;
 
@@ -82,13 +86,15 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
       component="article"
       aria-label={`Auction details for ${listing.title}`}
       sx={{
-        p: { xs: 1, sm: 1, md: 1 },
-        borderRadius: 3,
+        p: { xs: 2, sm: 2, md: 3 },
+        borderRadius: { xs: 2, sm: 3 },
         bgcolor: 'background.paper',
         width: '100%',
       }}
     >
-      <Grid container spacing={4}>
+      <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
+        {' '}
+        {/* Responsive spacing */}
         <Grid item xs={12} md={7}>
           <figure>
             <Card
@@ -98,13 +104,14 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
               aria-label={`Image ${currentImageIndex + 1} of ${totalImages}`}
               sx={{
                 position: 'relative',
-                mb: 4,
-                borderRadius: 2,
+                mb: { xs: 2, sm: 4 },
+                borderRadius: { xs: 1, sm: 2 },
                 bgcolor: 'grey.50',
                 aspectRatio: { xs: '1/1', sm: '4/3' },
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                overflow: 'hidden',
               }}
             >
               <Box
@@ -135,13 +142,15 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
                     aria-label="Previous image"
                     sx={{
                       position: 'absolute',
-                      left: { xs: 8, sm: 16 },
+                      left: { xs: 4, sm: 16 },
                       top: '50%',
                       transform: 'translateY(-50%)',
                       bgcolor: 'white',
                       boxShadow: 2,
                       zIndex: 2,
                       color: 'black',
+                      width: { xs: 32, sm: 40 },
+                      height: { xs: 32, sm: 40 },
                       '&:hover': {
                         bgcolor: 'white',
                         transform: 'translateY(-50%) scale(1.1)',
@@ -149,20 +158,22 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
                       transition: 'transform 0.2s',
                     }}
                   >
-                    <NavigateBeforeIcon />
+                    <NavigateBeforeIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
                   </IconButton>
                   <IconButton
                     onClick={handleNextImage}
                     aria-label="Next image"
                     sx={{
                       position: 'absolute',
-                      right: { xs: 8, sm: 16 },
+                      right: { xs: 4, sm: 16 },
                       top: '50%',
                       transform: 'translateY(-50%)',
                       bgcolor: 'white',
                       boxShadow: 2,
                       zIndex: 2,
                       color: 'black',
+                      width: { xs: 32, sm: 40 },
+                      height: { xs: 32, sm: 40 },
                       '&:hover': {
                         bgcolor: 'white',
                         transform: 'translateY(-50%) scale(1.1)',
@@ -170,7 +181,7 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
                       transition: 'transform 0.2s',
                     }}
                   >
-                    <NavigateNextIcon />
+                    <NavigateNextIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
                   </IconButton>
                 </>
               )}
@@ -180,15 +191,15 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
               <Stack
                 component="figcaption"
                 direction="row"
-                spacing={2}
+                spacing={1}
                 role="tablist"
                 aria-label="Image thumbnails"
                 sx={{
                   overflowX: 'auto',
-                  py: 2,
+                  py: { xs: 1, sm: 2 },
                   px: { xs: 1, sm: 0 },
                   '::-webkit-scrollbar': {
-                    height: 8,
+                    height: { xs: 4, sm: 8 },
                     borderRadius: 2,
                   },
                   '::-webkit-scrollbar-track': {
@@ -219,11 +230,11 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
                     }}
                     sx={{
                       position: 'relative',
-                      width: { xs: 70, sm: 80 },
-                      height: { xs: 70, sm: 80 },
+                      width: { xs: 60, sm: 80 },
+                      height: { xs: 60, sm: 80 },
                       cursor: 'pointer',
                       flexShrink: 0,
-                      borderRadius: 2,
+                      borderRadius: { xs: 1, sm: 2 },
                       border:
                         currentImageIndex === index
                           ? '2px solid'
@@ -260,7 +271,6 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
             )}
           </figure>
         </Grid>
-
         <Grid item xs={12} md={5}>
           <Stack spacing={3} component="section" aria-label="Auction details">
             <Stack

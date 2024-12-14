@@ -69,7 +69,16 @@ export default function NavBar() {
           component={Link}
           href={item.href}
           onClick={handleDrawerToggle}
-          sx={{ py: 1.5 }}
+          sx={{
+            py: 1.5,
+            color: 'common.white',
+            '& .MuiListItemIcon-root': {
+              color: 'common.white',
+            },
+            '& .MuiListItemText-primary': {
+              color: 'common.white',
+            },
+          }}
           role="menuitem"
         >
           <ListItemIcon aria-hidden="true">{item.icon}</ListItemIcon>
@@ -114,12 +123,16 @@ export default function NavBar() {
         '& .MuiDrawer-paper': {
           width: 280,
           boxSizing: 'border-box',
-          backgroundColor: theme.palette.background.default,
+          backgroundColor: theme.palette.primary.main,
         },
       }}
     >
       <Box
-        sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}
+        sx={{
+          p: 2,
+          borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+          color: 'common.white',
+        }}
         role="banner"
       >
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -129,7 +142,7 @@ export default function NavBar() {
             height={30}
             alt="Peregrine Auctions Logo"
           />
-          <Typography variant="h6" color="primary">
+          <Typography variant="h6" color="common.white">
             Peregrine Auctions
           </Typography>
         </Box>
@@ -144,17 +157,38 @@ export default function NavBar() {
               sx={{ width: 32, height: 32, mr: 1 }}
             />
             <Box>
-              <Typography variant="subtitle2">{session.user.name}</Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="subtitle2" color="common.white">
+                {session.user.name}
+              </Typography>
+              <Typography
+                variant="caption"
+                color="common.white"
+                sx={{ opacity: 0.8 }}
+              >
                 {session.user.email}
               </Typography>
             </Box>
           </Box>
         )}
       </Box>
-      <List sx={{ pt: 1 }} role="menu" aria-label="Navigation menu">
+      <List
+        sx={{
+          pt: 1,
+          '& .MuiListItem-root': {
+            color: 'common.white',
+            '& .MuiListItemIcon-root': {
+              color: 'common.white',
+            },
+            '& .MuiListItemText-primary': {
+              color: 'common.white',
+            },
+          },
+        }}
+        role="menu"
+        aria-label="Navigation menu"
+      >
         {renderNavItems(true)}
-        <Divider sx={{ my: 1 }} />
+        <Divider sx={{ my: 1, borderColor: 'rgba(255, 255, 255, 0.12)' }} />
         {session ? (
           USER_MENU_ITEMS.map((item) => (
             <ListItem
@@ -165,7 +199,16 @@ export default function NavBar() {
               }}
               component={item.href ? Link : 'li'}
               href={item.href}
-              sx={{ py: 1.5 }}
+              sx={{
+                py: 1.5,
+                color: 'common.white',
+                '& .MuiListItemIcon-root': {
+                  color: 'common.white',
+                },
+                '& .MuiListItemText-primary': {
+                  color: 'common.white',
+                },
+              }}
               role="menuitem"
             >
               <ListItemIcon aria-hidden="true">{item.icon}</ListItemIcon>
@@ -177,7 +220,16 @@ export default function NavBar() {
             component={Link}
             href="/auth/signin"
             onClick={handleDrawerToggle}
-            sx={{ py: 1.5 }}
+            sx={{
+              py: 1.5,
+              color: 'common.white',
+              '& .MuiListItemIcon-root': {
+                color: 'common.white',
+              },
+              '& .MuiListItemText-primary': {
+                color: 'common.white',
+              },
+            }}
             role="menuitem"
           >
             <ListItemIcon aria-hidden="true">
