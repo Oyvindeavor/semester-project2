@@ -15,6 +15,7 @@ import {
   Typography,
   IconButton,
   Paper,
+  FormLabel,
 } from '@mui/material';
 import { Search as SearchIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -152,7 +153,7 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
                     </IconButton>
                   )}
                   <Button
-                    variant="outlined"
+                    variant="contained"
                     onClick={handleSearch}
                     sx={{
                       minWidth: 'unset',
@@ -173,32 +174,18 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
 
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-            <InputLabel id="category-label">Categories</InputLabel>
+            <InputLabel id="category-label">Category</InputLabel>
             <Select
-              labelId="category-label"
-              value={filters.category}
-              label="All Categories"
-              defaultValue=""
+              value={filters.category} // Ensure the default value is "all"
+              label="Categories"
               onChange={(e) => handleFilterChange('category', e.target.value)}
               disabled={!!currentSearchTerm}
-              aria-label="Filter by category"
-              sx={{ color: 'white' }}
             >
-              <MenuItem value="" sx={{ color: 'white' }}>
-                All Categories
-              </MenuItem>
-              <MenuItem value="electronics" sx={{ color: 'white' }}>
-                Electronics
-              </MenuItem>
-              <MenuItem value="art" sx={{ color: 'white' }}>
-                Art
-              </MenuItem>
-              <MenuItem value="home" sx={{ color: 'white' }}>
-                Home
-              </MenuItem>
-              <MenuItem value="sports" sx={{ color: 'white' }}>
-                Sports
-              </MenuItem>
+              <MenuItem value="">All Categories</MenuItem>
+              <MenuItem value="electronics">Electronics</MenuItem>
+              <MenuItem value="art">Art</MenuItem>
+              <MenuItem value="home">Home</MenuItem>
+              <MenuItem value="sports">Sports</MenuItem>
             </Select>
             {currentSearchTerm && (
               <Typography
@@ -223,8 +210,6 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
               onChange={(e: SelectChangeEvent<string>) =>
                 onSortChange(e.target.value)
               }
-              aria-label="Sort auctions"
-              sx={{ color: 'white' }}
             >
               <MenuItem value="desc&sort=created">Newest First</MenuItem>
 

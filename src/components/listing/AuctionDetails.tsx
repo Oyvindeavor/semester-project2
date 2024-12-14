@@ -82,7 +82,7 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
       component="article"
       aria-label={`Auction details for ${listing.title}`}
       sx={{
-        p: { xs: 2, sm: 3, md: 4 },
+        p: { xs: 1, sm: 1, md: 1 },
         borderRadius: 3,
         bgcolor: 'background.paper',
         width: '100%',
@@ -98,7 +98,7 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
               aria-label={`Image ${currentImageIndex + 1} of ${totalImages}`}
               sx={{
                 position: 'relative',
-                mb: 2,
+                mb: 4,
                 borderRadius: 2,
                 bgcolor: 'grey.50',
                 aspectRatio: { xs: '1/1', sm: '4/3' },

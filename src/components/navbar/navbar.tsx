@@ -245,11 +245,10 @@ export default function NavBar() {
       elevation={0}
       component="nav"
       sx={{
-        backgroundColor: theme.palette.background.paper,
         borderBottom: `1px solid ${theme.palette.divider}`,
       }}
     >
-      <Container maxWidth="xl">
+      <Container sx={{}}>
         <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 70 } }}>
           <Link
             href="/"
@@ -257,7 +256,7 @@ export default function NavBar() {
             aria-label="Home"
           >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box sx={{ mr: 1, color: theme.palette.primary.main }}>
+              <Box sx={{ mr: 1 }}>
                 <Image
                   src="/peregrineAuctions.svg"
                   width={40}
@@ -271,7 +270,7 @@ export default function NavBar() {
                 noWrap
                 sx={{
                   fontWeight: 700,
-                  color: theme.palette.text.primary,
+
                   display: { xs: 'none', sm: 'block' },
                 }}
               >
@@ -288,9 +287,7 @@ export default function NavBar() {
             }}
             role="navigation"
             aria-label="Main navigation"
-          >
-            {renderNavItems()}
-          </Box>
+          ></Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
             {session ? (

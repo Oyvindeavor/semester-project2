@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Container, Typography, Grid, Divider } from '@mui/material';
-import AuctionCard from './AuctionCard';
+import AuctionCard from './common/AuctionCard';
 import { getTimeRemaining } from '@/utils/dateFormattings';
 import { getHighestBid } from '@/utils/getHighestBid';
 

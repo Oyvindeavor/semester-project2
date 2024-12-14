@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import FilterSort from '@/components/FilterSort';
-import AuctionCard from '@/components/AuctionCard';
+import AuctionCard from '@/components/common/AuctionCard';
 import { getTimeRemaining } from '@/utils/dateFormattings';
 import { getHighestBid } from '@/utils/getHighestBid';
 import Paper from '@mui/material/Paper';
@@ -174,7 +174,6 @@ export default function Marketplace() {
 
   return (
     <Box
-      component="main"
       sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}
       role="main"
       aria-label="Marketplace"

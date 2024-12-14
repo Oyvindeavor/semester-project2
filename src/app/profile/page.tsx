@@ -7,6 +7,8 @@ import { deleteListingById } from '@/utils/api/deleteListingById';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import AuctionTabs from '@/components/profile/TabPanelProfile';
 import type { Listing } from '@/types/api/listing';
+import ProfileHeaderLoading from '@/components/profile/skeleton/ProfileHeader';
+import TabPanelProfileLoading from '@/components/profile/skeleton/TabPanelProfile';
 
 interface Media {
   url: string;
@@ -67,7 +69,6 @@ export default function Profile() {
 
   const handleDelete = async (id: string) => {
     try {
-      // Use a more accessible confirmation dialog
       if (
         !window.confirm(
           'Are you sure you want to delete this listing? This action cannot be undone.'
@@ -91,12 +92,6 @@ export default function Profile() {
           },
         };
       });
-
-      // Announce successful deletion to screen readers
-      const announcer = document.getElementById('status-announcer');
-      if (announcer) {
-        announcer.textContent = 'Listing successfully deleted';
-      }
     } catch (error) {
       console.error('Error deleting listing:', error);
       setError('Failed to delete listing. Please try again.');
@@ -108,16 +103,21 @@ export default function Profile() {
   // Loading state
   if (status === 'loading' || isLoading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="50vh"
-        role="status"
-        aria-label="Loading profile"
-      >
-        <CircularProgress aria-label="Loading" />
-      </Box>
+      // <Box
+      //   display="flex"
+      //   justifyContent="center"
+      //   alignItems="center"
+      //   minHeight="50vh"
+      //   role="status"
+      //   aria-label="Loading profile"
+      // >
+      //   <CircularProgress aria-label="Loading" />
+      // </Box>
+
+      <>
+        <ProfileHeaderLoading />
+        <TabPanelProfileLoading />
+      </>
     );
   }
 
@@ -170,14 +170,6 @@ export default function Profile() {
         wonListings={profile.data.wins}
         onDelete={handleDelete}
         deleting={deleting}
-      />
-
-      {/* Status announcer for screen readers */}
-      <div
-        id="status-announcer"
-        role="status"
-        aria-live="polite"
-        className="sr-only"
       />
     </Box>
   );
