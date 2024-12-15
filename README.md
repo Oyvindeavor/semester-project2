@@ -1,4 +1,6 @@
 # Peregrine Auctions, Next.js TypeScript MUI Project
+<img width="1161" alt="Screenshot 2024-12-15 at 18 08 05" src="https://github.com/user-attachments/assets/7d13445e-bd2e-489c-9152-a4c087825399" />
+
 
 A modern web application built with Next.js, TypeScript, and Material-UI (MUI) for a clean, responsive user interface. Utilizes nextjs SSR as much as possible to snappy user interface.
 
