@@ -15,7 +15,6 @@ import {
   Typography,
   IconButton,
   Paper,
-  FormLabel,
 } from '@mui/material';
 import { Search as SearchIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -176,7 +175,7 @@ const FilterSort = ({ onFilterChange, onSortChange }: FilterSortProps) => {
           <FormControl fullWidth>
             <InputLabel id="category-label">Category</InputLabel>
             <Select
-              value={filters.category} // Ensure the default value is "all"
+              value={filters.category}
               label="Categories"
               onChange={(e) => handleFilterChange('category', e.target.value)}
               disabled={!!currentSearchTerm}

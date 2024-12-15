@@ -103,17 +103,6 @@ export default function Profile() {
   // Loading state
   if (status === 'loading' || isLoading) {
     return (
-      // <Box
-      //   display="flex"
-      //   justifyContent="center"
-      //   alignItems="center"
-      //   minHeight="50vh"
-      //   role="status"
-      //   aria-label="Loading profile"
-      // >
-      //   <CircularProgress aria-label="Loading" />
-      // </Box>
-
       <>
         <ProfileHeaderLoading />
         <TabPanelProfileLoading />

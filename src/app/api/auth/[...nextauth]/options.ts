@@ -24,32 +24,24 @@ export const authOptions: NextAuthOptions = {
           console.error('Credentials are missing');
           return null;
         }
-
         const { email, password } = credentials;
-
         try {
           const response = await fetch(noroffApi.login, {
             method: 'POST',
             headers: noAuthHeaders(),
             body: JSON.stringify({ email, password }),
           });
-
           const result = await response.json();
-
           if (!response.ok) {
             const errorMessage =
               result.errors?.[0]?.message || 'Failed to login';
-            console.error('Authentication failed:', errorMessage);
             throw new Error(errorMessage);
           }
-
           const userData = result.data;
-
           if (!userData.accessToken) {
             console.error('AccessToken is missing in the response.');
             return null;
           }
-
           return {
             id: userData.id,
             name: userData.name,
@@ -67,7 +59,8 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      // Initial sign in
       if (user) {
         token.accessToken = user.accessToken;
         token.user = {
@@ -79,8 +72,18 @@ export const authOptions: NextAuthOptions = {
           bio: user.bio,
         };
       }
+
+      // Handle updates from session
+      if (trigger === 'update' && session) {
+        token.user = {
+          ...token.user,
+          ...session.user,
+        };
+      }
+
       return token;
     },
+
     async session({ session, token }: { session: Session; token: JWT }) {
       session.accessToken = token.accessToken;
       if (token.user) {
@@ -93,6 +96,7 @@ export const authOptions: NextAuthOptions = {
           bio: token.user.bio,
         };
       }
+
       return session;
     },
   },

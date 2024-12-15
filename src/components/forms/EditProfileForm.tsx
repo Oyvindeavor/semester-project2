@@ -67,8 +67,14 @@ const EditProfileModal = React.memo(function EditProfileModal() {
       setLoading(true);
       const payload = {
         bio,
-        avatar: { url: avatarUrl, alt: session.user?.name || 'User avatar' },
-        banner: { url: bannerUrl, alt: session.user?.name || 'User banner' },
+        avatar: {
+          url: avatarUrl,
+          alt: session.user?.name || 'User avatar',
+        },
+        banner: {
+          url: bannerUrl,
+          alt: session.user?.name || 'User banner',
+        },
       };
 
       const response = await fetch(
@@ -85,7 +91,15 @@ const EditProfileModal = React.memo(function EditProfileModal() {
         throw new Error(data.error || 'Failed to update profile');
       }
 
-      await update();
+      // After API success, update the session
+      await update({
+        user: {
+          ...session.user,
+          image: avatarUrl,
+          bio: bio,
+          imageAlt: session.user.name,
+        },
+      });
       handleClose();
     } catch (error) {
       setError(

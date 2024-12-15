@@ -103,7 +103,6 @@ export default function RegisterForm() {
 
   return (
     <Card
-      component="main"
       role="main"
       aria-labelledby="register-title"
       sx={{ margin: '0 auto', padding: 3 }}
@@ -187,7 +186,7 @@ export default function RegisterForm() {
         <Divider sx={{ my: 2 }} />
         <Button
           type="submit"
-          variant="outlined"
+          variant="contained"
           color="primary"
           fullWidth
           disabled={loading}

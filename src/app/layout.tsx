@@ -1,7 +1,8 @@
 import * as React from 'react';
 import NavBar from '@/components/navbar/navbar';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import { Roboto } from 'next/font/google';
+import { Inter } from 'next/font/google';
+
 import { CssBaseline, Container, ThemeProvider } from '@mui/material';
 import SessionProvider from '@/components/SessionProvider';
 import { getServerSession } from 'next-auth';
@@ -10,11 +11,11 @@ import theme from '@/app/theme/theme';
 import Footer from '@/components/footer/footer';
 import { Viewport } from 'next';
 
-const roboto = Roboto({
+const inter = Inter({
   weight: ['300', '400', '500', '700'],
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-roboto',
+  variable: '--font-inter',
 });
 
 export const metadata = {
@@ -36,7 +37,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const session = await getServerSession();
 
   return (
-    <html lang="en" className={`${roboto.variable}`}>
+    <html lang="en" className={`${inter.variable}`}>
       <head>
         <link
           rel="preconnect"
@@ -44,7 +45,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
           crossOrigin="anonymous"
         />
       </head>
-      <body className={roboto.variable}>
+      <body className={inter.variable}>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <SessionProvider session={session}>
             <ThemeProvider theme={theme}>

@@ -123,6 +123,7 @@ export default function CreateAuctionForm() {
         sx={{ p: 4 }}
         role="form"
         aria-label="Create auction form"
+        bgcolor={'primary'}
       >
         {error && (
           <Alert severity="error" id="form-error" tabIndex={-1} sx={{ mb: 3 }}>
@@ -175,14 +176,13 @@ export default function CreateAuctionForm() {
                   ))}
                 </Box>
               )}
+              sx={{ mt: 1 }}
             >
-              {['Electronics', 'Fashion', 'Home', 'Toys', 'Vehicles'].map(
-                (tag) => (
-                  <MenuItem key={tag} value={tag}>
-                    {tag}
-                  </MenuItem>
-                )
-              )}
+              {['Electronics', 'Art', 'Home', 'Sports'].map((tag) => (
+                <MenuItem key={tag} value={tag}>
+                  {tag}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
 
@@ -231,7 +231,7 @@ export default function CreateAuctionForm() {
                 {index === formData.media.length - 1 && (
                   <IconButton
                     onClick={addMediaField}
-                    color="primary"
+                    color="success"
                     size="small"
                     aria-label="Add another image"
                   >

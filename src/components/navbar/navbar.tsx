@@ -54,6 +54,8 @@ export default function NavBar() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const router = useRouter();
 
+  console.log('session from navbar!!!', session);
+
   if (status === 'loading') return null;
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
@@ -129,7 +131,7 @@ export default function NavBar() {
     >
       <Box
         sx={{
-          p: 2,
+          p: 3,
           borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
           color: 'common.white',
         }}
@@ -142,16 +144,22 @@ export default function NavBar() {
             height={30}
             alt="Peregrine Auctions Logo"
           />
-          <Typography variant="h6" color="common.white">
+          <Typography
+            variant="h6"
+            color="common.white"
+            sx={{ padding: '10px' }}
+          >
             Peregrine Auctions
           </Typography>
         </Box>
+        <Divider sx={{ my: 1, borderColor: 'rgba(255, 255, 255, 0.12)' }} />
         {session && (
           <Box
             sx={{ display: 'flex', alignItems: 'center' }}
             role="complementary"
           >
             <Avatar
+              key={session.user.image} // Add this line
               src={session.user.image || ''}
               alt={session.user.name || 'User avatar'}
               sx={{ width: 32, height: 32, mr: 1 }}
@@ -354,6 +362,7 @@ export default function NavBar() {
                 aria-haspopup="true"
               >
                 <Avatar
+                  key={session.user.image} // Add this line
                   alt={session.user.name || 'User avatar'}
                   src={session.user.image || ''}
                   sx={{

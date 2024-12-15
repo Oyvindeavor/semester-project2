@@ -17,14 +17,9 @@ import {
 } from '@mui/material';
 import { Edit as EditIcon, Close as CloseIcon } from '@mui/icons-material';
 import { fetchListingById } from '@/utils/api/fetchListingById';
+import { useRouter } from 'next/navigation';
 
-const predefinedTags = [
-  'Electronics',
-  'Furniture',
-  'Books',
-  'Clothing',
-  'Sports',
-] as const;
+const predefinedTags = ['Electronics', 'Art', 'Home', 'Sports'] as const;
 
 interface FormData {
   title: string;
@@ -110,6 +105,8 @@ const UpdateListingForm = memo(function UpdateListingForm({
     }
   };
 
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -131,6 +128,7 @@ const UpdateListingForm = memo(function UpdateListingForm({
       }
 
       handleClose();
+      router.push(`/listing/${id}`);
     } catch (error) {
       setError(
         error instanceof Error ? error.message : 'Failed to update listing'

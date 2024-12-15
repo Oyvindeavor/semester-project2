@@ -4,7 +4,6 @@ import AuctionCard from './common/AuctionCard';
 import { getTimeRemaining } from '@/utils/dateFormattings';
 import { getHighestBid } from '@/utils/getHighestBid';
 
-// Types remain the same
 interface Media {
   url: string;
   alt?: string;
