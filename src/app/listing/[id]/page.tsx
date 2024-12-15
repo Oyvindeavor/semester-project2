@@ -1,6 +1,6 @@
 import { fetchListingById } from '@/utils/api/fetchListingById';
 import React from 'react';
-import { Box, Typography, Alert } from '@mui/material';
+import { Box, Alert } from '@mui/material';
 import AuctionDetails from '@/components/listing/AuctionDetails';
 import BidTable from '@/components/listing/BidTable';
 import PlaceBid from '@/components/listing/placeBid';

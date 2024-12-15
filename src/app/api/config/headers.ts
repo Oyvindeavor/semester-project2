@@ -5,7 +5,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 
 export async function headers(accessToken: string | null = null) {
   if (!accessToken) {
-    const session = await getServerSession(authOptions); // Fetch server session
+    const session = await getServerSession(authOptions);
     accessToken = session?.accessToken || null;
   }
 
