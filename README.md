@@ -48,6 +48,7 @@ npm install
 NEXT_PUBLIC_API_BASE=your_api_base_url
 API_KEY=your_api_key
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXTAUTH_SECRET=secret
 ```
 
 ## 🚀 Development
