@@ -1,52 +1,53 @@
 'use client';
-import { createTheme } from '@mui/material/styles';
-import { Inter } from 'next/font/google';
+import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
-const inter = Inter({
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-});
-
-const theme = createTheme({
+let theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#2A3447',
+      main: '#3D84E6',
+      contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#64B6AC',
+      main: '#E91E63',
+      contrastText: '#FFFFFF',
     },
     background: {
-      default: '#1A1A1A',
-      paper: '#242424',
+      default: '#121212',
+      paper: '#1E1E1E',
     },
+    text: {
+      primary: '#E0E0E0',
+      secondary: '#A8A8A8',
+    },
+    error: {
+      main: '#FF5252',
+    },
+    success: {
+      main: '#4CAF50',
+    },
+    divider: 'rgba(255, 255, 255, 0.12)',
+  },
+  typography: {
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    button: {
+      textTransform: 'none',
+      fontWeight: 600,
+    },
+    // Let MUI handle responsive font sizes for all variants
+  },
+  shape: {
+    borderRadius: 8,
   },
   components: {
-    MuiTypography: {
-      styleOverrides: {
-        root: {
-          '@media (max-width:600px)': {
-            fontSize: '90%',
-          },
-          '@media (min-width:601px) and (max-width:960px)': {
-            fontSize: '95%',
-          },
-          '@media (min-width:961px)': {
-            fontSize: '130%',
-          },
-        },
-      },
-    },
-
     MuiCard: {
       styleOverrides: {
         root: {
           transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
           '&:hover': {
-            transform: 'translateY(-4px)',
-            boxShadow: '0 4px 20px 0 rgba(0,0,0,0.12)',
+            transform: 'translateY(-5px)',
+            // Use a shadow based on the primary color for a modern "glow" effect
+            boxShadow: '0 8px 25px 0 rgba(61, 132, 230, 0.3)',
           },
         },
       },
@@ -67,9 +68,11 @@ const theme = createTheme({
     MuiLink: {
       styleOverrides: {
         root: {
+          color: '#3D84E6', // Use primary color for links
           transition: 'color 0.2s ease-in-out',
           '&:hover': {
-            color: '#64B6AC',
+            // Hover with the vibrant secondary color for consistency
+            color: '#E91E63',
           },
         },
       },
@@ -77,9 +80,9 @@ const theme = createTheme({
     MuiFab: {
       styleOverrides: {
         root: {
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
-            transform: 'rotate(90deg)',
+            transform: 'rotate(90deg) scale(1.05)', // Added a subtle scale for more pop
           },
         },
       },
@@ -96,4 +99,8 @@ const theme = createTheme({
     },
   },
 });
+
+// This function makes all typography variants (h1, h2, body1, etc.) responsive
+theme = responsiveFontSizes(theme);
+
 export default theme;

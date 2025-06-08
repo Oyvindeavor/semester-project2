@@ -68,7 +68,6 @@ export default function Marketplace() {
     isLastPage: true,
   });
 
-  // Existing fetch and handler functions remain the same
   const constructQueryString = (page: number) => {
     const params = new URLSearchParams();
     params.append('limit', ITEMS_PER_PAGE.toString());

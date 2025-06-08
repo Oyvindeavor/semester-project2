@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Box, CircularProgress, Alert } from '@mui/material';
+import { Box, Alert } from '@mui/material';
 import { deleteListingById } from '@/utils/api/deleteListingById';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import AuctionTabs from '@/components/profile/TabPanelProfile';

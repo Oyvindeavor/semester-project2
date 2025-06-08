@@ -49,8 +49,6 @@ interface AuctionDetailsProps {
 }
 
 const AuctionDetails: React.FC<AuctionDetailsProps> = ({ listing }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const totalImages = listing.media.length;
 

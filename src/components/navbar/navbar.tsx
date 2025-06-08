@@ -23,7 +23,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import StorefrontIcon from '@mui/icons-material/Storefront';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
@@ -32,215 +32,138 @@ import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
-const NAVIGATION_ITEMS = [
+// --- Constants for easy management ---
+const NAV_ITEMS = [
   { name: 'Marketplace', href: '/marketplace', icon: <StorefrontIcon /> },
 ];
 
 const USER_MENU_ITEMS = [
   { name: 'Profile', href: '/profile', icon: <PersonIcon /> },
-  { name: 'Create Listing', href: '/create', icon: <AddCircleIcon /> },
   {
     name: 'Logout',
     icon: <LogoutIcon />,
-    action: () => signOut({ redirect: false, callbackUrl: '/' }),
+    action: () => signOut({ callbackUrl: '/' }),
   },
 ];
 
 export default function NavBar() {
   const { data: session, status } = useSession();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const router = useRouter();
 
-  console.log('session from navbar!!!', session);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  if (status === 'loading') return null;
+  if (status === 'loading') {
+    // Render a skeleton or null during session loading to prevent flicker
+    return <AppBar position="sticky" sx={{ height: { xs: 64, md: 70 } }} />;
+  }
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) =>
     setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
-  const renderNavItems = (mobile = false) => {
-    return NAVIGATION_ITEMS.map((item) =>
-      mobile ? (
-        <ListItem
-          key={item.name}
-          component={Link}
-          href={item.href}
-          onClick={handleDrawerToggle}
-          sx={{
-            py: 1.5,
-            color: 'common.white',
-            '& .MuiListItemIcon-root': {
-              color: 'common.white',
-            },
-            '& .MuiListItemText-primary': {
-              color: 'common.white',
-            },
-          }}
-          role="menuitem"
-        >
-          <ListItemIcon aria-hidden="true">{item.icon}</ListItemIcon>
-          <ListItemText primary={item.name} />
-        </ListItem>
-      ) : (
-        <Button
-          key={item.name}
-          component={Link}
-          href={item.href}
-          startIcon={item.icon}
-          variant="outlined"
-          sx={{
-            color: theme.palette.text.primary,
-            mx: 1,
-            '&:hover': {
-              backgroundColor: theme.palette.action.hover,
-            },
-            '&:focus': {
-              outline: '2px solid currentColor',
-              outlineOffset: '2px',
-            },
-          }}
-          aria-label={item.name}
-        >
-          {item.name}
-        </Button>
-      )
-    );
-  };
-
-  const renderMobileDrawer = () => (
+  const MobileDrawer = (
     <Drawer
       variant="temporary"
       anchor="right"
       open={mobileOpen}
       onClose={handleDrawerToggle}
       ModalProps={{ keepMounted: true }}
-      aria-label="Mobile navigation menu"
       sx={{
         display: { xs: 'block', md: 'none' },
         '& .MuiDrawer-paper': {
           width: 280,
           boxSizing: 'border-box',
-          backgroundColor: theme.palette.primary.main,
+          // Glassmorphism for the drawer
+          backgroundColor: 'rgba(30, 30, 30, 0.9)',
+          backdropFilter: 'blur(10px)',
+          borderLeft: `1px solid ${theme.palette.divider}`,
         },
       }}
     >
-      <Box
-        sx={{
-          p: 3,
-          borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
-          color: 'common.white',
-        }}
-        role="banner"
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+      <Box sx={{ p: 2, textAlign: 'center' }}>
+        <Link href="/" passHref>
           <Image
             src="/peregrineAuctions.svg"
-            width={30}
-            height={30}
+            width={40}
+            height={40}
             alt="Peregrine Auctions Logo"
           />
-          <Typography
-            variant="h6"
-            color="common.white"
-            sx={{ padding: '10px' }}
-          >
-            Peregrine Auctions
-          </Typography>
-        </Box>
-        <Divider sx={{ my: 1, borderColor: 'rgba(255, 255, 255, 0.12)' }} />
-        {session && (
-          <Box
-            sx={{ display: 'flex', alignItems: 'center' }}
-            role="complementary"
-          >
-            <Avatar
-              key={session.user.image} // Add this line
-              src={session.user.image || ''}
-              alt={session.user.name || 'User avatar'}
-              sx={{ width: 32, height: 32, mr: 1 }}
-            />
-            <Box>
-              <Typography variant="subtitle2" color="common.white">
-                {session.user.name}
-              </Typography>
-              <Typography
-                variant="caption"
-                color="common.white"
-                sx={{ opacity: 0.8 }}
-              >
-                {session.user.email}
-              </Typography>
-            </Box>
-          </Box>
-        )}
+        </Link>
       </Box>
-      <List
-        sx={{
-          pt: 1,
-          '& .MuiListItem-root': {
-            color: 'common.white',
-            '& .MuiListItemIcon-root': {
-              color: 'common.white',
-            },
-            '& .MuiListItemText-primary': {
-              color: 'common.white',
-            },
-          },
-        }}
-        role="menu"
-        aria-label="Navigation menu"
-      >
-        {renderNavItems(true)}
-        <Divider sx={{ my: 1, borderColor: 'rgba(255, 255, 255, 0.12)' }} />
+      <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+      <List>
+        {session && (
+          <ListItem>
+            <ListItemIcon>
+              <Avatar
+                src={session.user.image || ''}
+                alt={session.user.name || ''}
+              />
+            </ListItemIcon>
+            <ListItemText
+              primary={session.user.name}
+              secondary={session.user.email}
+            />
+          </ListItem>
+        )}
+        <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+
+        {/* --- Navigation Items --- */}
+        {NAV_ITEMS.map((item) => (
+          <ListItem
+            button
+            key={item.name}
+            component={Link}
+            href={item.href}
+            onClick={handleDrawerToggle}
+          >
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.name} />
+          </ListItem>
+        ))}
+
+        {/* --- User Specific Items --- */}
         {session ? (
-          USER_MENU_ITEMS.map((item) => (
+          <>
             <ListItem
-              key={item.name}
-              onClick={() => {
-                handleDrawerToggle();
-                item.action?.();
-              }}
-              component={item.href ? Link : 'li'}
-              href={item.href}
-              sx={{
-                py: 1.5,
-                color: 'common.white',
-                '& .MuiListItemIcon-root': {
-                  color: 'common.white',
-                },
-                '& .MuiListItemText-primary': {
-                  color: 'common.white',
-                },
-              }}
-              role="menuitem"
+              button
+              component={Link}
+              href="/create"
+              onClick={handleDrawerToggle}
             >
-              <ListItemIcon aria-hidden="true">{item.icon}</ListItemIcon>
-              <ListItemText primary={item.name} />
+              <ListItemIcon>
+                <AddCircleOutlineIcon />
+              </ListItemIcon>
+              <ListItemText primary="Create Listing" />
             </ListItem>
-          ))
+            {USER_MENU_ITEMS.map((item) => (
+              <ListItem
+                button
+                key={item.name}
+                component={item.href ? Link : 'li'}
+                href={item.href || ''}
+                onClick={() => {
+                  if (item.action) item.action();
+                  handleDrawerToggle();
+                }}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.name} />
+              </ListItem>
+            ))}
+          </>
         ) : (
           <ListItem
+            button
             component={Link}
             href="/auth/signin"
             onClick={handleDrawerToggle}
-            sx={{
-              py: 1.5,
-              color: 'common.white',
-              '& .MuiListItemIcon-root': {
-                color: 'common.white',
-              },
-              '& .MuiListItemText-primary': {
-                color: 'common.white',
-              },
-            }}
-            role="menuitem"
           >
-            <ListItemIcon aria-hidden="true">
+            <ListItemIcon>
               <LoginIcon />
             </ListItemIcon>
             <ListItemText primary="Login" />
@@ -250,23 +173,32 @@ export default function NavBar() {
     </Drawer>
   );
 
-  const renderUserMenu = () => (
+  const UserMenu = (
     <Menu
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
       onClose={handleMenuClose}
       onClick={handleMenuClose}
-      PaperProps={{
-        sx: {
-          mt: 1.5,
-          minWidth: 220,
-          boxShadow: theme.shadows[8],
-        },
-      }}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      role="menu"
-      aria-label="User menu"
+      PaperProps={{
+        elevation: 0,
+        sx: {
+          overflow: 'visible',
+          mt: 1.5,
+          minWidth: 220,
+          // Glassmorphism for the menu
+          backgroundColor: 'rgba(30, 30, 30, 0.9)',
+          backdropFilter: 'blur(10px)',
+          border: `1px solid ${theme.palette.divider}`,
+          '& .MuiAvatar-root': {
+            width: 32,
+            height: 32,
+            ml: -0.5,
+            mr: 1,
+          },
+        },
+      }}
     >
       <Box sx={{ px: 2, py: 1.5 }}>
         <Typography variant="subtitle1" noWrap>
@@ -280,136 +212,132 @@ export default function NavBar() {
       {USER_MENU_ITEMS.map((item) => (
         <MenuItem
           key={item.name}
-          onClick={item.action ? item.action : undefined}
-          component={item.href ? Link : 'li'}
-          href={item.href}
-          sx={{
-            py: 1.5,
-            '&:focus': {
-              outline: '2px solid currentColor',
-              outlineOffset: '-2px',
-            },
-          }}
-          role="menuitem"
+          onClick={
+            item.action ? item.action : () => router.push(item.href || '/')
+          }
         >
-          <ListItemIcon aria-hidden="true">{item.icon}</ListItemIcon>
-          <ListItemText primary={item.name} />
+          <ListItemIcon>{item.icon}</ListItemIcon>
+          {item.name}
         </MenuItem>
       ))}
     </Menu>
   );
 
   return (
-    <AppBar
-      position="sticky"
-      elevation={0}
-      component="nav"
-      sx={{
-        borderBottom: `1px solid ${theme.palette.divider}`,
-      }}
-    >
-      <Container sx={{}}>
-        <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 70 } }}>
-          <Link
-            href="/"
-            style={{ textDecoration: 'none', color: 'inherit' }}
-            aria-label="Home"
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box sx={{ mr: 1 }}>
+    <>
+      <AppBar
+        position="sticky"
+        elevation={0}
+        component="nav"
+        sx={{
+          // Glassmorphism AppBar
+          backgroundColor: 'rgba(18, 18, 18, 0.8)', // semi-transparent background
+          backdropFilter: 'blur(10px)',
+          borderBottom: `1px solid ${theme.palette.divider}`,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 70 } }}>
+            {/* --- Logo and Brand Name --- */}
+            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
                 <Image
                   src="/peregrineAuctions.svg"
                   width={40}
                   height={40}
-                  alt=""
-                  aria-hidden="true"
+                  alt="Peregrine Auctions Logo"
                 />
-              </Box>
-              <Typography
-                variant="h6"
-                noWrap
-                sx={{
-                  fontWeight: 700,
-
-                  display: { xs: 'none', sm: 'block' },
-                }}
-              >
-                Peregrine Auctions
-              </Typography>
-            </Box>
-          </Link>
-
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: 'none', md: 'flex' },
-              justifyContent: 'center',
-            }}
-            role="navigation"
-            aria-label="Main navigation"
-          ></Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
-            {session ? (
-              <IconButton
-                onClick={handleMenuOpen}
-                sx={{
-                  p: 0,
-                  display: { xs: 'none', md: 'flex' },
-                }}
-                aria-label="Open user menu"
-                aria-expanded={Boolean(anchorEl)}
-                aria-haspopup="true"
-              >
-                <Avatar
-                  key={session.user.image} // Add this line
-                  alt={session.user.name || 'User avatar'}
-                  src={session.user.image || ''}
+                <Typography
+                  variant="h6"
+                  noWrap
                   sx={{
-                    width: 40,
-                    height: 40,
-                    border: `2px solid ${theme.palette.primary.main}`,
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s',
-                    '&:hover': {
-                      transform: 'scale(1.05)',
-                    },
+                    fontWeight: 700,
+                    ml: 1.5,
+                    display: { xs: 'none', sm: 'block' },
                   }}
-                />
-              </IconButton>
-            ) : (
-              <Button
-                component={Link}
-                href="/auth/signin"
-                variant="outlined"
-                color="primary"
-                sx={{ display: { xs: 'none', md: 'flex', color: 'white' } }}
-              >
-                Login
-              </Button>
-            )}
+                >
+                  Peregrine Auctions
+                </Typography>
+              </Box>
+            </Link>
+
+            <Box sx={{ flexGrow: 1 }} />
+
+            {/* --- Desktop Navigation --- */}
+            <Box
+              sx={{
+                display: { xs: 'none', md: 'flex' },
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              {NAV_ITEMS.map((item) => (
+                <Button
+                  key={item.name}
+                  component={Link}
+                  href={item.href}
+                  sx={{ color: 'text.primary', fontWeight: 500 }}
+                >
+                  {item.name}
+                </Button>
+              ))}
+
+              {session ? (
+                <>
+                  <Button
+                    component={Link}
+                    href="/create"
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<AddCircleOutlineIcon />}
+                  >
+                    Create Listing
+                  </Button>
+                  <IconButton onClick={handleMenuOpen} sx={{ p: 0, ml: 1 }}>
+                    <Avatar
+                      alt={session.user.name || ''}
+                      src={session.user.image || ''}
+                      sx={{
+                        width: 42,
+                        height: 42,
+                        border: `2px solid ${theme.palette.secondary.main}`,
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          transform: 'scale(1.05)',
+                          boxShadow: `0 0 15px ${theme.palette.secondary.main}`,
+                        },
+                      }}
+                    />
+                  </IconButton>
+                </>
+              ) : (
+                <Button
+                  component={Link}
+                  href="/auth/signin"
+                  variant="contained"
+                  color="primary"
+                >
+                  Login
+                </Button>
+              )}
+            </Box>
+
+            {/* --- Mobile Burger Icon --- */}
             <IconButton
               color="inherit"
               edge="end"
               onClick={handleDrawerToggle}
-              sx={{
-                ml: 1,
-                display: { md: 'none' },
-                color: theme.palette.text.primary,
-              }}
-              aria-label="Open mobile menu"
-              aria-expanded={mobileOpen}
-              aria-controls="mobile-menu"
+              sx={{ display: { md: 'none' } }}
             >
               <MenuIcon />
             </IconButton>
-          </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
 
-          {session && !isMobile && renderUserMenu()}
-        </Toolbar>
-      </Container>
-
-      {renderMobileDrawer()}
-    </AppBar>
+      {/* --- Render Menus and Drawers --- */}
+      {MobileDrawer}
+      {session && !isMobile && UserMenu}
+    </>
   );
 }
