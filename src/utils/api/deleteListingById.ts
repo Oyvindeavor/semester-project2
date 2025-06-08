@@ -21,7 +21,6 @@ export async function deleteListingById(id: string) {
     }
 
     if (response.status === 204) {
-      console.log('Listing deleted successfully');
       return;
     }
 

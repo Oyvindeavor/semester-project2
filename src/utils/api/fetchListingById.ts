@@ -14,7 +14,6 @@ export async function fetchListingById(id: string): Promise<Listing | null> {
   }
 
   const jsonResponse = await response.json();
-  console.log('Raw response JSON:', jsonResponse);
 
   return jsonResponse.listing || null;
 }
